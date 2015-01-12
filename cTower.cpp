@@ -17,8 +17,6 @@ cTower::cTower(Uint32 _x, Uint32 _y, SDL_Texture* _bitmap, Uint32 _grid_size, To
 	
 	mFiringVerts.push_back(JVector3());
 	mFiringVerts.push_back(JVector3());
-
-	mBitmapCircle = mRen->LoadTextureFromBMP("assets/circle.png",NULL);
 }
 
 cTower::~cTower()
@@ -26,8 +24,6 @@ cTower::~cTower()
 	mFireDurTimer.stop();
 	mFireFreqTimer.stop();
 	mTowerData = NULL;
-	if(mBitmapCircle) SDL_DestroyTexture(mBitmapCircle);
-	mBitmapCircle = NULL;
 }
 
 void cTower::Update()
@@ -70,21 +66,10 @@ void cTower::Update()
 
 void cTower::Draw()
 {
-	/*
-	SDL_Surface* l_surface = SDL_CreateRGBSurface(0,800,600,32,0,0,0,0);
-	SDL_Color range_col = { 0,222,0 };
-	mRen->draw_circle(l_surface,x,y,mTowerData->mRange,SDL_MapRGB(l_surface->format,0,222,0));
-	SDL_FreeSurface(l_surface);
-	*/
-
- 
-	//mRen->draw_circle(NULL, x, y, mTowerData->mRange, 0xFF004Cff); 
-	mRen->RenderTexture(mBitmapCircle,x+64,y,NULL,123,123);
-
 	mRen->RenderTexture(mBitmap,x,y,NULL);
 	if(mFiring) mRen->RenderVerts(x,y,mFiringVerts);
 	/*
-	//timer text
+	//firing timer text
 	SDL_Color col = { 0,0,0 };
 	mRen->RenderText(mFireFreqTimer.getTicks(),x+42,y,0,col,NULL,SCREEN_SPACE);
 	mRen->RenderText(mFireDurTimer.getTicks(),x+42,y+15,0,col,NULL,SCREEN_SPACE);

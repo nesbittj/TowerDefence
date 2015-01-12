@@ -21,7 +21,6 @@ private:
 	cTimer mFireFreqTimer;
 	cTimer mFireDurTimer;
 	vector<JVector3> mFiringVerts;
-	SDL_Texture* mBitmapCircle;
 
 	void Init(TowerData* _data);
 
