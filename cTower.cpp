@@ -1,29 +1,34 @@
 #include "cTower.h"
 
 
-cTower::cTower(Uint32 _x, Uint32 _y, char* _bitmap_filename, Uint32 _grid_size, TowerData* _data) : cEntity(_x,_y,_bitmap_filename,_grid_size)
-{
-	cTower(_x,_y,mBitmap,_grid_size,_data);
-}
-
-cTower::cTower(Uint32 _x, Uint32 _y, SDL_Texture* _bitmap, Uint32 _grid_size, TowerData* _data) : cEntity(_x,_y,_bitmap,_grid_size)
+cTower::cTower(Uint32 _x, Uint32 _y, Uint32 _grid_size) : cEntity(_x,_y,_grid_size)
 {
 	mFiring = false;
-	mTowerData = _data;
-	mFireFreqTimer = cTimer();
-	mFireFreqTimer.start();
-	mFireDurTimer = cTimer();
-	//mFireDurTimer.start();
-	
+	mBitmap = NULL;
 	mFiringVerts.push_back(JVector3());
 	mFiringVerts.push_back(JVector3());
 }
 
 cTower::~cTower()
 {
+}
+
+bool cTower::Init(SDL_Texture* _bitmap, TowerData* _data)
+{
+	if(!cEntity::Init(_bitmap)) return false;
+	mTowerData = _data;
+	mFireFreqTimer = cTimer();
+	mFireFreqTimer.start();
+	mFireDurTimer = cTimer();
+	return true;
+}
+
+bool cTower::CleanUp()
+{
 	mFireDurTimer.stop();
 	mFireFreqTimer.stop();
 	mTowerData = NULL;
+	return true;
 }
 
 void cTower::Update()
@@ -67,13 +72,14 @@ void cTower::Update()
 void cTower::Draw()
 {
 	mRen->RenderTexture(mBitmap,x,y,NULL);
-	if(mFiring) mRen->RenderVerts(x,y,mFiringVerts);
-	/*
+	if(mFiring)	
+		mRen->RenderVerts(x,y,mFiringVerts);
+	
 	//firing timer text
 	SDL_Color col = { 0,0,0 };
 	mRen->RenderText(mFireFreqTimer.getTicks(),x+42,y,0,col,NULL,SCREEN_SPACE);
 	mRen->RenderText(mFireDurTimer.getTicks(),x+42,y+15,0,col,NULL,SCREEN_SPACE);
-	*/
+	
 }
 
 bool cTower::TargetInRange(Uint32 _target[2])

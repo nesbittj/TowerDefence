@@ -29,13 +29,13 @@ public:
 
 	void SetPos(Uint32 _x, Uint32 _y);
 	void SetLevel(Uint32 l) { mLevel = l; }
-	bool LoadBitmap(char* filename);
 	void SetBitmap(SDL_Texture* _bitmap) { mBitmap = _bitmap; }
-	void UnloadBitmap();
 	
-	cEntity(Uint32 _x, Uint32 _y, char* _bitmap_filename, Uint32 _grid_size);
-	cEntity(Uint32 _x, Uint32 _y, SDL_Texture* _bitmap, Uint32 _grid_size);
+	cEntity(Uint32 _x, Uint32 _y,Uint32 _grid_size);
 	~cEntity();
+	
+	bool Init(SDL_Texture* _bitmap);
+	bool CleanUp();
 
 	void Update();
 	void Draw();

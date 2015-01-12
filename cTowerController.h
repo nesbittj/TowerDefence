@@ -20,7 +20,7 @@ private:
 
 	string mTowersFileLocation;
 	Uint32 mTowerSelected;
-	const Uint32* mGridSize;
+	Uint32 mGridSize;
 
 	cInput* mInput;
 	cRenderer* mRen;
@@ -35,11 +35,15 @@ public:
 	cTowerController();
 	~cTowerController();
 
-	bool Init(const Uint32* _grid_size, const cPlayer* _player);
+	bool Init(const Uint32 _grid_size, const cPlayer* _player);
+	bool CleanUp();
+
 	void Update();
 	void DrawTowersInUse();
 	void DrawTower(Uint32 _x, Uint32 _y, Uint32 _tower, Uint32 _space = WORLD_SPACE);
 	void DrawTowerText(Uint32 _x, Uint32 _y, Uint32 _tower, SDL_Color _col, Uint32 _space = WORLD_SPACE);
 	void AddTower(Uint32 _x, Uint32 _y, Uint32 _tower);
 	bool LoadTowersData();
+	SDL_Texture* LoadBitmap(const char* filename);
+	void UnloadBitmap(SDL_Texture* _bitmap);
 };

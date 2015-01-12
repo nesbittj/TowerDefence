@@ -62,13 +62,14 @@ int cEngine::Init()
 	mNodeRoot = new cSceneNode();
 	mPlayer = cPlayer(10,0,LEVEL_GRID_SIZE,mRen->GetCamera());
 	mTowerController = cTowerController();
-	mTowerController.Init(&LEVEL_GRID_SIZE,&mPlayer);
+	mTowerController.Init(LEVEL_GRID_SIZE,&mPlayer);
 
 	return 0;
 }
 
 int cEngine::CleanUp()
 {
+	mTowerController.CleanUp();
 	mFPSTimer.stop();
 
 	if(mTexture) SDL_DestroyTexture(mTexture);

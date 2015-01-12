@@ -1,49 +1,36 @@
 #include "cEntity.h"
 
-cEntity::cEntity(Uint32 _x, Uint32 _y, char* _bitmap_filename, Uint32 _grid_size)
+cEntity::cEntity(Uint32 _x, Uint32 _y, Uint32 _grid_size)
 {
-	cEntity(_x,_y,(SDL_Texture*)NULL,_grid_size);
-	LoadBitmap(_bitmap_filename);
-}
-
-cEntity::cEntity(Uint32 _x, Uint32 _y, SDL_Texture* _bitmap, Uint32 _grid_size)
-{
-	mLog = cLogger::Instance();
-	mRen = cRenderer::Instance();
-	mInput = cInput::Instance();
 	SetPos(_x,_y);
 	mGridSize = _grid_size;
 	mLevel = 0;
 	mLives = 10;
-	mBitmap = _bitmap;
 }
 
 cEntity::~cEntity()
 {
+}
+
+bool cEntity::Init(SDL_Texture* _bitmap)
+{
+	mLog = cLogger::Instance();
+	mRen = cRenderer::Instance();
+	mInput = cInput::Instance();
+	mBitmap = _bitmap;
+	return true;
+}
+
+bool cEntity::CleanUp()
+{
 	mRen = NULL;
 	mLog = NULL;
-	UnloadBitmap();
-}
-
-void cEntity::SetPos(Uint32 _x, Uint32 _y)
-{
-	x = _x;	y = _y;
-}
-
-bool cEntity::LoadBitmap(char* filename)
-{
-	mBitmap = mRen->LoadTextureFromBMP(filename,NULL);
-	if(mBitmap)
-		return true;
-	mLog->LogSDLError("cEntity::LoadBitmap() Error Loading Bitmap");
-	return false;
-}
-
-void cEntity::UnloadBitmap()
-{
-	if(mBitmap) SDL_DestroyTexture(mBitmap);
+	mInput = NULL;
 	mBitmap = NULL;
+	return true;
 }
+
+void cEntity::SetPos(Uint32 _x, Uint32 _y) { x = _x; y = _y; }
 
 void cEntity::Update()
 {
