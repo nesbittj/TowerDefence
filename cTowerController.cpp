@@ -10,6 +10,7 @@ cTowerController::cTowerController()
 	mTowerSelected = 0;
 	mInput = cInput::Instance();
 	mRen = cRenderer::Instance();
+	mLog = cLogger::Instance();
 
 	forTowersInUse mTowersInUse[i] = NULL;
 	forTowersData { mTowersData[i].mName = ""; mTowersData[i].mBitmap = NULL; }
@@ -19,13 +20,14 @@ cTowerController::~cTowerController()
 {
 	forTowersInUse
 	{
-		if(mTowersInUse[i] != NULL) delete mTowersInUse[i];
+		if(mTowersInUse[i] != NULL)
+			delete mTowersInUse[i];
 		mTowersInUse[i] = NULL;
 	}
 	forTowersData
 	{
-		mTowersData[i].mName = "";
-		if(mTowersData[i].mBitmap == NULL) SDL_DestroyTexture(mTowersData[i].mBitmap);
+		if(mTowersData[i].mBitmap != NULL)
+			SDL_DestroyTexture(mTowersData[i].mBitmap);
 		mTowersData[i].mBitmap = NULL;
 	}
 
@@ -34,27 +36,13 @@ cTowerController::~cTowerController()
 
 bool cTowerController::Init(const Uint32* _grid_size, const cPlayer* _player)
 {
+	bool result = true;
+
 	mGridSize = _grid_size;
 	mPlayer = _player;
+	result = LoadTowersData();
 
-	//load file
-	//set file data to mTowersData
-	mTowersData[0].mName = "Tower One";
-	mTowersData[0].mBitmap = mRen->LoadTextureFromBMP(std::string(mTowersFileLocation + "tower01.bmp").c_str(),NULL);
-	mTowersData[0].mFireFreq = 4 * 120;
-	mTowersData[0].mFireDuration = 2 * 120;
-	mTowersData[0].mRange = 150;
-	mTowersData[1].mName = "Tower Two";
-	mTowersData[1].mBitmap = mRen->LoadTextureFromBMP(std::string(mTowersFileLocation + "tower02.bmp").c_str(),NULL);
-	mTowersData[1].mFireFreq = 2 * 120;
-	mTowersData[1].mFireDuration = 1 * 120;
-	mTowersData[1].mRange = 150;
-	mTowersData[2].mName = "Tower Three";
-	mTowersData[2].mBitmap = mRen->LoadTextureFromBMP(std::string(mTowersFileLocation + "tower03.bmp").c_str(),NULL);
-	mTowersData[2].mFireFreq = 8 * 120;
-	mTowersData[2].mFireDuration = 4 * 120;
-	mTowersData[2].mRange = 150;
-	return true;
+	return result;
 }
 
 /*
@@ -112,4 +100,32 @@ void cTowerController::AddTower(Uint32 _x, Uint32 _y, Uint32 _tower)
 			return;
 		}
 	}
+}
+
+bool cTowerController::LoadTowersData()
+{
+	int l_game_speed = 120;
+	XMLDocument doc;
+	if(!doc.LoadFile("assets/towers/towers_data.xml"))
+	{
+		XMLElement* l_tower = doc.FirstChildElement("towers")->FirstChild()->ToElement();
+		int i = 0;
+		for( l_tower; l_tower; l_tower=l_tower->NextSiblingElement())
+		{
+			mTowersData[i].mName = l_tower->Attribute("name");
+			mTowersData[i].mBitmap = mRen->LoadTextureFromBMP(
+				std::string(mTowersFileLocation + l_tower->Attribute("bitmap")).c_str(),NULL);
+			l_tower->QueryIntAttribute("damage",&mTowersData[i].mDamage);
+			l_tower->QueryIntAttribute("range",&mTowersData[i].mRange);
+			l_tower->QueryIntAttribute("firefreq",&mTowersData[i].mFireFreq) * l_game_speed;
+			l_tower->QueryIntAttribute("firedur",&mTowersData[i].mFireDuration) * l_game_speed;
+			i++;
+		}		
+	}
+	else
+	{
+		mLog->LogError("cTowerController XML failed to load");
+		return false;
+	}
+	return true;
 }

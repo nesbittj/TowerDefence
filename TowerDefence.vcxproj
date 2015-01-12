@@ -84,6 +84,7 @@
     <ClCompile Include="cTower.cpp" />
     <ClCompile Include="cTowerController.cpp" />
     <ClCompile Include="Source.cpp" />
+    <ClCompile Include="tinyxml2.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="cCamera.h" />
@@ -98,6 +99,7 @@
     <ClInclude Include="cEntity.h" />
     <ClInclude Include="cTower.h" />
     <ClInclude Include="cTowerController.h" />
+    <ClInclude Include="tinyxml2.h" />
     <ClInclude Include="XInputButtons.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

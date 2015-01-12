@@ -7,10 +7,10 @@ struct TowerData
 {
 	string mName;
 	SDL_Texture* mBitmap;
-	Uint32 mDamage;
-	Uint32 mRange;
-	Uint32 mFireFreq;
-	Uint32 mFireDuration;
+	int mDamage;
+	int mRange;
+	int mFireFreq;
+	int mFireDuration;
 };
 
 class cTower : public cEntity
