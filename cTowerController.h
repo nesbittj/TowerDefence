@@ -44,6 +44,4 @@ public:
 	void DrawTowerText(Uint32 _x, Uint32 _y, Uint32 _tower, SDL_Color _col, Uint32 _space = WORLD_SPACE);
 	void AddTower(Uint32 _x, Uint32 _y, Uint32 _tower);
 	bool LoadTowersData();
-	SDL_Texture* LoadBitmap(const char* filename);
-	void UnloadBitmap(SDL_Texture* _bitmap);
 };

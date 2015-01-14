@@ -51,5 +51,8 @@ public:
 	void RenderText(const int value, int x, int y, int font, SDL_Color colour, SDL_Renderer* ren, int space = WORLD_SPACE);
 	void RenderVerts(int x, int y, const vector<JVector3>& verts, int space = WORLD_SPACE);
 	void Present(SDL_Renderer* ren) const;
+
+	SDL_Texture* LoadBitmap(const char* filename);
+	void UnloadBitmap(SDL_Texture* _bitmap);
 };
 

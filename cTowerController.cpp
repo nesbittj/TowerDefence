@@ -35,7 +35,7 @@ bool cTowerController::CleanUp()
 	}
 	for(int i = 0; i < sizeof(mTowersData)/sizeof(mTowersData[0]); i++)
 	{
-		UnloadBitmap(mTowersData[i].mBitmap);
+		mRen->UnloadBitmap(mTowersData[i].mBitmap);
 	}
 	mInput = NULL;
 	mRen = NULL;
@@ -120,7 +120,7 @@ bool cTowerController::LoadTowersData()
 		{
 			mTowersData[i].mName = l_tower->Attribute("name");
 
-			mTowersData[i].mBitmap = LoadBitmap( std::string(mTowersFileLocation + l_tower->Attribute("bitmap")).c_str() );
+			mTowersData[i].mBitmap = mRen->LoadBitmap( std::string(mTowersFileLocation + l_tower->Attribute("bitmap")).c_str() );
 
 			l_tower->QueryIntAttribute("damage",&mTowersData[i].mDamage);
 			l_tower->QueryIntAttribute("range",&mTowersData[i].mRange);
@@ -137,18 +137,4 @@ bool cTowerController::LoadTowersData()
 		return false;
 	}
 	return true;
-}
-
-SDL_Texture* cTowerController::LoadBitmap(const char* filename)
-{
-	SDL_Texture* result = mRen->LoadTextureFromBMP(filename,NULL);
-	if(!result) 
-	mLog->LogSDLError("cEntity::LoadBitmap() Error Loading Bitmap");
-	return result;
-}
-
-void cTowerController::UnloadBitmap(SDL_Texture* _bitmap)
-{
-	if(_bitmap) SDL_DestroyTexture(_bitmap);
-	_bitmap = NULL;
 }

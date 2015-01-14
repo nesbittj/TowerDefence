@@ -25,6 +25,7 @@ public:
 	Uint32 GetX() const { return x; }
 	Uint32 GetY() const { return y; }
 	Uint32 GetLevel() const { return mLevel; }
+	Uint32 GetLives() const { return mLives; }
 	SDL_Texture* GetBitmap() const { return mBitmap; }
 
 	void SetPos(Uint32 _x, Uint32 _y);
@@ -34,9 +35,9 @@ public:
 	cEntity(Uint32 _x, Uint32 _y,Uint32 _grid_size);
 	~cEntity();
 	
-	bool Init(SDL_Texture* _bitmap);
-	bool CleanUp();
+	bool virtual Init(SDL_Texture* _bitmap);
+	bool virtual CleanUp();
 
-	void Update();
-	void Draw();
+	void virtual Update();
+	void virtual Draw();
 };

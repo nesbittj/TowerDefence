@@ -6,6 +6,7 @@ cEntity::cEntity(Uint32 _x, Uint32 _y, Uint32 _grid_size)
 	mGridSize = _grid_size;
 	mLevel = 0;
 	mLives = 10;
+	mBitmap = NULL;
 }
 
 cEntity::~cEntity()
@@ -38,4 +39,5 @@ void cEntity::Update()
 
 void cEntity::Draw()
 {
+	mRen->RenderTexture(mBitmap,x,y,NULL);
 }
