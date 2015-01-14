@@ -4,7 +4,6 @@
 cTower::cTower(Uint32 _x, Uint32 _y, Uint32 _grid_size) : cEntity(_x,_y,_grid_size)
 {
 	mFiring = false;
-	mBitmap = NULL;
 	mFiringVerts.push_back(JVector3());
 	mFiringVerts.push_back(JVector3());
 }

@@ -72,6 +72,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="cCamera.cpp" />
+    <ClCompile Include="cEnemy.cpp" />
     <ClCompile Include="cEngine.cpp" />
     <ClCompile Include="cEntity.cpp" />
     <ClCompile Include="cInput.cpp" />
@@ -88,6 +89,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="cCamera.h" />
+    <ClInclude Include="cEnemy.h" />
     <ClInclude Include="cEngine.h" />
     <ClInclude Include="cInput.h" />
     <ClInclude Include="cLogger.h" />
