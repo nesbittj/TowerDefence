@@ -65,12 +65,17 @@ int cEngine::Init()
 	mTowerController.Init(LEVEL_GRID_SIZE,&mPlayer);
 	// TODO: pass level grid size by pointer
 
+	mEnemyController = cEnemyController();
+	mEnemyController.Init(32);
+
 	return 0;
 }
 
 int cEngine::CleanUp()
 {
+	mEnemyController.CleanUp();
 	mTowerController.CleanUp();
+
 	mFPSTimer.stop();
 
 	if(mTexture) SDL_DestroyTexture(mTexture);
@@ -106,7 +111,8 @@ void cEngine::Update()
 	{
 		UpdateCamera();
 		mPlayer.Update();
-		mTowerController.Update();		
+		mTowerController.Update();
+		mEnemyController.Update();
 		mCountedUpdates++;
 	}
 }
@@ -148,6 +154,8 @@ void cEngine::Render()
 		mTowerController.DrawTowersInUse();
 		mTowerController.DrawTower(mPlayer.GetCurserX(),mPlayer.GetCurserY(),mTowerController.GetTowerSelected(),SCREEN_SPACE);
 		mTowerController.DrawTowerText(mPlayer.GetCurserX(),mPlayer.GetCurserY() - 15,mTowerController.GetTowerSelected(),mouseColour,SCREEN_SPACE);
+
+		mEnemyController.DrawEnemies();
 
 		mRen->Present(NULL);
 		mCountedFrames++;

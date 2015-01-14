@@ -19,6 +19,7 @@ singleton class
 #include "cCamera.h"
 #include "cPlayer.h"
 #include "cTowerController.h"
+#include "cEnemyController.h"
 
 #include <sstream>
 
@@ -44,6 +45,7 @@ private:
 
 	cPlayer mPlayer;
 	cTowerController mTowerController;
+	cEnemyController mEnemyController;
 	
 	void CapFrameRate();
 	Uint32 CalcAvgFPS();
@@ -80,6 +82,7 @@ public:
 	static const Uint32 LEVEL_GRID_SIZE = 32;
 
 	void UpdateCamera();
+
 
 };
 

@@ -6,13 +6,12 @@ struct float2 { float x; float y; };
 
 class cCamera
 {
-private:
+public:
 	float x, y;
 	int screen_w, screen_h;
 	int level_w, level_h;
 	float mMoveSpeed;
 
-public:
 	cCamera(float _x, float _y, int _screen_w, int _screen_h, int _level_w, int _level_h);
 
 	void UpdateRelative(float _x, float _y);

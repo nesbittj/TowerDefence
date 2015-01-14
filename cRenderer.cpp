@@ -247,3 +247,25 @@ void cRenderer::Present(SDL_Renderer* ren) const
 	SDL_RenderPresent(ren);
 	SDL_RenderClear(ren);
 }
+
+/*
+loads bitmap from .bmp
+returns SDL_Texture*
+remember to call UnloadBitmap() when finished
+*/
+SDL_Texture* cRenderer::LoadBitmap(const char* filename)
+{
+	SDL_Texture* result = LoadTextureFromBMP(filename,NULL);
+	if(!result) 
+	mLog->LogSDLError("cEntity::LoadBitmap() Error Loading Bitmap");
+	return result;
+}
+
+/*
+destroys bitmap and sets pointer to NULL
+*/
+void cRenderer::UnloadBitmap(SDL_Texture* _bitmap)
+{
+	if(_bitmap) SDL_DestroyTexture(_bitmap);
+	_bitmap = NULL;
+}
