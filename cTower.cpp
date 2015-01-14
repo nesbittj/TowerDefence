@@ -15,11 +15,11 @@ cTower::~cTower()
 
 bool cTower::Init(SDL_Texture* _bitmap, TowerData* _data)
 {
-	if(!cEntity::Init(_bitmap)) return false;
 	mTowerData = _data;
 	mFireFreqTimer = cTimer();
 	mFireFreqTimer.start();
 	mFireDurTimer = cTimer();
+	if(!cEntity::Init(_bitmap)) return false;
 	return true;
 }
 
@@ -28,6 +28,7 @@ bool cTower::CleanUp()
 	mFireDurTimer.stop();
 	mFireFreqTimer.stop();
 	mTowerData = NULL;
+	if(!cEntity::CleanUp()) return false;
 	return true;
 }
 
@@ -35,7 +36,6 @@ void cTower::Update()
 {
 	bool l_freq = true;
 	bool l_dur = true;
-
 	
 	if(mFireFreqTimer.getTicks() > mTowerData->mFireFreq)
 	{
@@ -77,8 +77,8 @@ void cTower::Draw()
 	
 	//firing timer text
 	SDL_Color col = { 0,0,0 };
-	mRen->RenderText(mFireFreqTimer.getTicks(),x+42,y,0,col,NULL,SCREEN_SPACE);
-	mRen->RenderText(mFireDurTimer.getTicks(),x+42,y+15,0,col,NULL,SCREEN_SPACE);
+	mRen->RenderText(mFireFreqTimer.getTicks(),x+42,y,0,col,NULL);
+	mRen->RenderText(mFireDurTimer.getTicks(),x+42,y+15,0,col,NULL);
 	
 }
 

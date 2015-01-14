@@ -63,6 +63,7 @@ int cEngine::Init()
 	mPlayer = cPlayer(10,0,LEVEL_GRID_SIZE,mRen->GetCamera());
 	mTowerController = cTowerController();
 	mTowerController.Init(LEVEL_GRID_SIZE,&mPlayer);
+	// TODO: pass level grid size by pointer
 
 	return 0;
 }

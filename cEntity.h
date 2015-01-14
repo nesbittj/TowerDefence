@@ -34,9 +34,9 @@ public:
 	cEntity(Uint32 _x, Uint32 _y,Uint32 _grid_size);
 	~cEntity();
 	
-	bool Init(SDL_Texture* _bitmap);
-	bool CleanUp();
+	bool virtual Init(SDL_Texture* _bitmap);
+	bool virtual CleanUp();
 
-	void Update();
-	void Draw();
+	void virtual Update();
+	void virtual Draw();
 };

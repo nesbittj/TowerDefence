@@ -38,4 +38,5 @@ void cEntity::Update()
 
 void cEntity::Draw()
 {
+	mRen->RenderTexture(mBitmap,x,y,NULL);
 }
