@@ -77,6 +77,7 @@ void cTower::Update(cEnemy** const _enemies_hit)
 			}
 		}
 	}
+	else mFiring = false;
 }
 
 void cTower::Draw()
