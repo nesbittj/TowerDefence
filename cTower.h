@@ -2,6 +2,7 @@
 
 #include "centity.h"
 #include "cTimer.h"
+#include "cEnemy.h"
 
 struct TowerData
 {
@@ -31,8 +32,10 @@ public:
 	bool Init(SDL_Texture* _bitmap, TowerData* _data);
 	bool CleanUp();
 
-	void Update();
+	void Update(cEnemy** const _enemies_hit);
 	void Draw();
-	bool TargetInRange(Uint32 _target[2]);
+	bool TargetInRange(float2 _target);
+
+	bool GetFiring() { return mFiring; }
 };
 

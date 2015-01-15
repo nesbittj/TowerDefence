@@ -1,4 +1,4 @@
 <?xml version="1.0" ?>
 <enemies>
-	<enemy1 name="enemy 1" bitmap="enemy01.bmp" speed="1" />
+	<enemy1 name="enemy 1" bitmap="enemy01.bmp" speed="1" lives="100" />
 </enemies>

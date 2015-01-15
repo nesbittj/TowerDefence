@@ -17,7 +17,7 @@ class cEnemyController
 {
 private:
 	EnemyData mEnemiesData[10];
-	cEnemy* mEnemysAlive[30];
+	cEnemy* mEnemiesAlive[30];
 	
 	cTimer mEnemySpawnTimer;
 	string mEnemyFileLocation;
@@ -41,4 +41,6 @@ public:
 	void DrawEnemyText(Uint32 _x, Uint32 _y, Uint32 _enemy, SDL_Color _col, Uint32 _space = WORLD_SPACE);
 	void AddEnemy(Uint32 _x, Uint32 _y, Uint32 _enemy);
 	bool LoadEnemyData();
+
+	cEnemy** const GetEnemies() { return mEnemiesAlive; }
 };

@@ -31,7 +31,7 @@ bool cTower::CleanUp()
 	return true;
 }
 
-void cTower::Update()
+void cTower::Update(cEnemy** const _enemies_hit)
 {
 	bool l_freq = true;
 	bool l_dur = true;
@@ -56,16 +56,27 @@ void cTower::Update()
 
 	if((!mFiring && l_freq)	|| (mFiring && l_dur))
 	{
-		Uint32 target[2] = { mInput->GetMouseX(),mInput->GetMouseY() };
-		if(TargetInRange(target))
+		mFiring = false;
+		//Uint32 target[2] = { mInput->GetMouseX(),mInput->GetMouseY() };
+		//TODO: make more efficient, could reduce number of calls/searches
+		//TODO: loop needs to be dynamic
+		//TODO: consider reporting enemies hit then damaging them inside enemiesConstroller::Update()
+		for(int i = 0; i < 30; i++)
 		{
-			mFiringVerts[0] = JVector3(0,0,1);
-			mFiringVerts[1] = JVector3(target[0],target[1],WORLD_SPACE);
-			mFiring = true;
+			if(_enemies_hit[i] != NULL)
+			{
+				float2 l_target = {_enemies_hit[i]->GetX(),_enemies_hit[i]->GetY() };
+				if(TargetInRange(l_target))
+				{
+					mFiringVerts[0] = JVector3(0,0,1);
+					mFiringVerts[1] = JVector3(l_target.x,l_target.y,WORLD_SPACE);
+					mFiring = true;
+					_enemies_hit[i]->Damage(mTowerData->mDamage);
+					break;
+				}
+			}
 		}
-		else mFiring = false;
 	}
-	else mFiring = false;
 }
 
 void cTower::Draw()
@@ -81,9 +92,9 @@ void cTower::Draw()
 	
 }
 
-bool cTower::TargetInRange(Uint32 _target[2])
+bool cTower::TargetInRange(float2 _target)
 {
-	if(abs((int)(x + mRen->GetCamera()->GetPos().x - _target[0])) > mTowerData->mRange) return false;
-	if(abs((int)(y + mRen->GetCamera()->GetPos().y - _target[1])) > mTowerData->mRange) return false;
+	if(abs((int)(x + mRen->GetCamera()->GetPos().x - _target.x)) > mTowerData->mRange) return false;
+	if(abs((int)(y + mRen->GetCamera()->GetPos().y - _target.y)) > mTowerData->mRange) return false;
 	return true;
 }

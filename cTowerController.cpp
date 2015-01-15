@@ -56,7 +56,7 @@ void cTowerController::SetTowerSelected(Uint32 _tower)
 	}
 }
 
-void cTowerController::Update()
+void cTowerController::Update(cEnemy** const _enemies_hit)
 {
 	if(mInput->GetKeyDownRelease(SDLK_1)) SetTowerSelected(0);
 	if(mInput->GetKeyDownRelease(SDLK_2)) SetTowerSelected(1);
@@ -71,7 +71,9 @@ void cTowerController::Update()
 		RemoveTower(mPlayer->GetCurserX(),mPlayer->GetCurserY());
 
 	for(int i = 0; i < sizeof(mTowersInUse)/sizeof(mTowersInUse[0]); i++)
-		if(mTowersInUse[i] != NULL) mTowersInUse[i]->Update();
+	{
+		if(mTowersInUse[i] != NULL) mTowersInUse[i]->Update(_enemies_hit);
+	}
 }
 
 void cTowerController::DrawTowersInUse()
@@ -98,8 +100,8 @@ void cTowerController::AddTower(Uint32 _x, Uint32 _y, Uint32 _tower)
 	{
 		if(mTowersInUse[i] == NULL)
 		{
-			for(int i = 0; i < sizeof(mTowersInUse)/sizeof(mTowersInUse[0]); i++)
-				if(mTowersInUse[i] != NULL && mTowersInUse[i]->GetX() == _x && mTowersInUse[i]->GetY() == _y) return;
+			for(int j = 0; j < sizeof(mTowersInUse)/sizeof(mTowersInUse[0]); j++)
+				if(mTowersInUse[j] != NULL && mTowersInUse[j]->GetX() == _x && mTowersInUse[j]->GetY() == _y) return;
 			mTowersInUse[i] = new cTower(_x - mRen->GetCamera()->GetPos().x,_y - mRen->GetCamera()->GetPos().y,mGridSize);
 			mTowersInUse[i]->Init(mTowersData[_tower].mBitmap,&mTowersData[_tower]);
 			return;
