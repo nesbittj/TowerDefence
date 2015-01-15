@@ -7,6 +7,7 @@
 #include "cPlayer.h"
 #include "cTower.h"
 #include "cLogger.h"
+#include "cEnemy.h"
 
 #include "tinyxml2.h"
 
@@ -38,10 +39,11 @@ public:
 	bool Init(const Uint32 _grid_size, const cPlayer* _player);
 	bool CleanUp();
 
-	void Update();
+	void Update(cEnemy** const _enemies_hit, int size_of_array);
 	void DrawTowersInUse();
 	void DrawTower(Uint32 _x, Uint32 _y, Uint32 _tower, Uint32 _space = WORLD_SPACE);
 	void DrawTowerText(Uint32 _x, Uint32 _y, Uint32 _tower, SDL_Color _col, Uint32 _space = WORLD_SPACE);
 	void AddTower(Uint32 _x, Uint32 _y, Uint32 _tower);
+	void RemoveTower(Uint32 _x, Uint32 _y);
 	bool LoadTowersData();
 };

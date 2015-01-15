@@ -31,7 +31,14 @@ bool cTower::CleanUp()
 	return true;
 }
 
-void cTower::Update()
+/*
+updates towers.
+takes constant pointer to array of enemies,
+enemies in range are fired appon.
+second parameter is the number of elements
+in the array passed in the fist param.
+*/
+void cTower::Update(cEnemy** const _enemies, int size_of_array)
 {
 	bool l_freq = true;
 	bool l_dur = true;
@@ -56,14 +63,25 @@ void cTower::Update()
 
 	if((!mFiring && l_freq)	|| (mFiring && l_dur))
 	{
-		Uint32 target[2] = { mInput->GetMouseX(),mInput->GetMouseY() };
-		if(TargetInRange(target))
+		mFiring = false;
+		//TODO: make more efficient, could reduce number of calls/searches
+		//TODO: consider reporting enemies hit then damaging them inside enemiesConstroller::Update()
+		for(int i = 0; i < size_of_array; i++)
 		{
-			mFiringVerts[0] = JVector3(0,0,1);
-			mFiringVerts[1] = JVector3(target[0],target[1],WORLD_SPACE);
-			mFiring = true;
+			if(_enemies[i] != NULL)
+			{
+				float2 l_target = {_enemies[i]->GetX(),_enemies[i]->GetY() };
+				float2 l_this_pos = { x,y };
+				if(cMaths::InRange(l_this_pos,l_target,mTowerData->mRange))
+				{
+					mFiringVerts[0] = JVector3(0,0,1);
+					mFiringVerts[1] = JVector3(l_target.x,l_target.y,WORLD_SPACE);
+					mFiring = true;
+					_enemies[i]->Damage(mTowerData->mDamage);
+					break;
+				}
+			}
 		}
-		else mFiring = false;
 	}
 	else mFiring = false;
 }
@@ -79,11 +97,4 @@ void cTower::Draw()
 	mRen->RenderText(mFireFreqTimer.getTicks(),x+42,y,0,col,NULL);
 	mRen->RenderText(mFireDurTimer.getTicks(),x+42,y+15,0,col,NULL);
 	
-}
-
-bool cTower::TargetInRange(Uint32 _target[2])
-{
-	if(abs((int)(x + mRen->GetCamera()->GetPos().x - _target[0])) > mTowerData->mRange) return false;
-	if(abs((int)(y + mRen->GetCamera()->GetPos().y - _target[1])) > mTowerData->mRange) return false;
-	return true;
 }

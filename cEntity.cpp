@@ -22,6 +22,10 @@ bool cEntity::Init(SDL_Texture* _bitmap)
 	return true;
 }
 
+/*
+make sure to destroy bitmap elsewhere
+as this method does not.
+*/
 bool cEntity::CleanUp()
 {
 	mRen = NULL;

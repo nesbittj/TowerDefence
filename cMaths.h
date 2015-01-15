@@ -82,6 +82,7 @@ public:
 	static JVector3* PlaneNormal(JVector3* u, JVector3* v, JVector3* w);
 };
 
+struct float2 { float x; float y; };
 
 class cMaths
 {
@@ -94,4 +95,5 @@ public:
 	static void Truncatef(float& value, const float threshold);
 	static int Round(int num, int multiple);
 	static int RoundUp(int num, int multiple);
+	static bool InRange(float2 _origin, float2 _target, float _range);
 };

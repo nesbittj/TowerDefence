@@ -6,6 +6,7 @@ struct EnemyData
 	string mName;
 	SDL_Texture* mBitmap;
 	int mSpeed;
+	int mStartingLives;
 };
 
 class cEnemy : public cEntity
@@ -20,5 +21,7 @@ public:
 	bool CleanUp();
 
 	void Update();
+	void Draw();
+	void Damage(int _value);
 };
 

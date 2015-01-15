@@ -16,8 +16,10 @@ using namespace tinyxml2;
 class cEnemyController
 {
 private:
-	EnemyData mEnemiesData[10];
-	cEnemy* mEnemysAlive[30];
+	static const unsigned int mMaxEnemiesAlive = 30;
+	static const unsigned int mMaxEnemyTypes = 10;
+	EnemyData mEnemiesData[mMaxEnemyTypes];
+	cEnemy* mEnemiesAlive[mMaxEnemiesAlive];
 	
 	cTimer mEnemySpawnTimer;
 	string mEnemyFileLocation;
@@ -40,5 +42,9 @@ public:
 	void DrawEnemy(Uint32 _x, Uint32 _y, Uint32 _enemy, Uint32 _space = WORLD_SPACE);
 	void DrawEnemyText(Uint32 _x, Uint32 _y, Uint32 _enemy, SDL_Color _col, Uint32 _space = WORLD_SPACE);
 	void AddEnemy(Uint32 _x, Uint32 _y, Uint32 _enemy);
+	void RemoveEnemy(Uint32 _enemy);
 	bool LoadEnemyData();
+
+	cEnemy** const GetEnemies() { return mEnemiesAlive; }
+	inline int GetMaxEnemies() const { return mMaxEnemiesAlive; }
 };

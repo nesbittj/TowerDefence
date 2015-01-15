@@ -15,6 +15,8 @@ bool cEnemy::Init(SDL_Texture* _bitmap, EnemyData* _data)
 	if(!cEntity::Init(_bitmap)) return false;
 	int l_y_pos = rand() % mRen->GetCamera()->screen_h;
 	x = 0; y = l_y_pos;
+	mEnemyData = _data;
+	mLives = _data->mStartingLives;
 	return true;
 }
 
@@ -26,6 +28,21 @@ bool cEnemy::CleanUp()
 
 void cEnemy::Update()
 {
-	if(++x > mRen->GetCamera()->screen_w)
+	if(++x > mRen->GetCamera()->screen_w || mLives < 0)
 		mLives = 0;
+}
+
+void cEnemy::Draw()
+{
+	cEntity::Draw();
+	
+	SDL_Color col = { 0,0,0 };
+	mRen->RenderText(mLives,x+42,y,0,col,0);
+}
+
+void cEnemy::Damage(int _value)
+{
+	mLives -= _value;
+	if(mLives < 0) mLives = 0;
+	printf("%i\n",mLives);
 }

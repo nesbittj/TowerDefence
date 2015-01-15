@@ -10,7 +10,7 @@ class cEntity
 protected:
 	Uint32 x, y;
 	Uint32 mLevel;
-	Uint32 mLives;
+	int mLives;
 
 	SDL_Texture* mBitmap;
 	Uint32 mGridSize;
@@ -18,14 +18,11 @@ protected:
 	cLogger* mLog;
 	cInput* mInput;
 
-private:
-	void Init(Uint32 _x, Uint32 _y, Uint32 _grid_size);
-
 public:
 	Uint32 GetX() const { return x; }
 	Uint32 GetY() const { return y; }
 	Uint32 GetLevel() const { return mLevel; }
-	Uint32 GetLives() const { return mLives; }
+	int GetLives() const { return mLives; }
 	SDL_Texture* GetBitmap() const { return mBitmap; }
 
 	void SetPos(Uint32 _x, Uint32 _y);
