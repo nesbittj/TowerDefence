@@ -2,5 +2,5 @@
 <towers>
 	<tower1 name="tower 1" bitmap="tower01.bmp" damage="1" range="150" firefreq="4" firedur="2" />
 	<tower1 name="tower 2" bitmap="tower02.bmp" damage="10" range="150" firefreq="1" firedur="0" />
-	<tower1 name="tower 3" bitmap="tower03.bmp" damage="1" range="150" firefreq="8" firedur="4" />
+	<tower1 name="tower 3" bitmap="tower03.bmp" damage="70" range="150" firefreq="8" firedur="0" />
 </towers>

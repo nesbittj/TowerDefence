@@ -38,7 +38,7 @@ enemies in range are fired appon.
 second parameter is the number of elements
 in the array passed in the fist param.
 */
-void cTower::Update(cEnemy** const _enemies_hit, int size_of_array)
+void cTower::Update(cEnemy** const _enemies, int size_of_array)
 {
 	bool l_freq = true;
 	bool l_dur = true;
@@ -65,19 +65,19 @@ void cTower::Update(cEnemy** const _enemies_hit, int size_of_array)
 	{
 		mFiring = false;
 		//TODO: make more efficient, could reduce number of calls/searches
-		//TODO: loop needs to be dynamic
 		//TODO: consider reporting enemies hit then damaging them inside enemiesConstroller::Update()
 		for(int i = 0; i < size_of_array; i++)
 		{
-			if(_enemies_hit[i] != NULL)
+			if(_enemies[i] != NULL)
 			{
-				float2 l_target = {_enemies_hit[i]->GetX(),_enemies_hit[i]->GetY() };
-				if(TargetInRange(l_target))
+				float2 l_target = {_enemies[i]->GetX(),_enemies[i]->GetY() };
+				float2 l_this_pos = { x,y };
+				if(cMaths::InRange(l_this_pos,l_target,mTowerData->mRange))
 				{
 					mFiringVerts[0] = JVector3(0,0,1);
 					mFiringVerts[1] = JVector3(l_target.x,l_target.y,WORLD_SPACE);
 					mFiring = true;
-					_enemies_hit[i]->Damage(mTowerData->mDamage);
+					_enemies[i]->Damage(mTowerData->mDamage);
 					break;
 				}
 			}
@@ -97,11 +97,4 @@ void cTower::Draw()
 	mRen->RenderText(mFireFreqTimer.getTicks(),x+42,y,0,col,NULL);
 	mRen->RenderText(mFireDurTimer.getTicks(),x+42,y+15,0,col,NULL);
 	
-}
-
-bool cTower::TargetInRange(float2 _target)
-{
-	if(abs((int)(x + mRen->GetCamera()->GetPos().x - _target.x)) > mTowerData->mRange) return false;
-	if(abs((int)(y + mRen->GetCamera()->GetPos().y - _target.y)) > mTowerData->mRange) return false;
-	return true;
 }

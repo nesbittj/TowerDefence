@@ -317,3 +317,15 @@ int cMaths::RoundUp(int num, int multiple)
 	if(remainder == 0) return num;
 	return num + multiple - remainder;
 }
+
+/*
+return true if taret is inside the range of origin,
+return false if not.
+TODO: check InRange Prerformance
+*/
+bool cMaths::InRange(float2 _origin, float2 _target, float _range)
+{
+	if(abs((int)(_origin.x - _target.x)) > _range) return false;
+	if(abs((int)(_origin.y - _target.y)) > _range) return false;
+	return true;
+}

@@ -18,9 +18,6 @@ protected:
 	cLogger* mLog;
 	cInput* mInput;
 
-private:
-	void Init(Uint32 _x, Uint32 _y, Uint32 _grid_size);
-
 public:
 	Uint32 GetX() const { return x; }
 	Uint32 GetY() const { return y; }

@@ -34,6 +34,7 @@ private:
 	TTF_Font* mFont;
 	SDL_Surface* mFontSurface;
 	SDL_Texture* mFontTexture;
+	SDL_Texture* LoadTextureFromBMP(const char* bitmap, SDL_Renderer* ren);
 
 public:
 	static cRenderer* Instance();
@@ -44,7 +45,6 @@ public:
 	void SetCamera(cCamera* cam) { mCamera = cam; }
 	void DrawRect(int x, int y, int w, int h, SDL_Color colour, int space = WORLD_SPACE);
 	void DrawCircleFill(int _x, int _y, int _rad, SDL_Color _col, int _space = WORLD_SPACE);
-	SDL_Texture* LoadTextureFromBMP(const char* bitmap, SDL_Renderer* ren);
 	void RenderTexture(SDL_Texture* tex, int x, int y, SDL_Renderer* ren, int space = WORLD_SPACE);
 	void RenderTexture(SDL_Texture* tex, int x, int y, SDL_Renderer* ren, int w, int h, int space = WORLD_SPACE);
 	void RenderText(const char* string, int x, int y, int font, SDL_Color colour, SDL_Renderer* ren, int space = WORLD_SPACE);

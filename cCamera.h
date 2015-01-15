@@ -1,8 +1,7 @@
 #pragma once
 
 #include <SDL.h>
-
-struct float2 { float x; float y; };
+#include "cMaths.h"
 
 class cCamera
 {

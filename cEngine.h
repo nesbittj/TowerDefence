@@ -20,6 +20,7 @@ singleton class
 #include "cPlayer.h"
 #include "cTowerController.h"
 #include "cEnemyController.h"
+#include "cCore.h"
 
 #include <sstream>
 
@@ -46,6 +47,7 @@ private:
 	cPlayer mPlayer;
 	cTowerController mTowerController;
 	cEnemyController mEnemyController;
+	cCore* mCore;
 	
 	void CapFrameRate();
 	Uint32 CalcAvgFPS();

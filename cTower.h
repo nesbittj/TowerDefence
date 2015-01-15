@@ -32,9 +32,8 @@ public:
 	bool Init(SDL_Texture* _bitmap, TowerData* _data);
 	bool CleanUp();
 
-	void Update(cEnemy** const _enemies_hit, int size_of_array);
+	void Update(cEnemy** const _enemies, int size_of_array);
 	void Draw();
-	bool TargetInRange(float2 _target);
 
 	bool GetFiring() { return mFiring; }
 };
