@@ -120,6 +120,7 @@ void cTowerController::RemoveTower(Uint32 _x, Uint32 _y)
 		&& (_x == _x - mRen->GetCamera()->GetPos().x && _y == _y - mRen->GetCamera()->GetPos().y))
 		{
 			mTowersInUse[i]->CleanUp();
+			delete mTowersInUse[i];
 			mTowersInUse[i] = NULL;
 		}
 	}

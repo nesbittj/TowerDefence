@@ -60,11 +60,7 @@ void cEnemyController::Update()
 		{
 			mEnemiesAlive[i]->Update();
 			//if(_enemies_hit[i].x != -1) mEnemiesAlive[i]->Damage(_enemies_hit[i].y);
-			if(mEnemiesAlive[i]->GetLives() <= 0)
-			{
-				mEnemiesAlive[i]->CleanUp();
-				mEnemiesAlive[i] = NULL;
-			}
+			if(mEnemiesAlive[i]->GetLives() <= 0) RemoveEnemy(i);
 		}
 	}
 }
@@ -108,6 +104,13 @@ void cEnemyController::AddEnemy(Uint32 _x, Uint32 _y, Uint32 _enemy)
 			return;
 		}
 	}
+}
+
+void cEnemyController::RemoveEnemy(Uint32 _enemy)
+{
+	mEnemiesAlive[_enemy]->CleanUp();
+	delete mEnemiesAlive[_enemy];
+	mEnemiesAlive[_enemy] = NULL;
 }
 
 bool cEnemyController::LoadEnemyData()

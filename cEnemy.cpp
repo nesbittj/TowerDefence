@@ -42,6 +42,7 @@ void cEnemy::Draw()
 
 void cEnemy::Damage(int _value)
 {
-	if((mLives -= _value) < 0) mLives = 0;
+	mLives -= _value;
+	if(mLives < 0) mLives = 0;
 	printf("%i\n",mLives);
 }
