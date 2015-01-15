@@ -16,7 +16,7 @@ bool cEnemyController::Init(const Uint32 _grid_size)
 	mLog = cLogger::Instance();
 	mGridSize = _grid_size;
 	if(!LoadEnemyData()) return false;
-	for(int i = 0; i < sizeof(mEnemiesAlive)/sizeof(mEnemiesAlive[0]); i++) mEnemiesAlive[i] = NULL;
+	for(int i = 0; i < mMaxEnemiesAlive; i++) mEnemiesAlive[i] = NULL;
 
 	mEnemySpawnTimer = cTimer();
 	mEnemySpawnTimer.start();
@@ -28,7 +28,7 @@ bool cEnemyController::CleanUp()
 {
 	mEnemySpawnTimer.stop();
 
-	for(int i = 0; i < sizeof(mEnemiesAlive)/sizeof(mEnemiesAlive[0]); i++)
+	for(int i = 0; i < mMaxEnemiesAlive; i++)
 	{
 		if(mEnemiesAlive[i])
 		{
@@ -37,7 +37,7 @@ bool cEnemyController::CleanUp()
 		}
 		mEnemiesAlive[i] = NULL;
 	}
-	for(int i = 0; i < sizeof(mEnemiesData)/sizeof(mEnemiesData[0]); i++)
+	for(int i = 0; i < mMaxEnemyTypes; i++)
 	{
 		mRen->UnloadBitmap(mEnemiesData[i].mBitmap);
 	}
@@ -54,7 +54,7 @@ void cEnemyController::Update()
 		AddEnemy(0,0,0);
 		mEnemySpawnTimer.start();
 	}
-	for(int i = 0; i < sizeof(mEnemiesAlive)/sizeof(mEnemiesAlive[0]); i++)
+	for(int i = 0; i < mMaxEnemiesAlive; i++)
 	{
 		if(mEnemiesAlive[i] !=  NULL)
 		{
@@ -70,7 +70,7 @@ void cEnemyController::DrawEnemies()
 	SDL_Color col = { 0,0,0,255 };
 	int l_alive = 0;
 
-	for(int i = 0; i < sizeof(mEnemiesAlive)/sizeof(mEnemiesAlive[0]); i++)
+	for(int i = 0; i < mMaxEnemiesAlive; i++)
 	{
 		if(mEnemiesAlive[i] != NULL)
 		{
@@ -93,11 +93,11 @@ void cEnemyController::DrawEnemyText(Uint32 _x, Uint32 _y, Uint32 _enemy, SDL_Co
 
 void cEnemyController::AddEnemy(Uint32 _x, Uint32 _y, Uint32 _enemy)
 {
-	for(int i = 0; i < sizeof(mEnemiesAlive)/sizeof(mEnemiesAlive[0]); i++)
+	for(int i = 0; i < mMaxEnemiesAlive; i++)
 	{
 		if(mEnemiesAlive[i] == NULL)
 		{
-			for(int j = 0; j < sizeof(mEnemiesAlive)/sizeof(mEnemiesAlive[0]); j++)
+			for(int j = 0; j < mMaxEnemiesAlive; j++)
 				if(mEnemiesAlive[j] != NULL && mEnemiesAlive[j]->GetX() == _x && mEnemiesAlive[j]->GetY() == _y) return;
 			mEnemiesAlive[i] = new cEnemy(_x,_y,mGridSize);
 			mEnemiesAlive[i]->Init(mEnemiesData[_enemy].mBitmap,&mEnemiesData[_enemy]);
@@ -116,7 +116,7 @@ void cEnemyController::RemoveEnemy(Uint32 _enemy)
 bool cEnemyController::LoadEnemyData()
 {
 	int l_game_speed = 120;
-	for(int i = 0; i < sizeof(mEnemiesData)/sizeof(mEnemiesData[0]); i++)
+	for(int i = 0; i < mMaxEnemyTypes; i++)
 		mEnemiesData[i].mBitmap = NULL;
 
 	XMLDocument doc;

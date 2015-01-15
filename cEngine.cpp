@@ -111,7 +111,7 @@ void cEngine::Update()
 	{
 		UpdateCamera();
 		mPlayer.Update();
-		mTowerController.Update(mEnemyController.GetEnemies());
+		mTowerController.Update(mEnemyController.GetEnemies(),mEnemyController.GetMaxEnemies());
 		mEnemyController.Update();
 		mCountedUpdates++;
 	}

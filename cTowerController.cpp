@@ -56,7 +56,7 @@ void cTowerController::SetTowerSelected(Uint32 _tower)
 	}
 }
 
-void cTowerController::Update(cEnemy** const _enemies_hit)
+void cTowerController::Update(cEnemy** const _enemies_hit, int size_of_array)
 {
 	if(mInput->GetKeyDownRelease(SDLK_1)) SetTowerSelected(0);
 	if(mInput->GetKeyDownRelease(SDLK_2)) SetTowerSelected(1);
@@ -72,7 +72,7 @@ void cTowerController::Update(cEnemy** const _enemies_hit)
 
 	for(int i = 0; i < sizeof(mTowersInUse)/sizeof(mTowersInUse[0]); i++)
 	{
-		if(mTowersInUse[i] != NULL) mTowersInUse[i]->Update(_enemies_hit);
+		if(mTowersInUse[i] != NULL) mTowersInUse[i]->Update(_enemies_hit,size_of_array);
 	}
 }
 

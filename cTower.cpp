@@ -31,7 +31,14 @@ bool cTower::CleanUp()
 	return true;
 }
 
-void cTower::Update(cEnemy** const _enemies_hit)
+/*
+updates towers.
+takes constant pointer to array of enemies,
+enemies in range are fired appon.
+second parameter is the number of elements
+in the array passed in the fist param.
+*/
+void cTower::Update(cEnemy** const _enemies_hit, int size_of_array)
 {
 	bool l_freq = true;
 	bool l_dur = true;
@@ -57,11 +64,10 @@ void cTower::Update(cEnemy** const _enemies_hit)
 	if((!mFiring && l_freq)	|| (mFiring && l_dur))
 	{
 		mFiring = false;
-		//Uint32 target[2] = { mInput->GetMouseX(),mInput->GetMouseY() };
 		//TODO: make more efficient, could reduce number of calls/searches
 		//TODO: loop needs to be dynamic
 		//TODO: consider reporting enemies hit then damaging them inside enemiesConstroller::Update()
-		for(int i = 0; i < 30; i++)
+		for(int i = 0; i < size_of_array; i++)
 		{
 			if(_enemies_hit[i] != NULL)
 			{
