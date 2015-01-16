@@ -15,7 +15,8 @@ public:
 
 	void UpdateRelative(float _x, float _y);
 	void UpdateAbsolute(float _x, float _y);
-	void CheckBounds(float _oldX, float _oldY);
+	void CheckCameraBounds(float _oldX, float _oldY);
+	void CheckLevelBounds(float _oldX, float _oldY);
 	inline float2 GetPos() const { float2 pos = {x,y}; return pos; } 
 	inline float GetMoveSpeed() const { return mMoveSpeed; }
 };

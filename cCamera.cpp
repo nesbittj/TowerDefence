@@ -17,7 +17,7 @@ void cCamera::UpdateRelative(float _x, float _y)
 {
 	float oldX = _x; float oldY = _y;
 	x += _x; y += _y;
-	CheckBounds(oldX,oldY);
+	CheckCameraBounds(oldX,oldY);
 }
 
 /*
@@ -28,16 +28,31 @@ void cCamera::UpdateAbsolute(float _x, float _y)
 {
 	float oldX = _x; float oldY = _y;
 	x = _x; y = _y;
-	CheckBounds(oldX,oldY);
+	CheckCameraBounds(oldX,oldY);
 }
 
 /*
 restrics camera to level height and width
 */
-void cCamera::CheckBounds(float _oldX, float _oldY)
+void cCamera::CheckCameraBounds(float _oldX, float _oldY)
 {
 	if(x > 0.f) x = 0.f;
 	if(y > 0.f) y = 0.f;
 	if(x < screen_w - level_w) x = screen_w - level_w;
 	if(y < screen_h - level_h) y = screen_h - level_h;
+}
+
+/*
+restrics x,y to level height and width
+*/
+void cCamera::CheckLevelBounds(float _oldX, float _oldY)
+{
+	if(_oldX < 0.f) 
+		_oldX = 0.f;
+	if(_oldY < 0.f) 
+		_oldY = 0.f;
+	if(_oldX > level_w)
+		_oldX = level_w;
+	if(_oldY > level_h)
+		_oldY = level_h;
 }

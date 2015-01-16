@@ -20,7 +20,7 @@ public:
 	bool Init(SDL_Texture* _bitmap, EnemyData* _data);
 	bool CleanUp();
 
-	void Update();
+	void Update(float2 _target);
 	void Draw();
 	void Damage(int _value);
 };

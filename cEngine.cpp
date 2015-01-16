@@ -117,7 +117,7 @@ void cEngine::Update()
 		UpdateCamera();
 		mPlayer.Update();
 		mTowerController.Update(mEnemyController.GetEnemies(),mEnemyController.GetMaxEnemies());
-		mEnemyController.Update();
+		mEnemyController.Update(mCore->GetPos());
 		mCore->Update(mEnemyController.GetEnemies(),mEnemyController.GetMaxEnemies());
 		mCountedUpdates++;
 	}
@@ -156,6 +156,7 @@ void cEngine::Render()
 		mRen->DrawRect(mPlayer.GetCurserX(),mPlayer.GetCurserY(),30,30,mouseColour,SCREEN_SPACE);
 		mRen->RenderText(mAvgFPS,34,50,0,mouseColour,NULL,SCREEN_SPACE);
 		mRen->RenderText(mAvgUpdates,34,80,0,mouseColour,NULL,SCREEN_SPACE);
+		mRen->RenderText(mCore->GetLives(),34,110,0,mouseColour,NULL,SCREEN_SPACE);
 
 		mCore->Draw();
 

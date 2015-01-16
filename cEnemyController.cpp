@@ -47,10 +47,11 @@ bool cEnemyController::CleanUp()
 	return true;
 }
 
-void cEnemyController::Update()
+void cEnemyController::Update(float2 _target)
 {
 	if(mEnemySpawnTimer.getTicks() > (120 * 20))
 	{
+		//TODO: set up addenmemy spawn loacation properly
 		AddEnemy(0,0,0);
 		mEnemySpawnTimer.start();
 	}
@@ -58,8 +59,7 @@ void cEnemyController::Update()
 	{
 		if(mEnemiesAlive[i] !=  NULL)
 		{
-			mEnemiesAlive[i]->Update();
-			//if(_enemies_hit[i].x != -1) mEnemiesAlive[i]->Damage(_enemies_hit[i].y);
+			mEnemiesAlive[i]->Update(_target);
 			if(mEnemiesAlive[i]->GetLives() <= 0) RemoveEnemy(i);
 		}
 	}
@@ -79,7 +79,7 @@ void cEnemyController::DrawEnemies()
 		}
 	}
 
-	mRen->RenderText(l_alive,34,110,0,col,NULL,SCREEN_SPACE);
+	//mRen->RenderText(l_alive,34,110,0,col,NULL,SCREEN_SPACE);
 	
 }
 

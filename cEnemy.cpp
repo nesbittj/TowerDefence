@@ -26,9 +26,15 @@ bool cEnemy::CleanUp()
 	return true;
 }
 
-void cEnemy::Update()
+void cEnemy::Update(float2 _target)
 {
-	if(++x > mRen->GetCamera()->level_w || mLives < 0)
+	if(_target.x < x) x -= mEnemyData->mSpeed*0.05;
+	if(_target.x > x) x += mEnemyData->mSpeed*0.05;
+	if(_target.y < y) y -= mEnemyData->mSpeed*0.05;
+	if(_target.y > y) y += mEnemyData->mSpeed*0.05;
+	mRen->GetCamera()->CheckLevelBounds(x,y);
+
+	if(x > mRen->GetCamera()->level_w || mLives < 0)
 		mLives = 0;
 }
 
