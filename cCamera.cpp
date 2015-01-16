@@ -5,7 +5,7 @@ cCamera::cCamera(float _x, float _y, int _screen_w, int _screen_h, int _level_w,
 	x = _x; y = _y;
 	screen_w = _screen_w; screen_h = _screen_h;
 	level_w = _level_w; level_h = _level_h;
-	mMoveSpeed = 0.7;
+	mMoveSpeed = 1.0;//0.7;
 }
 
 /*

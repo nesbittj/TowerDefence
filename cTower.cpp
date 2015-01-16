@@ -70,10 +70,12 @@ void cTower::Update(cEnemy** const _enemies, int size_of_array)
 		{
 			if(_enemies[i] != NULL)
 			{
-				float2 l_target = {_enemies[i]->GetX(),_enemies[i]->GetY() };
+				float2 l_target = { _enemies[i]->GetX(),_enemies[i]->GetY() };
 				float2 l_this_pos = { x,y };
 				if(cMaths::InRange(l_this_pos,l_target,mTowerData->mRange))
 				{
+				//_enemies[i]->GetX() -= (int)mRen->GetCamera()->GetPos().x;
+				//_enemies[i]->GetY() -= (int)mRen->GetCamera()->GetPos().y;
 					mFiringVerts[0] = JVector3(0,0,1);
 					mFiringVerts[1] = JVector3(l_target.x,l_target.y,WORLD_SPACE);
 					mFiring = true;

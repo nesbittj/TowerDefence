@@ -28,7 +28,7 @@ bool cEnemy::CleanUp()
 
 void cEnemy::Update()
 {
-	if(++x > mRen->GetCamera()->screen_w || mLives < 0)
+	if(++x > mRen->GetCamera()->level_w || mLives < 0)
 		mLives = 0;
 }
 
