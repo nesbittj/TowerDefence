@@ -18,13 +18,13 @@ private:
 	cCamera* mCamera;
 
 public:
-	int GetCurserX() const { return mCurserPosX; }
-	int GetCurserY() const { return mCurserPosY; }
-	int GetScore() const { return mScore; }
-	int GetLives() const {return mLives; }
+	inline int GetCurserX() const { return mCurserPosX; }
+	inline int GetCurserY() const { return mCurserPosY; }
+	inline int GetScore() const { return mScore; }
+	inline int GetLives() const {return mLives; }
 
-	void SetCurserX(int _x) { mCurserPosX = _x; }
-	void SetCurserY(int _y) { mCurserPosY = _y; }
+	inline void SetCurserX(int _x) { mCurserPosX = _x; }
+	inline void SetCurserY(int _y) { mCurserPosY = _y; }
 	void IncromentScore(int _int);
 	void IncromentLives(int _inc);
 

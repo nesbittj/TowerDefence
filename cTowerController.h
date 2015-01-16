@@ -16,8 +16,10 @@ using namespace tinyxml2;
 class cTowerController
 {
 private:
-	TowerData mTowersData[10];
-	cTower* mTowersInUse[30];
+	static const unsigned int mMaxTowerTypes = 10;
+	static const unsigned int mMaxTowersInUse = 30;
+	TowerData mTowersData[mMaxTowerTypes];
+	cTower* mTowersInUse[mMaxTowersInUse];
 
 	string mTowersFileLocation;
 	Uint32 mTowerSelected;

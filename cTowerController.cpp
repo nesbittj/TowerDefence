@@ -18,13 +18,13 @@ bool cTowerController::Init(const Uint32 _grid_size, const cPlayer* _player)
 	mGridSize = _grid_size;
 	mPlayer = _player;
 	if(!LoadTowersData()) return false;
-	for(int i = 0; i < sizeof(mTowersInUse)/sizeof(mTowersInUse[0]); i++) mTowersInUse[i] = NULL;
+	for(int i = 0; i < mMaxTowersInUse; i++) mTowersInUse[i] = NULL;
 	return true;
 }
 
 bool cTowerController::CleanUp()
 {
-	for(int i = 0; i < sizeof(mTowersInUse)/sizeof(mTowersInUse[0]); i++)
+	for(int i = 0; i < mMaxTowersInUse; i++)
 	{
 		if(mTowersInUse[i])
 		{
@@ -33,7 +33,7 @@ bool cTowerController::CleanUp()
 		}
 		mTowersInUse[i] = NULL;
 	}
-	for(int i = 0; i < sizeof(mTowersData)/sizeof(mTowersData[0]); i++)
+	for(int i = 0; i < mMaxTowerTypes; i++)
 	{
 		mRen->UnloadBitmap(mTowersData[i].mBitmap);
 	}
@@ -49,7 +49,7 @@ set the currently selected tower from tower inventory.
 */
 void cTowerController::SetTowerSelected(Uint32 _tower)
 {
-	if(_tower < sizeof(mTowersData)/sizeof(mTowersData[0]))
+	if(_tower < mMaxTowerTypes)
 	{
 		if(mTowersData[_tower].mName != "")
 			mTowerSelected = _tower;
@@ -70,7 +70,7 @@ void cTowerController::Update(cEnemy** const _enemies_hit, int size_of_array)
 	if(mInput->GetMouseButtonDownRelease(3))
 		RemoveTower(mPlayer->GetCurserX(),mPlayer->GetCurserY());
 
-	for(int i = 0; i < sizeof(mTowersInUse)/sizeof(mTowersInUse[0]); i++)
+	for(int i = 0; i < mMaxTowersInUse; i++)
 	{
 		if(mTowersInUse[i] != NULL) mTowersInUse[i]->Update(_enemies_hit,size_of_array);
 	}
@@ -78,31 +78,36 @@ void cTowerController::Update(cEnemy** const _enemies_hit, int size_of_array)
 
 void cTowerController::DrawTowersInUse()
 {
-	for(int i = 0; i < sizeof(mTowersInUse)/sizeof(mTowersInUse[0]); i++)
+	for(int i = 0; i < mMaxTowersInUse; i++)
 		if(mTowersInUse[i] != NULL) mTowersInUse[i]->Draw();
 }
 
 void cTowerController::DrawTower(Uint32 _x, Uint32 _y, Uint32 _tower, Uint32 _space)
 {
-	if(_tower < sizeof(mTowersData)/sizeof(mTowersData[0]))
+	if(_tower < mMaxTowerTypes)
 		mRen->RenderTexture(mTowersData[_tower].mBitmap,_x,_y,NULL,_space);
 }
 
 void cTowerController::DrawTowerText(Uint32 _x, Uint32 _y, Uint32 _tower, SDL_Color _col, Uint32 _space)
 {
-	if(_tower < sizeof(mTowersData)/sizeof(mTowersData[0]))
+	if(_tower < mMaxTowerTypes)
 		mRen->RenderText(mTowersData[_tower].mName.c_str(),_x,_y,0,_col,NULL,_space);
 }
 
 void cTowerController::AddTower(Uint32 _x, Uint32 _y, Uint32 _tower)
 {
-	for(int i = 0; i < sizeof(mTowersInUse)/sizeof(mTowersInUse[0]); i++)
+	for(int i = 0; i < mMaxTowersInUse; i++)
 	{
 		if(mTowersInUse[i] == NULL)
 		{
-			for(int j = 0; j < sizeof(mTowersInUse)/sizeof(mTowersInUse[0]); j++)
-				if(mTowersInUse[j] != NULL && mTowersInUse[j]->GetX() == _x && mTowersInUse[j]->GetY() == _y) return;
-			mTowersInUse[i] = new cTower(_x - mRen->GetCamera()->GetPos().x,_y - mRen->GetCamera()->GetPos().y,mGridSize);
+			float2 l_world_pos = { _x - (int)mRen->GetCamera()->GetPos().x,_y - (int)mRen->GetCamera()->GetPos().y };
+			for(int j = 0; j < mMaxTowersInUse; j++)
+			{
+				if(mTowersInUse[j] != NULL
+				&& mTowersInUse[j]->GetX() == l_world_pos.x && mTowersInUse[j]->GetY() == l_world_pos.y) 
+					return;
+			}
+			mTowersInUse[i] = new cTower(l_world_pos.x,l_world_pos.y,mGridSize);
 			mTowersInUse[i]->Init(mTowersData[_tower].mBitmap,&mTowersData[_tower]);
 			return;
 		}
@@ -114,10 +119,11 @@ remove any tower at grid world pos x,y
 */
 void cTowerController::RemoveTower(Uint32 _x, Uint32 _y)
 {
-	for(int i = 0; i < sizeof(mTowersInUse)/sizeof(mTowersInUse[0]); i++)
+	float2 l_world_pos = { _x - (int)mRen->GetCamera()->GetPos().x,_y - (int)mRen->GetCamera()->GetPos().y };
+	for(int i = 0; i < mMaxTowersInUse; i++)
 	{
 		if(mTowersInUse[i] != NULL
-		&& (_x == _x - mRen->GetCamera()->GetPos().x && _y == _y - mRen->GetCamera()->GetPos().y))
+		&& (mTowersInUse[i]->GetX() == l_world_pos.x && mTowersInUse[i]->GetY() == l_world_pos.y))	
 		{
 			mTowersInUse[i]->CleanUp();
 			delete mTowersInUse[i];
@@ -129,7 +135,7 @@ void cTowerController::RemoveTower(Uint32 _x, Uint32 _y)
 bool cTowerController::LoadTowersData()
 {
 	int l_game_speed = 120;
-	for(int i = 0; i < sizeof(mTowersData)/sizeof(mTowersData[0]); i++)
+	for(int i = 0; i < mMaxTowerTypes; i++)
 		mTowersData[i].mBitmap = NULL;
 
 	XMLDocument doc;
