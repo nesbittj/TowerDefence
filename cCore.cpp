@@ -31,8 +31,7 @@ void cCore::Update(cEnemy** const _enemies, int size_of_array)
 		{
 			float2 l_target = { _enemies[i]->GetX(),_enemies[i]->GetY() };
 			//TODO: set core range and damage properly
-			if(cMaths::InRange(l_this_pos,l_target,30)) 
-				Damage(1);
+			if(cMaths::InRange(l_this_pos,l_target,30)) Damage(1);
 		}
 	}
 }

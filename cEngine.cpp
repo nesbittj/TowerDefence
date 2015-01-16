@@ -156,14 +156,11 @@ void cEngine::Render()
 		mRen->DrawRect(mPlayer.GetCurserX(),mPlayer.GetCurserY(),30,30,mouseColour,SCREEN_SPACE);
 		mRen->RenderText(mAvgFPS,34,50,0,mouseColour,NULL,SCREEN_SPACE);
 		mRen->RenderText(mAvgUpdates,34,80,0,mouseColour,NULL,SCREEN_SPACE);
-		mRen->RenderText(mCore->GetLives(),34,110,0,mouseColour,NULL,SCREEN_SPACE);
 
 		mCore->Draw();
-
 		mTowerController.DrawTowersInUse();
 		mTowerController.DrawTower(mPlayer.GetCurserX(),mPlayer.GetCurserY(),mTowerController.GetTowerSelected(),SCREEN_SPACE);
 		mTowerController.DrawTowerText(mPlayer.GetCurserX(),mPlayer.GetCurserY() - 15,mTowerController.GetTowerSelected(),mouseColour,SCREEN_SPACE);
-
 		mEnemyController.DrawEnemies();
 
 		mRen->Present(NULL);

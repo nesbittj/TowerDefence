@@ -78,6 +78,7 @@
     <ClCompile Include="cEngine.cpp" />
     <ClCompile Include="cEntity.cpp" />
     <ClCompile Include="cInput.cpp" />
+    <ClCompile Include="cLevel.cpp" />
     <ClCompile Include="cLogger.cpp" />
     <ClCompile Include="cMaths.cpp" />
     <ClCompile Include="cPlayer.cpp" />
@@ -96,6 +97,7 @@
     <ClInclude Include="cEnemyController.h" />
     <ClInclude Include="cEngine.h" />
     <ClInclude Include="cInput.h" />
+    <ClInclude Include="cLevel.h" />
     <ClInclude Include="cLogger.h" />
     <ClInclude Include="cMaths.h" />
     <ClInclude Include="cPlayer.h" />

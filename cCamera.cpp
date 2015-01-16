@@ -47,12 +47,8 @@ restrics x,y to level height and width
 */
 void cCamera::CheckLevelBounds(float _oldX, float _oldY)
 {
-	if(_oldX < 0.f) 
-		_oldX = 0.f;
-	if(_oldY < 0.f) 
-		_oldY = 0.f;
-	if(_oldX > level_w)
-		_oldX = level_w;
-	if(_oldY > level_h)
-		_oldY = level_h;
+	if(_oldX < 0.f) _oldX = 0.f;
+	if(_oldY < 0.f) _oldY = 0.f;
+	if(_oldX > level_w) _oldX = level_w;
+	if(_oldY > level_h) _oldY = level_h;
 }
