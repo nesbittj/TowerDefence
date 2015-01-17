@@ -5,7 +5,7 @@ struct EnemyData
 {
 	string mName;
 	SDL_Texture* mBitmap;
-	int mSpeed;
+	float mSpeed;
 	int mStartingLives;
 };
 

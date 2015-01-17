@@ -65,9 +65,9 @@ bool cLevel::LoadLevelData(const char* _filename)
 
 const char* cLevel::GetTyleType(float2 _pos)
 {
-	if(_pos.x < 0 || _pos.x > GRID_SIZE) return "BAD_VALUE";
-	if(_pos.y < 0 || _pos.y > GRID_SIZE) return "BAD_VALUE";
-	return ".";//mLevelTiles[(int)_pos.x][(int)_pos.y];
+	if(_pos.x < 0 || _pos.x > 20) return "BAD_VALUE";
+	if(_pos.y < 0 || _pos.y > 30) return "BAD_VALUE";
+	return &mLevelTiles[(int)_pos.x][(int)_pos.y];
 }
 
 void cLevel::Draw()

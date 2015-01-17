@@ -9,11 +9,25 @@ cEnemyController::~cEnemyController()
 {	
 }
 
-bool cEnemyController::Init(const Uint32 _grid_size)
+bool cEnemyController::Init(const Uint32 _grid_size, cLevel* _level)
 {
 	mInput = cInput::Instance();
 	mRen = cRenderer::Instance();
 	mLog = cLogger::Instance();
+	mLevel = _level;
+	for(int i = 0; i < 15; i++)
+	{
+		for(int j = 0; j < 20; j++)
+		{
+			float2 l_pos = { i,j };
+			if(*mLevel->GetTyleType(l_pos) == 'S')
+			{
+				mEnemyStartPos = l_pos;
+				i = j = 100; //TODO: find a better way of breaking out of nested loops
+				break;
+			}
+		}
+	}
 	mGridSize = _grid_size;
 	if(!LoadEnemyData()) return false;
 	for(int i = 0; i < mMaxEnemiesAlive; i++) mEnemiesAlive[i] = NULL;
@@ -52,7 +66,7 @@ void cEnemyController::Update(float2 _target)
 	if(mEnemySpawnTimer.getTicks() > (120 * 20))
 	{
 		//TODO: set up addenmemy spawn loacation properly
-		AddEnemy(0,0,0);
+		AddEnemy(mEnemyStartPos.x,mEnemyStartPos.y,0);
 		mEnemySpawnTimer.start();
 	}
 	for(int i = 0; i < mMaxEnemiesAlive; i++)
@@ -79,7 +93,7 @@ void cEnemyController::DrawEnemies()
 		}
 	}
 
-	//mRen->RenderText(l_alive,34,110,0,col,NULL,SCREEN_SPACE);
+	mRen->RenderText(l_alive,34,110,0,col,NULL,SCREEN_SPACE);
 	
 }
 
@@ -97,8 +111,6 @@ void cEnemyController::AddEnemy(Uint32 _x, Uint32 _y, Uint32 _enemy)
 	{
 		if(mEnemiesAlive[i] == NULL)
 		{
-			for(int j = 0; j < mMaxEnemiesAlive; j++)
-				if(mEnemiesAlive[j] != NULL && mEnemiesAlive[j]->GetX() == _x && mEnemiesAlive[j]->GetY() == _y) return;
 			mEnemiesAlive[i] = new cEnemy(_x,_y,mGridSize);
 			mEnemiesAlive[i]->Init(mEnemiesData[_enemy].mBitmap,&mEnemiesData[_enemy]);
 			return;
@@ -129,7 +141,7 @@ bool cEnemyController::LoadEnemyData()
 			mEnemiesData[i].mName = l_enemy->Attribute("name");
 			mEnemiesData[i].mBitmap = mRen->LoadBitmap( std::string(mEnemyFileLocation + l_enemy->Attribute("bitmap")).c_str() );
 			l_enemy->QueryIntAttribute("lives",&mEnemiesData[i].mStartingLives);
-			l_enemy->QueryIntAttribute("speed",&mEnemiesData[i].mSpeed);
+			l_enemy->QueryFloatAttribute("speed",&mEnemiesData[i].mSpeed);
 			mEnemiesData[i].mSpeed *= l_game_speed;
 			i++;
 		}

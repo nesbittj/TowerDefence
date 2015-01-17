@@ -65,14 +65,15 @@ int cEngine::Init()
 	mTowerController.Init(LEVEL_GRID_SIZE,&mPlayer);
 	// TODO: pass level grid size by pointer
 
+	mLevel = new cLevel(0,0);
+	mLevel->Init();
+
 	mEnemyController = cEnemyController();
-	mEnemyController.Init(32);
+	mEnemyController.Init(32,mLevel);
 
 	mCore = new cCore(SCREEN_WIDTH,SCREEN_HEIGHT,LEVEL_GRID_SIZE);
 	mCore->Init(0);
 
-	mLevel = new cLevel(0,0);
-	mLevel->Init();
 
 	return 0;
 }

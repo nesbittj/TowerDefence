@@ -1,20 +1,20 @@
-<?xml version="1.0" ?>
+<?xml version="1_0" ?>
 <layout>
-	<layout01  tiles="...................."/>
-	<layout02  tiles="...................."/>
-	<layout03  tiles="PPPPPPPPPPPPPPPPPPPP"/>
-	<layout04  tiles="...............P...."/>
-	<layout05  tiles="...............P...."/>
-	<layout06  tiles="...............P...."/>
-	<layout07  tiles="...............P...."/>
-	<layout08  tiles="...............P...."/>
-	<layout09  tiles="...............P...."/>
-	<layout10  tiles="...............P...."/>
-	<layout12  tiles="...............P...."/>
-	<layout13  tiles="...............P...."/>
-	<layout14  tiles="...............P...."/>
-	<layout15  tiles="...................."/>
-	<layout16  tiles="...................."/>
+	<layout01  tiles="____________________"/>
+	<layout02  tiles="SPP_________________"/>
+	<layout03  tiles="__P_________________"/>
+	<layout04  tiles="__PPPPPPPPPPPP______"/>
+	<layout05  tiles="_____________P______"/>
+	<layout06  tiles="_____________P______"/>
+	<layout07  tiles="_____________P______"/>
+	<layout08  tiles="_____________P______"/>
+	<layout09  tiles="_____PCPPPPPPP______"/>
+	<layout10  tiles="_____P______________"/>
+	<layout12  tiles="_____P______________"/>
+	<layout13  tiles="_____P______________"/>
+	<layout14  tiles="_____PPPPPPPPPPPPPPE"/>
+	<layout15  tiles="____________________"/>
+	<layout16  tiles="____________________"/>
 </layout>
 <tiles>
 	<Tyle1 bitmap="assets/level/tile01.bmp" />

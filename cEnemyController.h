@@ -8,7 +8,7 @@
 #include "cLogger.h"
 #include "cEnemy.h"
 #include "cTimer.h"
-
+#include "cLevel.h"
 #include "tinyxml2.h"
 
 using namespace tinyxml2;
@@ -24,17 +24,19 @@ private:
 	cTimer mEnemySpawnTimer;
 	string mEnemyFileLocation;
 	Uint32 mGridSize;
+	float2 mEnemyStartPos;
 
 	cInput* mInput;
 	cRenderer* mRen;
 	cLogger* mLog;
+	cLevel* mLevel;
 
 public:
 
 	cEnemyController();
 	~cEnemyController();
 
-	bool Init(const Uint32 _grid_size);
+	bool Init(const Uint32 _grid_size, cLevel* _level);
 	bool CleanUp();
 
 	void Update(float2 _target);
