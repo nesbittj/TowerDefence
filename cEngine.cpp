@@ -57,7 +57,7 @@ int cEngine::Init()
 	SDL_Rect cam = {0,0,SCREEN_WIDTH,SCREEN_HEIGHT};
 	mRen->SetCamera(new cCamera(0,0,SCREEN_WIDTH,SCREEN_HEIGHT,LEVEL_WIDTH,LEVEL_HIEGHT));
 
-	mTexture = mRen->LoadBitmap("assets/level/grid_bg.bmp");
+	mTexture = mRen->LoadBitmap("assets/arena/grid_bg.bmp");
 
 	mNodeRoot = new cSceneNode();
 	mPlayer = cPlayer(10,0,LEVEL_GRID_SIZE,mRen->GetCamera());
@@ -65,11 +65,11 @@ int cEngine::Init()
 	mTowerController.Init(LEVEL_GRID_SIZE,&mPlayer);
 	// TODO: pass level grid size by pointer
 
-	mLevel = new cLevel(0,0);
-	mLevel->Init();
+	mArena = new cArena(0,0);
+	mArena->Init();
 
 	mEnemyController = cEnemyController();
-	mEnemyController.Init(32,mLevel);
+	mEnemyController.Init(32,mArena);
 
 	mCore = new cCore(SCREEN_WIDTH,SCREEN_HEIGHT,LEVEL_GRID_SIZE);
 	mCore->Init(0);
@@ -80,9 +80,9 @@ int cEngine::Init()
 
 int cEngine::CleanUp()
 {
-	mLevel->CleanUp();
-	delete mLevel;
-	mLevel = NULL;
+	mArena->CleanUp();
+	delete mArena;
+	mArena = NULL;
 
 	mCore->CleanUp();
 	delete mCore; mCore = NULL;
@@ -128,7 +128,7 @@ void cEngine::Update()
 		mTowerController.Update(mEnemyController.GetEnemies(),mEnemyController.GetMaxEnemies());
 		mEnemyController.Update(mCore->GetPos());
 		mCore->Update(mEnemyController.GetEnemies(),mEnemyController.GetMaxEnemies());
-		mLevel->SetPos(mRen->GetCamera()->GetPos().x,mRen->GetCamera()->GetPos().y);
+		mArena->SetPos(mRen->GetCamera()->GetPos().x,mRen->GetCamera()->GetPos().y);
 		mCountedUpdates++;
 	}
 }
@@ -161,7 +161,7 @@ void cEngine::Render()
 		float2 cam = mRen->GetCamera()->GetPos();
 
 		mRen->RenderTexture(mTexture,0,0,NULL);
-		mLevel->Draw();
+		mArena->Draw();
 
 		SDL_Color mouseColour = { 0,0,0,255 };
 		mRen->DrawRect(mPlayer.GetCurserX(),mPlayer.GetCurserY(),30,30,mouseColour,SCREEN_SPACE);

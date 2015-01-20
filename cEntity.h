@@ -4,6 +4,7 @@
 #include "cRenderer.h"
 #include "cLogger.h"
 #include "cInput.h"
+#include "cArena.h"
 
 class cEntity
 {

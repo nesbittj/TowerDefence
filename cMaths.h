@@ -4,6 +4,9 @@ Jonathan Nesbitt
 */
 #pragma once
 #include <math.h> //for only magnitude sqrt
+				  //TODO: write sqrt method
+
+//TODO: add JVector2
 
 #define PIDIV180 0.017453292f
 
@@ -39,6 +42,7 @@ public:
 	JVector3* Cross(const JVector3* v) const;
 	float Normalise();
 	void Zero() { x = 0.f; y = 0.f; z = 0.f; }
+	static JVector3 Lerp(JVector3& _v0, JVector3& _v1, const float _t);
 };
 
 class JMatrix3

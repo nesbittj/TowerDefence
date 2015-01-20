@@ -6,17 +6,17 @@
 	<layout04  tiles="__PPPPPPPPPPPP______"/>
 	<layout05  tiles="_____________P______"/>
 	<layout06  tiles="_____________P______"/>
-	<layout07  tiles="_____________P______"/>
+	<layout07  tiles="_______E_____P______"/>
 	<layout08  tiles="_____________P______"/>
 	<layout09  tiles="_____PCPPPPPPP______"/>
 	<layout10  tiles="_____P______________"/>
 	<layout12  tiles="_____P______________"/>
 	<layout13  tiles="_____P______________"/>
-	<layout14  tiles="_____PPPPPPPPPPPPPPE"/>
+	<layout14  tiles="_____PPPPPPPPPPPPPPP"/>
 	<layout15  tiles="____________________"/>
 	<layout16  tiles="____________________"/>
 </layout>
 <tiles>
-	<Tyle1 bitmap="assets/level/tile01.bmp" />
-	<Tyle2 bitmap="assets/level/tile02.bmp" />
+	<Tyle1 bitmap="assets/arena/tile01.bmp" />
+	<Tyle2 bitmap="assets/arena/tile02.bmp" />
 </tiles>

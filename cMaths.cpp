@@ -60,6 +60,13 @@ JVector3* JVector3::Cross(const JVector3* v) const
 					 x*v->y - y*v->x);
 }
 
+JVector3 JVector3::Lerp(JVector3& _v0, JVector3& _v1, const float _t)
+{
+	JVector3 result = JVector3(_v1 - _v0);
+	result.Normalise();
+	return  result * _t;
+}
+
 ///////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////
 

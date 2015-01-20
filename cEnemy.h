@@ -13,15 +13,17 @@ class cEnemy : public cEntity
 {
 public:
 	EnemyData* mEnemyData;
+	vector<float2>* mEnemyPath;
 
 	cEnemy(Uint32 _x, Uint32 _y, Uint32 _grid_size);
 	~cEnemy();
 
-	bool Init(SDL_Texture* _bitmap, EnemyData* _data);
+	bool Init(SDL_Texture* _bitmap, EnemyData* _data, vector<float2>* _enemy_path);
 	bool CleanUp();
 
-	void Update(float2 _target);
+	void Update();
 	void Draw();
 	void Damage(int _value);
+	float2 PathFind();
 };
 

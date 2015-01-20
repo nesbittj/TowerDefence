@@ -8,7 +8,7 @@
 #include "cLogger.h"
 #include "cEnemy.h"
 #include "cTimer.h"
-#include "cLevel.h"
+#include "cArena.h"
 #include "tinyxml2.h"
 
 using namespace tinyxml2;
@@ -25,18 +25,20 @@ private:
 	string mEnemyFileLocation;
 	Uint32 mGridSize;
 	float2 mEnemyStartPos;
+	float2 mEnemyExitPos;
+	vector<float2> mEnemyPath;
 
 	cInput* mInput;
 	cRenderer* mRen;
 	cLogger* mLog;
-	cLevel* mLevel;
+	cArena* mArena;
 
 public:
 
 	cEnemyController();
 	~cEnemyController();
 
-	bool Init(const Uint32 _grid_size, cLevel* _level);
+	bool Init(const Uint32 _grid_size, cArena* _arena);
 	bool CleanUp();
 
 	void Update(float2 _target);

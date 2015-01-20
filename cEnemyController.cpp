@@ -9,25 +9,31 @@ cEnemyController::~cEnemyController()
 {	
 }
 
-bool cEnemyController::Init(const Uint32 _grid_size, cLevel* _level)
+bool cEnemyController::Init(const Uint32 _grid_size, cArena* _arena)
 {
 	mInput = cInput::Instance();
 	mRen = cRenderer::Instance();
 	mLog = cLogger::Instance();
-	mLevel = _level;
+	mArena = _arena;
 	for(int i = 0; i < 15; i++)
 	{
 		for(int j = 0; j < 20; j++)
 		{
 			float2 l_pos = { i,j };
-			if(*mLevel->GetTyleType(l_pos) == 'S')
+			if(*mArena->GetTyleType(l_pos) == 'S')
 			{
 				mEnemyStartPos = l_pos;
-				i = j = 100; //TODO: find a better way of breaking out of nested loops
+				//i = j = 100; //TODO: find a better way of breaking out of nested loops
+				break;
+			}
+			if(*mArena->GetTyleType(l_pos) == 'E')
+			{
+				mEnemyExitPos = l_pos;
 				break;
 			}
 		}
 	}
+	mEnemyPath = mArena->BreadthFirst(mEnemyStartPos,mEnemyExitPos);
 	mGridSize = _grid_size;
 	if(!LoadEnemyData()) return false;
 	for(int i = 0; i < mMaxEnemiesAlive; i++) mEnemiesAlive[i] = NULL;
@@ -55,6 +61,7 @@ bool cEnemyController::CleanUp()
 	{
 		mRen->UnloadBitmap(mEnemiesData[i].mBitmap);
 	}
+	mArena = NULL;
 	mInput = NULL;
 	mRen = NULL;
 	mLog = NULL;
@@ -73,7 +80,7 @@ void cEnemyController::Update(float2 _target)
 	{
 		if(mEnemiesAlive[i] !=  NULL)
 		{
-			mEnemiesAlive[i]->Update(_target);
+			mEnemiesAlive[i]->Update();
 			if(mEnemiesAlive[i]->GetLives() <= 0) RemoveEnemy(i);
 		}
 	}
@@ -112,7 +119,7 @@ void cEnemyController::AddEnemy(Uint32 _x, Uint32 _y, Uint32 _enemy)
 		if(mEnemiesAlive[i] == NULL)
 		{
 			mEnemiesAlive[i] = new cEnemy(_x,_y,mGridSize);
-			mEnemiesAlive[i]->Init(mEnemiesData[_enemy].mBitmap,&mEnemiesData[_enemy]);
+			mEnemiesAlive[i]->Init(mEnemiesData[_enemy].mBitmap,&mEnemiesData[_enemy],&mEnemyPath);
 			return;
 		}
 	}
