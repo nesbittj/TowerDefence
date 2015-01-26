@@ -25,5 +25,8 @@ public:
 	void Draw();
 	void Damage(int _value);
 	float2 PathFind();
+
+private:
+	JVector3 mTargetPos;
 };
 

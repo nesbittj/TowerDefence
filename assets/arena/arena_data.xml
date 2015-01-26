@@ -5,8 +5,8 @@
 	<layout03  tiles="__P_________________"/>
 	<layout04  tiles="__PPPPPPPPPPPP______"/>
 	<layout05  tiles="_____________P______"/>
-	<layout06  tiles="_____________P______"/>
-	<layout07  tiles="_______E_____P______"/>
+	<layout06  tiles="_____________E______"/>
+	<layout07  tiles="_____________P______"/>
 	<layout08  tiles="_____________P______"/>
 	<layout09  tiles="_____PCPPPPPPP______"/>
 	<layout10  tiles="_____P______________"/>

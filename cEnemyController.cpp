@@ -19,17 +19,14 @@ bool cEnemyController::Init(const Uint32 _grid_size, cArena* _arena)
 	{
 		for(int j = 0; j < 20; j++)
 		{
-			float2 l_pos = { i,j };
+			float2 l_pos = { j,i };
 			if(*mArena->GetTyleType(l_pos) == 'S')
 			{
 				mEnemyStartPos = l_pos;
-				//i = j = 100; //TODO: find a better way of breaking out of nested loops
-				break;
 			}
 			if(*mArena->GetTyleType(l_pos) == 'E')
 			{
 				mEnemyExitPos = l_pos;
-				break;
 			}
 		}
 	}
@@ -72,9 +69,12 @@ void cEnemyController::Update(float2 _target)
 {
 	if(mEnemySpawnTimer.getTicks() > (120 * 20))
 	{
+		if(mEnemiesAlive[0] == NULL)
+		{
 		//TODO: set up addenmemy spawn loacation properly
-		AddEnemy(mEnemyStartPos.x,mEnemyStartPos.y,0);
+		AddEnemy(mEnemyStartPos.x * mGridSize,mEnemyStartPos.y * mGridSize,0);
 		mEnemySpawnTimer.start();
+		}
 	}
 	for(int i = 0; i < mMaxEnemiesAlive; i++)
 	{

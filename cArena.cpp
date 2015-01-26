@@ -67,7 +67,7 @@ const char* cArena::GetTyleType(float2 _pos)
 {
 	if(_pos.x < 0 || _pos.x > 20) return "BAD_VALUE";
 	if(_pos.y < 0 || _pos.y > 30) return "BAD_VALUE";
-	return &mArenaTiles[(int)_pos.x][(int)_pos.y];
+	return &mArenaTiles[(int)_pos.y][(int)_pos.x];
 }
 
 void cArena::Draw()
@@ -116,12 +116,17 @@ vector<float2> cArena::BreadthFirst(const float2 _start, const float2 _target)
 		}
 	}
 
+	vector<float2> l_path;
 	for(int i = 0; i < mClosedList.size(); i++)
 	{
-		mClosedList[i].x *= GRID_SIZE;
-		mClosedList[i].y *= GRID_SIZE;
+		const char l_tile = *GetTyleType(mClosedList[i]);
+		if(l_tile == 'P' || l_tile == 'S' || l_tile == 'C' || l_tile == 'E')
+		{
+			float2 l_path_pos = { mClosedList[i].x*GRID_SIZE,mClosedList[i].y*GRID_SIZE };
+			l_path.push_back(l_path_pos);
+		}
 	}
-	return mClosedList;
+	return l_path;
 }
 
 /*
@@ -141,21 +146,6 @@ int cArena::Contains(vector<float2>* _vect, float2 _val)
 
 void cArena::GraphNeighbours(float2 _current)
 {	
-	/*
-	//right
-	mNeighbours[0].x = _current.x + GRID_SIZE;
-	mNeighbours[0].y = _current.y;
-	//bottom
-	mNeighbours[1].x = _current.x;
-	mNeighbours[1].y = _current.y + GRID_SIZE;
-	//left
-	mNeighbours[2].x = _current.x - GRID_SIZE;
-	mNeighbours[2].y = _current.y;
-	//top
-	mNeighbours[3].x = _current.x;
-	mNeighbours[3].y = _current.y - GRID_SIZE;
-	*/
-	
 	//right
 	mNeighbours[0].x = _current.x + 1;
 	mNeighbours[0].y = _current.y;

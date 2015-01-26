@@ -30,10 +30,9 @@ void cEnemy::Update()
 {
 	float2 l_t = PathFind();
 	JVector3 l_0 = JVector3(x,y,0);
-	JVector3 l_1 = JVector3(l_t.x*32,l_t.y*32,0);
-	JVector3 l_r = JVector3::Lerp(l_0,l_1,1);
-	printf("x: %f\ny: %f\n",l_1.x,l_1.y);
-	printf("x: %f\ny: %f\n\n",l_r.x,l_r.y);
+	if(l_t.x >= 0 || l_t.y >= 0)
+		mTargetPos = JVector3(l_t.x,l_t.y,0);
+	JVector3 l_r = JVector3::Lerp(l_0,mTargetPos,1);
 	x += l_r.x; y += l_r.y;
 	//mRen->GetCamera()->CheckCameraBounds(x,y);
 
@@ -57,16 +56,16 @@ void cEnemy::Damage(int _value)
 }
 
 float2 cEnemy::PathFind()
-{
-	/*
-	if(_target.x < x) x -= mEnemyData->mSpeed;
-	if(_target.x > x) x += mEnemyData->mSpeed;
-	if(_target.y < y) y -= mEnemyData->mSpeed;
-	if(_target.y > y) y += mEnemyData->mSpeed;
-	*/
-	
+{	
 	float2 l_current_pos = { x,y };
 	int current_index = cArena::Contains(mEnemyPath,l_current_pos);
+	printf("%i\n",current_index);
+	if(current_index < 0)
+	{
+		float2 not_found = { -1,-1 };
+		return not_found;
+	}
+
 	if(current_index+1 >= mEnemyPath->size()) return (*mEnemyPath)[0];
 	return (*mEnemyPath)[current_index+1];
 }
