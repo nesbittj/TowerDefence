@@ -47,5 +47,15 @@ template <class _type> _type cQueue<_type>::Dequeue()
 	return l_result;
 }
 
+template <class _type> int cQueue<_type>::Contains(const _type _value)
+{
+	int result = -1;
+	for(int i = 0; i < mMaxsize; i++)
+	{
+		if(mData[i] == _value) result = mData;
+	}
+	return result;
+}
+
 template <class _type> int cQueue<_type>::GetSize() { return mSize; }
 template <class _type> void cQueue<_type>::SetNextZero() { mNext = 0; }

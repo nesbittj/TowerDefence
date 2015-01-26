@@ -5,6 +5,7 @@
 #include "cRenderer.h"
 #include "cMaths.h"
 #include "cLogger.h"
+#include "cQueue.h"
 #include "tinyxml2.h"
 using namespace tinyxml2;
 
@@ -23,9 +24,9 @@ private:
 	bool UnloadBitmaps();
 
 	//Breadth First Search Variables
-	vector<float2> mOpenList;
-	vector<float2> mClosedList;
-	float2 mNeighbours[4];
+	vector<JVector2> mOpenList;
+	vector<JVector2> mClosedList;
+	JVector2 mNeighbours[4];
 
 public:
 	cArena(float _x, float _y);
@@ -35,13 +36,14 @@ public:
 	bool CleanUp();
 
 	bool LoadArenaData(const char* _filename);
-	const char* GetTyleType(float2 _pos);
+	const char* GetTyleType(JVector2 _pos);
 	void Draw();
-	vector<float2> BreadthFirst(const float2 _start, const float2 _target);
-	void GraphNeighbours(float2 _current);
-	bool CheckBounds(float2 _pos);
+	vector<JVector2> BreadthFirstOld(const JVector2 _start, const JVector2 _target);
+	vector<JVector2> BreadthFirst(const JVector2 _start, const JVector2 _target);
+	void GraphNeighbours(JVector2 _current);
+	bool CheckBounds(JVector2 _pos);
 
-	static int Contains(vector<float2>* _vect, float2 _val);
-	inline float2 GetPos() const { float2 l_pos = { x,y }; return l_pos; }
+	static int Contains(vector<JVector2>* _vect, JVector2 _val);
+	inline JVector2 GetPos() const { return JVector2(x,y); }
 	void SetPos(float _x, float _y);
 };

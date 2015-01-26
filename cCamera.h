@@ -17,6 +17,6 @@ public:
 	void UpdateAbsolute(float _x, float _y);
 	void CheckCameraBounds(float _oldX, float _oldY);
 	void CheckLevelBounds(float _oldX, float _oldY);
-	inline float2 GetPos() const { float2 pos = {x,y}; return pos; } 
+	inline JVector2 GetPos() const { return JVector2(x,y); } 
 	inline float GetMoveSpeed() const { return mMoveSpeed; }
 };

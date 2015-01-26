@@ -45,6 +45,40 @@ public:
 	static JVector3 Lerp(JVector3& _v0, JVector3& _v1, const float _t);
 };
 
+class JVector2
+{
+public:
+	float x,y;
+
+	JVector2();
+	JVector2(float _x, float _y);
+
+	bool operator==(const JVector2& v) const;
+	bool operator!=(const JVector2& v) const;
+	JVector2& operator-() const;
+	JVector2& operator=(const JVector2& v);
+	
+	JVector2& operator+=(const JVector2& v);
+	JVector2& operator-=(const JVector2& v);
+	JVector2& operator+=(const float& scalar);
+	JVector2& operator-=(const float& scalar);
+	JVector2& operator*=(const float& scalar);
+	JVector2& operator/=(const float& scalar);
+
+	JVector2& operator+(const JVector2& v);
+	JVector2& operator-(const JVector2& v);
+	JVector2& operator+(const float& scalar);
+	JVector2& operator-(const float& scalar);
+	JVector2& operator*(const float& scalar);
+	JVector2& operator/(const float& scalar);
+
+	float Dot(const JVector2& v) const;
+	float Magnitude() const;
+	float Normalise();
+	void Zero() { x = 0.f; y = 0.f; }
+	static JVector2 Lerp(JVector2& _v0, JVector2& _v1, const float _t);
+};
+
 class JMatrix3
 {
 public:
@@ -86,8 +120,6 @@ public:
 	static JVector3* PlaneNormal(JVector3* u, JVector3* v, JVector3* w);
 };
 
-struct float2 { float x; float y; };
-
 class cMaths
 {
 public:
@@ -99,5 +131,5 @@ public:
 	static void Truncatef(float& value, const float threshold);
 	static int Round(int num, int multiple);
 	static int RoundUp(int num, int multiple);
-	static bool InRange(float2 _origin, float2 _target, float _range);
+	static bool InRange(JVector2 _origin, JVector2 _target, float _range);
 };

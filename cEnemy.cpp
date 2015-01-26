@@ -11,7 +11,7 @@ cEnemy::~cEnemy()
 {
 }
 
-bool cEnemy::Init(SDL_Texture* _bitmap, EnemyData* _data, vector<float2>* _enemy_path)
+bool cEnemy::Init(SDL_Texture* _bitmap, EnemyData* _data, vector<JVector2>* _enemy_path)
 {
 	if(!cEntity::Init(_bitmap)) return false;
 	mEnemyData = _data;
@@ -28,7 +28,7 @@ bool cEnemy::CleanUp()
 
 void cEnemy::Update()
 {
-	float2 l_t = PathFind();
+	JVector2 l_t = PathFind();
 	JVector3 l_0 = JVector3(x,y,0);
 	if(l_t.x >= 0 || l_t.y >= 0)
 		mTargetPos = JVector3(l_t.x,l_t.y,0);
@@ -55,14 +55,14 @@ void cEnemy::Damage(int _value)
 	if(mLives < 0) mLives = 0;
 }
 
-float2 cEnemy::PathFind()
+JVector2 cEnemy::PathFind()
 {	
-	float2 l_current_pos = { x,y };
+	JVector2 l_current_pos(x,y);
 	int current_index = cArena::Contains(mEnemyPath,l_current_pos);
 	printf("%i\n",current_index);
 	if(current_index < 0)
 	{
-		float2 not_found = { -1,-1 };
+		JVector2 not_found(-1,-1);
 		return not_found;
 	}
 

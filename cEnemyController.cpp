@@ -19,7 +19,7 @@ bool cEnemyController::Init(const Uint32 _grid_size, cArena* _arena)
 	{
 		for(int j = 0; j < 20; j++)
 		{
-			float2 l_pos = { j,i };
+			JVector2 l_pos(j,i);
 			if(*mArena->GetTyleType(l_pos) == 'S')
 			{
 				mEnemyStartPos = l_pos;
@@ -65,7 +65,7 @@ bool cEnemyController::CleanUp()
 	return true;
 }
 
-void cEnemyController::Update(float2 _target)
+void cEnemyController::Update(JVector2 _target)
 {
 	if(mEnemySpawnTimer.getTicks() > (120 * 20))
 	{

@@ -15,6 +15,7 @@ public:
 
 	void Enqueue(const _type _value);
 	_type Dequeue();
+	int Contains(const _type _value);
 	inline int GetSize();
 	inline void SetNextZero();
 };

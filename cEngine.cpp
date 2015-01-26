@@ -158,7 +158,7 @@ void cEngine::Render()
 
 	if(mRender)
 	{
-		float2 cam = mRen->GetCamera()->GetPos();
+		JVector2 cam = mRen->GetCamera()->GetPos();
 
 		mRen->RenderTexture(mTexture,0,0,NULL);
 		mArena->Draw();

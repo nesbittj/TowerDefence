@@ -63,7 +63,7 @@ bool cArena::LoadArenaData(const char* _filename)
 	return true;
 }
 
-const char* cArena::GetTyleType(float2 _pos)
+const char* cArena::GetTyleType(JVector2 _pos)
 {
 	if(_pos.x < 0 || _pos.x > 20) return "BAD_VALUE";
 	if(_pos.y < 0 || _pos.y > 30) return "BAD_VALUE";
@@ -86,9 +86,9 @@ void cArena::Draw()
 	}
 }
 
-vector<float2> cArena::BreadthFirst(const float2 _start, const float2 _target)
+vector<JVector2> cArena::BreadthFirstOld(const JVector2 _start, const JVector2 _target)
 {
-	float2 l_current = { 0,0 };
+	JVector2 l_current(0,0);
 	mOpenList.push_back(_start);
 	//mClosedList.push_back(l_current);
 
@@ -116,13 +116,54 @@ vector<float2> cArena::BreadthFirst(const float2 _start, const float2 _target)
 		}
 	}
 
-	vector<float2> l_path;
+	vector<JVector2> l_path;
 	for(int i = 0; i < mClosedList.size(); i++)
 	{
 		const char l_tile = *GetTyleType(mClosedList[i]);
 		if(l_tile == 'P' || l_tile == 'S' || l_tile == 'C' || l_tile == 'E')
 		{
-			float2 l_path_pos = { mClosedList[i].x*GRID_SIZE,mClosedList[i].y*GRID_SIZE };
+			JVector2 l_path_pos(mClosedList[i].x*GRID_SIZE,mClosedList[i].y*GRID_SIZE);
+			l_path.push_back(l_path_pos);
+		}
+	}
+	return l_path;
+}
+
+vector<JVector2> cArena::BreadthFirst(const JVector2 _start, const JVector2 _target)
+{
+	JVector2 l_current(0,0);
+	cQueue<JVector2> l_open;
+	l_open.Enqueue(_start);
+	cQueue<JVector2> l_closed;
+
+	while(!mOpenList.empty())
+	{
+		l_current = l_open.Dequeue();
+
+		if(l_current.x == _target.x && l_current.y == _target.y)
+			break;
+
+		GraphNeighbours(l_current);
+		for(int i = 0; i < 4; i++)
+		{
+			if(Contains(&mClosedList,mNeighbours[i]) < 0)
+			{
+				if(CheckBounds(mNeighbours[i])) //TODO: also check against obsticals
+				{
+					mOpenList.push_back(mNeighbours[i]);
+					mClosedList.push_back(l_current);
+				}
+			}
+		}
+	}
+
+	vector<JVector2> l_path;
+	for(int i = 0; i < mClosedList.size(); i++)
+	{
+		const char l_tile = *GetTyleType(mClosedList[i]);
+		if(l_tile == 'P' || l_tile == 'S' || l_tile == 'C' || l_tile == 'E')
+		{
+			JVector2 l_path_pos(mClosedList[i].x*GRID_SIZE,mClosedList[i].y*GRID_SIZE);
 			l_path.push_back(l_path_pos);
 		}
 	}
@@ -134,7 +175,7 @@ searches vector _vect for value _val.
 return index of found element,
 returns -1 if value not found
 */
-int cArena::Contains(vector<float2>* _vect, float2 _val)
+int cArena::Contains(vector<JVector2>* _vect, JVector2 _val)
 {
 	for(int i = 0; i < (*_vect).size(); i++)
 	{
@@ -144,7 +185,7 @@ int cArena::Contains(vector<float2>* _vect, float2 _val)
 	return -1;
 }
 
-void cArena::GraphNeighbours(float2 _current)
+void cArena::GraphNeighbours(JVector2 _current)
 {	
 	//right
 	mNeighbours[0].x = _current.x + 1;
@@ -160,7 +201,7 @@ void cArena::GraphNeighbours(float2 _current)
 	mNeighbours[3].y = _current.y - 1;
 }
 
-bool cArena::CheckBounds(float2 _pos)
+bool cArena::CheckBounds(JVector2 _pos)
 {
 	if(_pos.x < 0.f) return false;
 	if(_pos.y < 0.f) return false;

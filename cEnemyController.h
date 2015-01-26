@@ -24,9 +24,9 @@ private:
 	cTimer mEnemySpawnTimer;
 	string mEnemyFileLocation;
 	Uint32 mGridSize;
-	float2 mEnemyStartPos;
-	float2 mEnemyExitPos;
-	vector<float2> mEnemyPath;
+	JVector2 mEnemyStartPos;
+	JVector2 mEnemyExitPos;
+	vector<JVector2> mEnemyPath;
 
 	cInput* mInput;
 	cRenderer* mRen;
@@ -41,7 +41,7 @@ public:
 	bool Init(const Uint32 _grid_size, cArena* _arena);
 	bool CleanUp();
 
-	void Update(float2 _target);
+	void Update(JVector2 _target);
 	void DrawEnemies();
 	void DrawEnemy(Uint32 _x, Uint32 _y, Uint32 _enemy, Uint32 _space = WORLD_SPACE);
 	void DrawEnemyText(Uint32 _x, Uint32 _y, Uint32 _enemy, SDL_Color _col, Uint32 _space = WORLD_SPACE);
