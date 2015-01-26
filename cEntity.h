@@ -22,7 +22,7 @@ protected:
 public:
 	Uint32 GetX() const { return x; }
 	Uint32 GetY() const { return y; }
-	float2 GetPos() const { float2 l_pos = { x,y }; return l_pos; }
+	JVector2 GetPos() const { return JVector2(x,y); }
 	Uint32 GetLevel() const { return mLevel; }
 	int GetLives() const { return mLives; }
 	SDL_Texture* GetBitmap() const { return mBitmap; }

@@ -10,6 +10,8 @@
 #include "cTimer.h"
 #include "cArena.h"
 #include "tinyxml2.h"
+#include "cQueue.h"
+#include "cMaths.h"
 
 using namespace tinyxml2;
 
@@ -26,7 +28,7 @@ private:
 	Uint32 mGridSize;
 	JVector2 mEnemyStartPos;
 	JVector2 mEnemyExitPos;
-	vector<JVector2> mEnemyPath;
+	cQueue<JVector2> mEnemyPath;
 
 	cInput* mInput;
 	cRenderer* mRen;

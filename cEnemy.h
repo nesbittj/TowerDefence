@@ -1,5 +1,6 @@
 #pragma once
 #include "centity.h"
+#include "cQueue.h"
 
 struct EnemyData
 {
@@ -13,12 +14,12 @@ class cEnemy : public cEntity
 {
 public:
 	EnemyData* mEnemyData;
-	vector<JVector2>* mEnemyPath;
+	cQueue<JVector2>* mEnemyPath;
 
 	cEnemy(Uint32 _x, Uint32 _y, Uint32 _grid_size);
 	~cEnemy();
 
-	bool Init(SDL_Texture* _bitmap, EnemyData* _data, vector<JVector2>* _enemy_path);
+	bool Init(SDL_Texture* _bitmap, EnemyData* _data, cQueue<JVector2>* _enemy_path);
 	bool CleanUp();
 
 	void Update();

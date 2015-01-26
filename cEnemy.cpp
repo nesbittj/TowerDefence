@@ -11,7 +11,7 @@ cEnemy::~cEnemy()
 {
 }
 
-bool cEnemy::Init(SDL_Texture* _bitmap, EnemyData* _data, vector<JVector2>* _enemy_path)
+bool cEnemy::Init(SDL_Texture* _bitmap, EnemyData* _data, cQueue<JVector2>* _enemy_path)
 {
 	if(!cEntity::Init(_bitmap)) return false;
 	mEnemyData = _data;
@@ -57,6 +57,7 @@ void cEnemy::Damage(int _value)
 
 JVector2 cEnemy::PathFind()
 {	
+	/*
 	JVector2 l_current_pos(x,y);
 	int current_index = cArena::Contains(mEnemyPath,l_current_pos);
 	printf("%i\n",current_index);
@@ -66,6 +67,8 @@ JVector2 cEnemy::PathFind()
 		return not_found;
 	}
 
-	if(current_index+1 >= mEnemyPath->size()) return (*mEnemyPath)[0];
+	//if(current_index+1 >= mEnemyPath->GetSize()) return mEnemyPath)[0];
 	return (*mEnemyPath)[current_index+1];
+	*/
+	return JVector2();
 }

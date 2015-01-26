@@ -70,8 +70,8 @@ void cTower::Update(cEnemy** const _enemies, int size_of_array)
 		{
 			if(_enemies[i] != NULL)
 			{
-				float2 l_target = { _enemies[i]->GetX(),_enemies[i]->GetY() };
-				float2 l_this_pos = { x,y };
+				JVector2 l_target(_enemies[i]->GetX(),_enemies[i]->GetY());
+				JVector2 l_this_pos(x,y);
 				if(cMaths::InRange(l_this_pos,l_target,mTowerData->mRange))
 				{
 				//_enemies[i]->GetX() -= (int)mRen->GetCamera()->GetPos().x;

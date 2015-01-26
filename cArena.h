@@ -39,10 +39,10 @@ public:
 	const char* GetTyleType(JVector2 _pos);
 	void Draw();
 	vector<JVector2> BreadthFirstOld(const JVector2 _start, const JVector2 _target);
-	vector<JVector2> BreadthFirst(const JVector2 _start, const JVector2 _target);
+	cQueue<JVector2> BreadthFirst(const JVector2 _start, const JVector2 _target);
 	void GraphNeighbours(JVector2 _current);
 	bool CheckBounds(JVector2 _pos);
-
+	
 	static int Contains(vector<JVector2>* _vect, JVector2 _val);
 	inline JVector2 GetPos() const { return JVector2(x,y); }
 	void SetPos(float _x, float _y);

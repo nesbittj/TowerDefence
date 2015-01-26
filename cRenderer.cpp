@@ -80,7 +80,7 @@ void cRenderer::DrawRect(int x, int y, int w, int h, SDL_Color col, int _space)
 		&prevColRect[0],&prevColRect[1],&prevColRect[2],&prevColRect[3]);
 
 	SDL_SetRenderDrawColor(mRenderer,col.r,col.g,col.b,col.a);
-	float2 camPos = mCamera->GetPos();
+	JVector2 camPos = mCamera->GetPos();
 	if(_space == WORLD_SPACE/* && camPos.w > 0*/)
 	{
 		x += camPos.x;
@@ -102,7 +102,7 @@ void cRenderer::RenderTexture(SDL_Texture* tex, int x, int y, SDL_Renderer* ren,
 {
 	if(!ren) ren = mRenderer;
 	SDL_Rect local_rect;
-	float2 camPos = mCamera->GetPos();
+	JVector2 camPos = mCamera->GetPos();
 	if(_space == WORLD_SPACE/* && camPos.w > 0*/)
 	{
 		x += camPos.x;
@@ -125,7 +125,7 @@ void cRenderer::RenderTexture(SDL_Texture* tex, int x, int y, SDL_Renderer* ren,
 {
 	if(!ren) ren = mRenderer;
 	SDL_Rect dst;
-	float2 camPos = mCamera->GetPos();
+	JVector2 camPos = mCamera->GetPos();
 	if(_space == WORLD_SPACE/* && camPos.w > 0*/)
 	{
 		x += camPos.x;
@@ -211,7 +211,7 @@ void cRenderer::RenderVerts(int x, int y, const vector<JVector3>& verts, bool _2
 {
 	int num_verts = verts.size();
 	vector<SDL_Point> points;
-	float2 camPos = mCamera->GetPos();
+	JVector2 camPos = mCamera->GetPos();
 	if(_space == WORLD_SPACE)
 	{
 		x += camPos.x;

@@ -129,14 +129,14 @@ vector<JVector2> cArena::BreadthFirstOld(const JVector2 _start, const JVector2 _
 	return l_path;
 }
 
-vector<JVector2> cArena::BreadthFirst(const JVector2 _start, const JVector2 _target)
+cQueue<JVector2> cArena::BreadthFirst(const JVector2 _start, const JVector2 _target)
 {
 	JVector2 l_current(0,0);
 	cQueue<JVector2> l_open;
 	l_open.Enqueue(_start);
 	cQueue<JVector2> l_closed;
 
-	while(!mOpenList.empty())
+	while(l_open.GetSize() > 0)
 	{
 		l_current = l_open.Dequeue();
 
@@ -146,27 +146,29 @@ vector<JVector2> cArena::BreadthFirst(const JVector2 _start, const JVector2 _tar
 		GraphNeighbours(l_current);
 		for(int i = 0; i < 4; i++)
 		{
-			if(Contains(&mClosedList,mNeighbours[i]) < 0)
+			if(l_closed.Contains(mNeighbours[i]) < 0)
 			{
 				if(CheckBounds(mNeighbours[i])) //TODO: also check against obsticals
 				{
-					mOpenList.push_back(mNeighbours[i]);
-					mClosedList.push_back(l_current);
+					l_open.Enqueue(mNeighbours[i]);
+					l_closed.Enqueue(mNeighbours[i]);
 				}
 			}
 		}
 	}
 
-	vector<JVector2> l_path;
-	for(int i = 0; i < mClosedList.size(); i++)
+	cQueue<JVector2> l_path;
+	/*
+	for(int i = 0; i < l_closed.GetSize(); i++)
 	{
-		const char l_tile = *GetTyleType(mClosedList[i]);
+		const char l_tile = *GetTyleType(l_closed.Dequeue());
 		if(l_tile == 'P' || l_tile == 'S' || l_tile == 'C' || l_tile == 'E')
 		{
 			JVector2 l_path_pos(mClosedList[i].x*GRID_SIZE,mClosedList[i].y*GRID_SIZE);
-			l_path.push_back(l_path_pos);
+			//l_path.push_back(l_path_pos);
 		}
 	}
+	*/
 	return l_path;
 }
 
@@ -179,7 +181,7 @@ int cArena::Contains(vector<JVector2>* _vect, JVector2 _val)
 {
 	for(int i = 0; i < (*_vect).size(); i++)
 	{
-		if((*_vect)[i].x == _val.x && (*_vect)[i].y == _val.y)
+		if((*_vect)[i] == _val)
 			return i;
 	}
 	return -1;

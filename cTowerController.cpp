@@ -100,7 +100,7 @@ void cTowerController::AddTower(Uint32 _x, Uint32 _y, Uint32 _tower)
 	{
 		if(mTowersInUse[i] == NULL)
 		{
-			float2 l_world_pos = { _x - (int)mRen->GetCamera()->GetPos().x,_y - (int)mRen->GetCamera()->GetPos().y };
+			JVector2 l_world_pos(_x - (int)mRen->GetCamera()->GetPos().x,_y - (int)mRen->GetCamera()->GetPos().y);
 			for(int j = 0; j < mMaxTowersInUse; j++)
 			{
 				if(mTowersInUse[j] != NULL
@@ -119,7 +119,7 @@ remove any tower at grid world pos x,y
 */
 void cTowerController::RemoveTower(Uint32 _x, Uint32 _y)
 {
-	float2 l_world_pos = { _x - (int)mRen->GetCamera()->GetPos().x,_y - (int)mRen->GetCamera()->GetPos().y };
+	JVector2 l_world_pos(_x - (int)mRen->GetCamera()->GetPos().x,_y - (int)mRen->GetCamera()->GetPos().y);
 	for(int i = 0; i < mMaxTowersInUse; i++)
 	{
 		if(mTowersInUse[i] != NULL
