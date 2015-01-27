@@ -9,11 +9,29 @@ cEnemyController::~cEnemyController()
 {	
 }
 
-bool cEnemyController::Init(const Uint32 _grid_size)
+bool cEnemyController::Init(const Uint32 _grid_size, cArena* _arena)
 {
 	mInput = cInput::Instance();
 	mRen = cRenderer::Instance();
 	mLog = cLogger::Instance();
+	mArena = _arena;
+	for(int i = 0; i < 15; i++)
+	{
+		for(int j = 0; j < 20; j++)
+		{
+			JVector2 l_pos(j,i);
+			if(*mArena->GetTyleType(l_pos) == 'S')
+			{
+				mEnemyStartPos = l_pos;
+			}
+			if(*mArena->GetTyleType(l_pos) == 'E')
+			{
+				mEnemyExitPos = l_pos;
+			}
+		}
+	}
+	mEnemyPath = mArena->BreadthFirst(
+		make_pair(mEnemyStartPos.x,mEnemyStartPos.y),make_pair(mEnemyExitPos.x,mEnemyExitPos.y));
 	mGridSize = _grid_size;
 	if(!LoadEnemyData()) return false;
 	for(int i = 0; i < mMaxEnemiesAlive; i++) mEnemiesAlive[i] = NULL;
@@ -41,25 +59,29 @@ bool cEnemyController::CleanUp()
 	{
 		mRen->UnloadBitmap(mEnemiesData[i].mBitmap);
 	}
+	mArena = NULL;
 	mInput = NULL;
 	mRen = NULL;
 	mLog = NULL;
 	return true;
 }
 
-void cEnemyController::Update()
+void cEnemyController::Update(JVector2 _target)
 {
 	if(mEnemySpawnTimer.getTicks() > (120 * 20))
 	{
-		AddEnemy(0,0,0);
+		//if(mEnemiesAlive[0] == NULL)
+		{
+		//TODO: set up addenmemy spawn loacation properly
+		AddEnemy(mEnemyStartPos.x * mGridSize,mEnemyStartPos.y * mGridSize,0);
 		mEnemySpawnTimer.start();
+		}
 	}
 	for(int i = 0; i < mMaxEnemiesAlive; i++)
 	{
 		if(mEnemiesAlive[i] !=  NULL)
 		{
 			mEnemiesAlive[i]->Update();
-			//if(_enemies_hit[i].x != -1) mEnemiesAlive[i]->Damage(_enemies_hit[i].y);
 			if(mEnemiesAlive[i]->GetLives() <= 0) RemoveEnemy(i);
 		}
 	}
@@ -97,10 +119,8 @@ void cEnemyController::AddEnemy(Uint32 _x, Uint32 _y, Uint32 _enemy)
 	{
 		if(mEnemiesAlive[i] == NULL)
 		{
-			for(int j = 0; j < mMaxEnemiesAlive; j++)
-				if(mEnemiesAlive[j] != NULL && mEnemiesAlive[j]->GetX() == _x && mEnemiesAlive[j]->GetY() == _y) return;
 			mEnemiesAlive[i] = new cEnemy(_x,_y,mGridSize);
-			mEnemiesAlive[i]->Init(mEnemiesData[_enemy].mBitmap,&mEnemiesData[_enemy]);
+			mEnemiesAlive[i]->Init(mEnemiesData[_enemy].mBitmap,&mEnemiesData[_enemy],mEnemyPath);
 			return;
 		}
 	}
@@ -129,7 +149,7 @@ bool cEnemyController::LoadEnemyData()
 			mEnemiesData[i].mName = l_enemy->Attribute("name");
 			mEnemiesData[i].mBitmap = mRen->LoadBitmap( std::string(mEnemyFileLocation + l_enemy->Attribute("bitmap")).c_str() );
 			l_enemy->QueryIntAttribute("lives",&mEnemiesData[i].mStartingLives);
-			l_enemy->QueryIntAttribute("speed",&mEnemiesData[i].mSpeed);
+			l_enemy->QueryFloatAttribute("speed",&mEnemiesData[i].mSpeed);
 			mEnemiesData[i].mSpeed *= l_game_speed;
 			i++;
 		}

@@ -80,7 +80,7 @@ void cRenderer::DrawRect(int x, int y, int w, int h, SDL_Color col, int _space)
 		&prevColRect[0],&prevColRect[1],&prevColRect[2],&prevColRect[3]);
 
 	SDL_SetRenderDrawColor(mRenderer,col.r,col.g,col.b,col.a);
-	float2 camPos = mCamera->GetPos();
+	JVector2 camPos = mCamera->GetPos();
 	if(_space == WORLD_SPACE/* && camPos.w > 0*/)
 	{
 		x += camPos.x;
@@ -102,7 +102,7 @@ void cRenderer::RenderTexture(SDL_Texture* tex, int x, int y, SDL_Renderer* ren,
 {
 	if(!ren) ren = mRenderer;
 	SDL_Rect local_rect;
-	float2 camPos = mCamera->GetPos();
+	JVector2 camPos = mCamera->GetPos();
 	if(_space == WORLD_SPACE/* && camPos.w > 0*/)
 	{
 		x += camPos.x;
@@ -125,7 +125,7 @@ void cRenderer::RenderTexture(SDL_Texture* tex, int x, int y, SDL_Renderer* ren,
 {
 	if(!ren) ren = mRenderer;
 	SDL_Rect dst;
-	float2 camPos = mCamera->GetPos();
+	JVector2 camPos = mCamera->GetPos();
 	if(_space == WORLD_SPACE/* && camPos.w > 0*/)
 	{
 		x += camPos.x;
@@ -203,14 +203,16 @@ void cRenderer::RenderText(const int value, int x, int y, int font, SDL_Color co
 }
 
 /*
-render a polygon from vertices
+render a polygon from vertices.
+if _2D is true (default) z axis of verts will be used
+to identify WORLD_SPACE vs SCREEN_SPACE.
 */
-void cRenderer::RenderVerts(int x, int y, const vector<JVector3>& verts, int _space)
+void cRenderer::RenderVerts(int x, int y, const vector<JVector3>& verts, bool _2D, int _space)
 {
 	int num_verts = verts.size();
 	vector<SDL_Point> points;
-	float2 camPos = mCamera->GetPos();
-	if(_space == WORLD_SPACE/* && camPos.w > 0*/)
+	JVector2 camPos = mCamera->GetPos();
+	if(_space == WORLD_SPACE)
 	{
 		x += camPos.x;
 		y += camPos.y;
@@ -218,10 +220,10 @@ void cRenderer::RenderVerts(int x, int y, const vector<JVector3>& verts, int _sp
 	for(int i = 0; i < num_verts; i++)
 	{
 		points.push_back(SDL_Point());
-		if(verts[i].z == WORLD_SPACE)
+		if(_2D && verts[i].z == WORLD_SPACE)
 		{
-			points.back().x = verts[i].x;
-			points.back().y = verts[i].y;
+			points.back().x = verts[i].x + camPos.x;
+			points.back().y = verts[i].y + camPos.y;
 		}
 		else // LOCAL_SPACE
 		{

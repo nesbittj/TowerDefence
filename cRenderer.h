@@ -49,7 +49,7 @@ public:
 	void RenderTexture(SDL_Texture* tex, int x, int y, SDL_Renderer* ren, int w, int h, int space = WORLD_SPACE);
 	void RenderText(const char* string, int x, int y, int font, SDL_Color colour, SDL_Renderer* ren, int space = WORLD_SPACE);
 	void RenderText(const int value, int x, int y, int font, SDL_Color colour, SDL_Renderer* ren, int space = WORLD_SPACE);
-	void RenderVerts(int x, int y, const vector<JVector3>& verts, int space = WORLD_SPACE);
+	void RenderVerts(int x, int y, const vector<JVector3>& verts, bool _2D = true, int space = WORLD_SPACE);
 	void Present(SDL_Renderer* ren) const;
 
 	SDL_Texture* LoadBitmap(const char* filename);

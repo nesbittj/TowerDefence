@@ -22,12 +22,14 @@ bool cCore::CleanUp()
 
 void cCore::Update(cEnemy** const _enemies, int size_of_array)
 {
-	float2 l_this_pos = { x,y };
+	if(mInput->GetKeyDown(SDLK_h)) Heal();
+
+	JVector2 l_this_pos(x,y);
 	for(int i = 0; i < size_of_array; i++)
 	{
 		if(_enemies[i] != NULL)
 		{
-			float2 l_target = { _enemies[i]->GetX(),_enemies[i]->GetY() };
+			JVector2 l_target(_enemies[i]->GetX(),_enemies[i]->GetY());
 			//TODO: set core range and damage properly
 			if(cMaths::InRange(l_this_pos,l_target,30)) Damage(1);
 		}

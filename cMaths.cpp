@@ -5,6 +5,10 @@ Jonathan Nesbitt
 
 #include "cMaths.h"
 
+///////////////////////////////////////////////////////////////////////////////////////
+//JVector3
+///////////////////////////////////////////////////////////////////////////////////////
+
 JVector3::JVector3() { x = y = z = 0.0f; }
 JVector3::JVector3(float _x, float _y, float _z) { x = _x; y = _y; z = _z; }
 
@@ -60,7 +64,94 @@ JVector3* JVector3::Cross(const JVector3* v) const
 					 x*v->y - y*v->x);
 }
 
+JVector3 JVector3::Lerp(JVector3& _v0, JVector3& _v1, const float _t)
+{
+	JVector3 result = JVector3(_v1 - _v0);
+	result.Normalise();
+	return  result * _t;
+}
+
 ///////////////////////////////////////////////////////////////////////////////////////
+//JVector2
+///////////////////////////////////////////////////////////////////////////////////////
+
+JVector2::JVector2() { x = y = 0.0f; }
+JVector2::JVector2(float _x, float _y) { x = _x; y = _y; }
+
+bool JVector2::operator==(const JVector2& v) const
+{
+	if(x == v.x && y == v.y) return true;
+	return false;
+}
+
+/* uses JVector2::operator== */
+bool JVector2::operator!=(const JVector2& v) const { return !(*this == v); }
+
+bool JVector2::operator<(const JVector2& v) const
+{
+	if(this->Magnitude() < v.Magnitude()) return true;
+	return false;
+}
+
+bool JVector2::operator>(const JVector2& v) const
+{
+	if(this->Magnitude() > v.Magnitude()) return true;
+	return false;
+}
+
+
+JVector2& JVector2::operator-() const { return JVector2(-x,-y); }
+
+/* uses JVector2::operator!= */
+JVector2& JVector2::operator=(const JVector2& v)
+{
+	if(this != &v) { x = v.x; y = v.y; }
+	return *this;
+}
+
+JVector2& JVector2::operator+=(const JVector2& v) { x += v.x; y += v.y; return *this; }
+JVector2& JVector2::operator-=(const JVector2& v) { x -= v.x; y -= v.y; return *this; }
+JVector2& JVector2::operator+=(const float& scalar) { x += scalar; y += scalar; return *this; }
+JVector2& JVector2::operator-=(const float& scalar) { x -= scalar; y -= scalar; return *this; }
+JVector2& JVector2::operator*=(const float& scalar) { x *= scalar; y *= scalar; return *this; }
+JVector2& JVector2::operator/=(const float& scalar) { x /= scalar; y /= scalar; return *this; }
+JVector2& JVector2::operator+(const JVector2& v) { JVector2 result = *this; return result += v; }
+JVector2& JVector2::operator-(const JVector2& v) { JVector2 result = *this; return result -= v; }
+JVector2& JVector2::operator+(const float& scalar) { JVector2 result = *this; return result += scalar; }
+JVector2& JVector2::operator-(const float& scalar) { JVector2 result = *this; return result -= scalar; }
+JVector2& JVector2::operator*(const float& scalar) { JVector2 result = *this; return result *= scalar; }
+JVector2& JVector2::operator/(const float& scalar) { JVector2 result = *this; return result /= scalar; }
+
+float JVector2::Dot(const JVector2& v) const
+{
+	return (x*v.x) + (y*v.y);
+}
+
+float JVector2::Magnitude() const
+{
+	if(x == 0.0f && y == 0.0f) return 0.f;
+	return sqrt((x*x) + (y*y));
+}
+
+/* returns inverse magnitude */
+float JVector2::Normalise()
+{
+	if(x == 0.0f && y == 0.0f) return 0;
+
+	float inverseMag = 1/Magnitude();
+	x *= inverseMag; y *= inverseMag;
+	return inverseMag;
+}
+
+JVector2 JVector2::Lerp(JVector2& _v0, JVector2& _v1, const float _t)
+{
+	JVector2 result = JVector2(_v1 - _v0);
+	result.Normalise();
+	return  result * _t;
+}
+
+///////////////////////////////////////////////////////////////////////////////////////
+//JMatrix3
 ///////////////////////////////////////////////////////////////////////////////////////
 
 JMatrix3::JMatrix3() { x = JVector3(); y = JVector3(); z = JVector3(); }
@@ -323,7 +414,7 @@ return true if taret is inside the range of origin,
 return false if not.
 TODO: check InRange Prerformance
 */
-bool cMaths::InRange(float2 _origin, float2 _target, float _range)
+bool cMaths::InRange(JVector2 _origin, JVector2 _target, float _range)
 {
 	if(abs((int)(_origin.x - _target.x)) > _range) return false;
 	if(abs((int)(_origin.y - _target.y)) > _range) return false;

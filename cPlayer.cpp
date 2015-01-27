@@ -38,7 +38,7 @@ void cPlayer::IncromentLives(int _inc)
 
 void cPlayer::Update()
 {
-	float2 camPos = mCamera->GetPos();
+	JVector2 camPos = mCamera->GetPos();
 	SetCurserX(cMaths::Round(mInput->GetMouseX(),mGridSize) + ((int)camPos.x % mGridSize));
 	SetCurserY(cMaths::Round(mInput->GetMouseY(),mGridSize) + ((int)camPos.y % mGridSize));
 }

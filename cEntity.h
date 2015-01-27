@@ -4,11 +4,12 @@
 #include "cRenderer.h"
 #include "cLogger.h"
 #include "cInput.h"
+#include "cArena.h"
 
 class cEntity
 {
 protected:
-	Uint32 x, y;
+	float x, y;
 	Uint32 mLevel;
 	int mLives;
 
@@ -21,6 +22,7 @@ protected:
 public:
 	Uint32 GetX() const { return x; }
 	Uint32 GetY() const { return y; }
+	JVector2 GetPos() const { return JVector2(x,y); }
 	Uint32 GetLevel() const { return mLevel; }
 	int GetLives() const { return mLives; }
 	SDL_Texture* GetBitmap() const { return mBitmap; }

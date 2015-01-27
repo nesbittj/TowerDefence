@@ -42,6 +42,10 @@
     <IncludePath>..\SDL2-2.0.3\include;$(IncludePath)</IncludePath>
     <LibraryPath>..\SDL2-2.0.3\lib\x86;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <IncludePath>..\SDL2-2.0.3\include;$(IncludePath)</IncludePath>
+    <LibraryPath>..\SDL2-2.0.3\lib\x86;$(LibraryPath)</LibraryPath>
+  </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
@@ -68,6 +72,8 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
+      <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2_ttf.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <SubSystem>Windows</SubSystem>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -78,9 +84,11 @@
     <ClCompile Include="cEngine.cpp" />
     <ClCompile Include="cEntity.cpp" />
     <ClCompile Include="cInput.cpp" />
+    <ClCompile Include="cArena.cpp" />
     <ClCompile Include="cLogger.cpp" />
     <ClCompile Include="cMaths.cpp" />
     <ClCompile Include="cPlayer.cpp" />
+    <ClCompile Include="cQueue.cpp" />
     <ClCompile Include="cRenderer.cpp" />
     <ClCompile Include="cSceneNode.cpp" />
     <ClCompile Include="cTimer.cpp" />
@@ -96,9 +104,11 @@
     <ClInclude Include="cEnemyController.h" />
     <ClInclude Include="cEngine.h" />
     <ClInclude Include="cInput.h" />
+    <ClInclude Include="cArena.h" />
     <ClInclude Include="cLogger.h" />
     <ClInclude Include="cMaths.h" />
     <ClInclude Include="cPlayer.h" />
+    <ClInclude Include="cQueue.h" />
     <ClInclude Include="cRenderer.h" />
     <ClInclude Include="cSceneNode.h" />
     <ClInclude Include="cTimer.h" />

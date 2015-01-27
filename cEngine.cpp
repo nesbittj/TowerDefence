@@ -57,7 +57,7 @@ int cEngine::Init()
 	SDL_Rect cam = {0,0,SCREEN_WIDTH,SCREEN_HEIGHT};
 	mRen->SetCamera(new cCamera(0,0,SCREEN_WIDTH,SCREEN_HEIGHT,LEVEL_WIDTH,LEVEL_HIEGHT));
 
-	mTexture = mRen->LoadBitmap("assets/grid_bg.bmp");
+	mTexture = mRen->LoadBitmap("assets/arena/grid_bg.bmp");
 
 	mNodeRoot = new cSceneNode();
 	mPlayer = cPlayer(10,0,LEVEL_GRID_SIZE,mRen->GetCamera());
@@ -65,19 +65,28 @@ int cEngine::Init()
 	mTowerController.Init(LEVEL_GRID_SIZE,&mPlayer);
 	// TODO: pass level grid size by pointer
 
+	mArena = new cArena(0,0);
+	mArena->Init();
+
 	mEnemyController = cEnemyController();
-	mEnemyController.Init(32);
+	mEnemyController.Init(32,mArena);
 
 	mCore = new cCore(SCREEN_WIDTH,SCREEN_HEIGHT,LEVEL_GRID_SIZE);
 	mCore->Init(0);
+
 
 	return 0;
 }
 
 int cEngine::CleanUp()
 {
+	mArena->CleanUp();
+	delete mArena;
+	mArena = NULL;
+
 	mCore->CleanUp();
 	delete mCore; mCore = NULL;
+
 	mEnemyController.CleanUp();
 	mTowerController.CleanUp();
 
@@ -117,8 +126,9 @@ void cEngine::Update()
 		UpdateCamera();
 		mPlayer.Update();
 		mTowerController.Update(mEnemyController.GetEnemies(),mEnemyController.GetMaxEnemies());
-		mEnemyController.Update();
+		mEnemyController.Update(mCore->GetPos());
 		mCore->Update(mEnemyController.GetEnemies(),mEnemyController.GetMaxEnemies());
+		mArena->SetPos(mRen->GetCamera()->GetPos().x,mRen->GetCamera()->GetPos().y);
 		mCountedUpdates++;
 	}
 }
@@ -148,9 +158,10 @@ void cEngine::Render()
 
 	if(mRender)
 	{
-		float2 cam = mRen->GetCamera()->GetPos();
+		JVector2 cam = mRen->GetCamera()->GetPos();
 
 		mRen->RenderTexture(mTexture,0,0,NULL);
+		mArena->Draw();
 
 		SDL_Color mouseColour = { 0,0,0,255 };
 		mRen->DrawRect(mPlayer.GetCurserX(),mPlayer.GetCurserY(),30,30,mouseColour,SCREEN_SPACE);
@@ -158,11 +169,9 @@ void cEngine::Render()
 		mRen->RenderText(mAvgUpdates,34,80,0,mouseColour,NULL,SCREEN_SPACE);
 
 		mCore->Draw();
-
 		mTowerController.DrawTowersInUse();
 		mTowerController.DrawTower(mPlayer.GetCurserX(),mPlayer.GetCurserY(),mTowerController.GetTowerSelected(),SCREEN_SPACE);
 		mTowerController.DrawTowerText(mPlayer.GetCurserX(),mPlayer.GetCurserY() - 15,mTowerController.GetTowerSelected(),mouseColour,SCREEN_SPACE);
-
 		mEnemyController.DrawEnemies();
 
 		mRen->Present(NULL);
