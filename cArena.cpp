@@ -65,8 +65,8 @@ bool cArena::LoadArenaData(const char* _filename)
 
 const char* cArena::GetTyleType(JVector2 _pos)
 {
-	if(_pos.x < 0 || _pos.x > 20) return "BAD_VALUE";
-	if(_pos.y < 0 || _pos.y > 30) return "BAD_VALUE";
+	if(_pos.x < 0 || _pos.x > 20) return "_";
+	if(_pos.y < 0 || _pos.y > 15) return "_";
 	return &mArenaTiles[(int)_pos.y][(int)_pos.x];
 }
 
@@ -129,47 +129,58 @@ vector<JVector2> cArena::BreadthFirstOld(const JVector2 _start, const JVector2 _
 	return l_path;
 }
 
-cQueue<JVector2> cArena::BreadthFirst(const JVector2 _start, const JVector2 _target)
+stack<pair<int,int>> cArena::BreadthFirst(const pair<int,int> _start, const pair<int,int> _target)
 {
-	JVector2 l_current(0,0);
-	cQueue<JVector2> l_open;
-	l_open.Enqueue(_start);
-	cQueue<JVector2> l_closed;
+	map<pair<int,int>,pair<int,int>> l_parent;
+	l_parent[_start] = make_pair(-1,-1);
+	vector<pair<int,int>> l_openList;
+	l_openList.push_back(_start);
 
-	while(l_open.GetSize() > 0)
+	while(!l_openList.empty())
 	{
-		l_current = l_open.Dequeue();
+		pair<int,int> l_u = l_openList.back();
 
-		if(l_current.x == _target.x && l_current.y == _target.y)
-			break;
+		//if(l_u.first == _target.x && l_u.second == _target.y)
+		//	break;
 
-		GraphNeighbours(l_current);
-		for(int i = 0; i < 4; i++)
-		{
-			if(l_closed.Contains(mNeighbours[i]) < 0)
+		GraphNeighbours(l_u);
+		l_openList.pop_back();
+		for(int j = 0; j < 4; j++)
+		{			
+			if(CheckBounds(JVector2(mAdj[j].first,mAdj[j].second)) && l_parent.find(mAdj[j]) == l_parent.end())
 			{
-				if(CheckBounds(mNeighbours[i])) //TODO: also check against obsticals
-				{
-					l_open.Enqueue(mNeighbours[i]);
-					l_closed.Enqueue(mNeighbours[i]);
-				}
+				l_parent[mAdj[j]] = l_u;
+				l_openList.push_back(mAdj[j]);
 			}
 		}
 	}
-
-	cQueue<JVector2> l_path;
-	/*
-	for(int i = 0; i < l_closed.GetSize(); i++)
+	
+	pair<int,int> l_current = _target;
+	vector<pair<int,int>> l_path;
+	l_path.push_back(l_current);
+	while(l_current != _start)
 	{
-		const char l_tile = *GetTyleType(l_closed.Dequeue());
-		if(l_tile == 'P' || l_tile == 'S' || l_tile == 'C' || l_tile == 'E')
-		{
-			JVector2 l_path_pos(mClosedList[i].x*GRID_SIZE,mClosedList[i].y*GRID_SIZE);
-			//l_path.push_back(l_path_pos);
-		}
+		l_current = l_parent[l_current];
+		l_path.push_back(l_current);
 	}
-	*/
-	return l_path;
+
+	l_current = _target;
+	stack<pair<int,int>> l_path_s;
+	l_path_s.push(l_current);
+	while(l_current != _start)
+	{
+		l_current = l_parent[l_current];
+		l_path_s.push(l_current);
+	}
+
+	return l_path_s;
+}
+
+int cArena::Contains(JVector2* _array, JVector2 _val)
+{
+	for(int i = 0; i < 100; i++)
+		if(_array[i] == _val) return i;
+	return 99;
 }
 
 /*
@@ -203,13 +214,58 @@ void cArena::GraphNeighbours(JVector2 _current)
 	mNeighbours[3].y = _current.y - 1;
 }
 
+void cArena::GraphNeighbours(pair<int,int> _u)
+{
+	//right
+	char l_tile = *GetTyleType(JVector2(_u.first + 1,_u.second));
+	if(l_tile != '_')
+	{
+		mAdj[0].first =  _u.first + 1;
+		mAdj[0].second =  _u.second;
+	}
+	else
+		mAdj[0] = make_pair(-1,-1);
+	//bottom
+	l_tile = *GetTyleType(JVector2(_u.first,_u.second + 1));
+	if(l_tile != '_')
+	{
+		mAdj[1].first =  _u.first;
+		mAdj[1].second =  _u.second + 1;
+	}
+	else
+		mAdj[1] = make_pair(-1,-1);
+	//left
+	l_tile = *GetTyleType(JVector2(_u.first - 1,_u.second));
+	if(l_tile != '_')
+	{
+		mAdj[2].first =  _u.first - 1;
+		mAdj[2].second =  _u.second;
+	}
+	else
+		mAdj[2] = make_pair(-1,-1);
+	//top
+	l_tile = *GetTyleType(JVector2(_u.first,_u.second - 1));
+	if(l_tile != '_')
+	{
+		mAdj[3].first =  _u.first;
+		mAdj[3].second =  _u.second - 1;
+	}
+	else
+		mAdj[3] = make_pair(-1,-1);
+}
+
 bool cArena::CheckBounds(JVector2 _pos)
 {
 	if(_pos.x < 0.f) return false;
 	if(_pos.y < 0.f) return false;
-	if(_pos.x > 10) return false;
-	if(_pos.y > 10) return false;
+	if(_pos.x > 19) return false;
+	if(_pos.y > 15) return false;
 	return true;
+}
+
+bool cArena::CheckBounds(pair<int,int> _u)
+{
+	return false;
 }
 
 void cArena::SetPos(float _x, float _y)

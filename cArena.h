@@ -1,6 +1,9 @@
 #pragma once
 
 #include <SDL.h>
+#include <map>
+#include <queue>
+#include <stack>
 #include "cCamera.h"
 #include "cRenderer.h"
 #include "cMaths.h"
@@ -27,6 +30,7 @@ private:
 	vector<JVector2> mOpenList;
 	vector<JVector2> mClosedList;
 	JVector2 mNeighbours[4];
+	pair<int,int> mAdj[4];
 
 public:
 	cArena(float _x, float _y);
@@ -39,10 +43,13 @@ public:
 	const char* GetTyleType(JVector2 _pos);
 	void Draw();
 	vector<JVector2> BreadthFirstOld(const JVector2 _start, const JVector2 _target);
-	cQueue<JVector2> BreadthFirst(const JVector2 _start, const JVector2 _target);
+	stack<pair<int,int>> BreadthFirst(const pair<int,int> _start, const pair<int,int> _target);
 	void GraphNeighbours(JVector2 _current);
+	void GraphNeighbours(pair<int,int> _u);
 	bool CheckBounds(JVector2 _pos);
+	bool CheckBounds(pair<int,int> _u);
 	
+	int Contains(JVector2* _array, JVector2 _val);
 	static int Contains(vector<JVector2>* _vect, JVector2 _val);
 	inline JVector2 GetPos() const { return JVector2(x,y); }
 	void SetPos(float _x, float _y);

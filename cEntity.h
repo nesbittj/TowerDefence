@@ -9,7 +9,7 @@
 class cEntity
 {
 protected:
-	Uint32 x, y;
+	float x, y;
 	Uint32 mLevel;
 	int mLives;
 

@@ -86,6 +86,20 @@ bool JVector2::operator==(const JVector2& v) const
 
 /* uses JVector2::operator== */
 bool JVector2::operator!=(const JVector2& v) const { return !(*this == v); }
+
+bool JVector2::operator<(const JVector2& v) const
+{
+	if(this->Magnitude() < v.Magnitude()) return true;
+	return false;
+}
+
+bool JVector2::operator>(const JVector2& v) const
+{
+	if(this->Magnitude() > v.Magnitude()) return true;
+	return false;
+}
+
+
 JVector2& JVector2::operator-() const { return JVector2(-x,-y); }
 
 /* uses JVector2::operator!= */
@@ -113,11 +127,17 @@ float JVector2::Dot(const JVector2& v) const
 	return (x*v.x) + (y*v.y);
 }
 
-float JVector2::Magnitude() const { return sqrt((x*x) + (y*y)); }
+float JVector2::Magnitude() const
+{
+	if(x == 0.0f && y == 0.0f) return 0.f;
+	return sqrt((x*x) + (y*y));
+}
 
 /* returns inverse magnitude */
 float JVector2::Normalise()
 {
+	if(x == 0.0f && y == 0.0f) return 0;
+
 	float inverseMag = 1/Magnitude();
 	x *= inverseMag; y *= inverseMag;
 	return inverseMag;

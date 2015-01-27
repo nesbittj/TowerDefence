@@ -11,7 +11,7 @@ cEnemy::~cEnemy()
 {
 }
 
-bool cEnemy::Init(SDL_Texture* _bitmap, EnemyData* _data, cQueue<JVector2>* _enemy_path)
+bool cEnemy::Init(SDL_Texture* _bitmap, EnemyData* _data, stack<pair<int,int>> _enemy_path)
 {
 	if(!cEntity::Init(_bitmap)) return false;
 	mEnemyData = _data;
@@ -28,13 +28,19 @@ bool cEnemy::CleanUp()
 
 void cEnemy::Update()
 {
-	JVector2 l_t = PathFind();
-	JVector3 l_0 = JVector3(x,y,0);
-	if(l_t.x >= 0 || l_t.y >= 0)
-		mTargetPos = JVector3(l_t.x,l_t.y,0);
-	JVector3 l_r = JVector3::Lerp(l_0,mTargetPos,1);
-	x += l_r.x; y += l_r.y;
-	//mRen->GetCamera()->CheckCameraBounds(x,y);
+	JVector2 l_0 = JVector2(x,y);
+	JVector2 l_t = l_0;
+	if(!mEnemyPath.empty())
+	{
+		l_t = JVector2(mEnemyPath.top().first,mEnemyPath.top().second);
+		l_t *= mGridSize;
+		if(l_0 == l_t) 
+			mEnemyPath.pop();
+		JVector2 l_r = JVector2::Lerp(l_0,l_t,1);
+		printf("lerp x: %f, y: %f\n\n", l_r.x,l_r.y);
+		x += l_r.x; y += l_r.y;
+		//mRen->GetCamera()->CheckCameraBounds(x,y);
+	}
 
 	if(x > mRen->GetCamera()->level_w || mLives < 0)
 		mLives = 0;
@@ -70,5 +76,9 @@ JVector2 cEnemy::PathFind()
 	//if(current_index+1 >= mEnemyPath->GetSize()) return mEnemyPath)[0];
 	return (*mEnemyPath)[current_index+1];
 	*/
+
+	JVector2 l_current_pos(x,y);
+
+
 	return JVector2();
 }

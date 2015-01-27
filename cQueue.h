@@ -18,6 +18,7 @@ public:
 	int Contains(const _type _value);
 	inline int GetSize();
 	inline void SetNextZero();
+	void PrintAll();
 
 	cQueue<_type>& operator=(const cQueue<_type>& _other_queue);
 };
@@ -43,7 +44,7 @@ mMaxSize(_Queue.mMaxSize)
 											
 template <class _type> cQueue<_type>::~cQueue()
 {
-	delete[] mData;
+	//delete[] mData;
 }
 
 template <class _type> void cQueue<_type>::Enqueue(const _type _value)
@@ -82,6 +83,14 @@ template <class _type> int cQueue<_type>::Contains(const _type _value)
 
 template <class _type> int cQueue<_type>::GetSize() { return mSize; }
 template <class _type> void cQueue<_type>::SetNextZero() { mNext = 0; }
+
+template <class JVector2> void cQueue<JVector2>::PrintAll()
+{
+	for(int i = 0; i < mSize; i++)
+	{
+		printf("i: %i\nx: %f\ny: %f\n\n", i,mData[i].x,mData[i].y);
+	}
+}
 
 template <class _type> cQueue<_type>& cQueue<_type>::operator=(const cQueue<_type>& _other_queue)
 {

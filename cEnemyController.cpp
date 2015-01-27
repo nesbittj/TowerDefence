@@ -30,7 +30,8 @@ bool cEnemyController::Init(const Uint32 _grid_size, cArena* _arena)
 			}
 		}
 	}
-	mEnemyPath = mArena->BreadthFirst(mEnemyStartPos,mEnemyExitPos);
+	mEnemyPath = mArena->BreadthFirst(
+		make_pair(mEnemyStartPos.x,mEnemyStartPos.y),make_pair(mEnemyExitPos.x,mEnemyExitPos.y));
 	mGridSize = _grid_size;
 	if(!LoadEnemyData()) return false;
 	for(int i = 0; i < mMaxEnemiesAlive; i++) mEnemiesAlive[i] = NULL;
@@ -69,7 +70,7 @@ void cEnemyController::Update(JVector2 _target)
 {
 	if(mEnemySpawnTimer.getTicks() > (120 * 20))
 	{
-		if(mEnemiesAlive[0] == NULL)
+		//if(mEnemiesAlive[0] == NULL)
 		{
 		//TODO: set up addenmemy spawn loacation properly
 		AddEnemy(mEnemyStartPos.x * mGridSize,mEnemyStartPos.y * mGridSize,0);
@@ -119,7 +120,7 @@ void cEnemyController::AddEnemy(Uint32 _x, Uint32 _y, Uint32 _enemy)
 		if(mEnemiesAlive[i] == NULL)
 		{
 			mEnemiesAlive[i] = new cEnemy(_x,_y,mGridSize);
-			mEnemiesAlive[i]->Init(mEnemiesData[_enemy].mBitmap,&mEnemiesData[_enemy],&mEnemyPath);
+			mEnemiesAlive[i]->Init(mEnemiesData[_enemy].mBitmap,&mEnemiesData[_enemy],mEnemyPath);
 			return;
 		}
 	}

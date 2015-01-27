@@ -12,6 +12,7 @@
 #include "tinyxml2.h"
 #include "cQueue.h"
 #include "cMaths.h"
+#include <queue>
 
 using namespace tinyxml2;
 
@@ -28,7 +29,7 @@ private:
 	Uint32 mGridSize;
 	JVector2 mEnemyStartPos;
 	JVector2 mEnemyExitPos;
-	cQueue<JVector2> mEnemyPath;
+	stack<pair<int,int>> mEnemyPath;
 
 	cInput* mInput;
 	cRenderer* mRen;

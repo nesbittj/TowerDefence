@@ -1,20 +1,21 @@
 <?xml version="1_0" ?>
 <layout>
-	<layout01  tiles="____________________"/>
-	<layout02  tiles="SPP_________________"/>
-	<layout03  tiles="__P_________________"/>
-	<layout04  tiles="__PPPPPPPPPPPP______"/>
+	<layout00  tiles="____________________"/>
+	<layout01  tiles="SPP_________________"/>
+	<layout02  tiles="__P_________________"/>
+	<layout03  tiles="__PPPPPPPPPPPP______"/>
+	<layout04  tiles="_____________P______"/>
 	<layout05  tiles="_____________P______"/>
-	<layout06  tiles="_____________E______"/>
+	<layout06  tiles="_____________P______"/>
 	<layout07  tiles="_____________P______"/>
-	<layout08  tiles="_____________P______"/>
-	<layout09  tiles="_____PCPPPPPPP______"/>
+	<layout08  tiles="_____PCPPPPPPP______"/>
+	<layout09  tiles="_____P______________"/>
 	<layout10  tiles="_____P______________"/>
-	<layout12  tiles="_____P______________"/>
-	<layout13  tiles="_____P______________"/>
-	<layout14  tiles="_____PPPPPPPPPPPPPPP"/>
-	<layout15  tiles="____________________"/>
-	<layout16  tiles="____________________"/>
+	<layout11  tiles="_____P______________"/>
+	<layout12  tiles="_____PPPPPPPPPPPPPPE"/>
+	<layout13  tiles="____________________"/>
+	<layout14  tiles="____________________"/>
+	<!--      grid ref       01234567890123456789  -->
 </layout>
 <tiles>
 	<Tyle1 bitmap="assets/arena/tile01.bmp" />

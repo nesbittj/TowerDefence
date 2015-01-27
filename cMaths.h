@@ -55,6 +55,8 @@ public:
 
 	bool operator==(const JVector2& v) const;
 	bool operator!=(const JVector2& v) const;
+	bool operator<(const JVector2& v) const;
+	bool operator>(const JVector2& v) const;
 	JVector2& operator-() const;
 	JVector2& operator=(const JVector2& v);
 	
@@ -71,11 +73,12 @@ public:
 	JVector2& operator-(const float& scalar);
 	JVector2& operator*(const float& scalar);
 	JVector2& operator/(const float& scalar);
+	
 
 	float Dot(const JVector2& v) const;
 	float Magnitude() const;
 	float Normalise();
-	void Zero() { x = 0.f; y = 0.f; }
+	void SetZero() { x = 0.f; y = 0.f; }
 	static JVector2 Lerp(JVector2& _v0, JVector2& _v1, const float _t);
 };
 
