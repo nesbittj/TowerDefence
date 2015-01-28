@@ -15,23 +15,10 @@ bool cEnemyController::Init(const Uint32 _grid_size, cArena* _arena)
 	mRen = cRenderer::Instance();
 	mLog = cLogger::Instance();
 	mArena = _arena;
-	for(int i = 0; i < 15; i++)
-	{
-		for(int j = 0; j < 20; j++)
-		{
-			JVector2 l_pos(j,i);
-			if(*mArena->GetTyleType(l_pos) == 'S')
-			{
-				mEnemyStartPos = l_pos;
-			}
-			if(*mArena->GetTyleType(l_pos) == 'E')
-			{
-				mEnemyExitPos = l_pos;
-			}
-		}
-	}
+	mEnemyStartPos = mArena->GetEnemyStartPos();
+	const JVector2& const l_enemy_exit_pos = mArena->GetEnemyExitPos();
 	mEnemyPath = mArena->BreadthFirst(
-		make_pair(mEnemyStartPos.x,mEnemyStartPos.y),make_pair(mEnemyExitPos.x,mEnemyExitPos.y));
+		make_pair(mEnemyStartPos.x,mEnemyStartPos.y),make_pair(l_enemy_exit_pos.x,l_enemy_exit_pos.y));
 	mGridSize = _grid_size;
 	if(!LoadEnemyData()) return false;
 	for(int i = 0; i < mMaxEnemiesAlive; i++) mEnemiesAlive[i] = NULL;
@@ -66,7 +53,7 @@ bool cEnemyController::CleanUp()
 	return true;
 }
 
-void cEnemyController::Update(JVector2 _target)
+void cEnemyController::Update()
 {
 	if(mEnemySpawnTimer.getTicks() > (1000))
 	{
@@ -80,8 +67,13 @@ void cEnemyController::Update(JVector2 _target)
 	{
 		if(mEnemiesAlive[i] !=  NULL)
 		{
+			//damage arena::core //could go after update, would need another != NULL
+			mArena->GetCore()->Damage(mEnemiesAlive[i]->GetPos(),30,0.1);
+
+			//update enemy
 			mEnemiesAlive[i]->Update();
 			if(mEnemiesAlive[i]->GetLives() <= 0) RemoveEnemy(i);
+
 		}
 	}
 }

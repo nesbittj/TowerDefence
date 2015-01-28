@@ -1,15 +1,20 @@
 #pragma once
 
 #include <SDL.h>
+
 #include <map>
-#include <queue>
 #include <stack>
+
 #include "cCamera.h"
 #include "cRenderer.h"
+
 #include "cMaths.h"
 #include "cLogger.h"
-#include "cQueue.h"
+
+#include "cCore.h"
+
 #include "tinyxml2.h"
+
 using namespace tinyxml2;
 
 class cArena
@@ -23,6 +28,7 @@ private:
 	SDL_Texture* mTiles[NUM_TILES];
 	cRenderer* mRen;
 	cLogger* mLog;
+	cCore* mCore;
 
 	bool UnloadBitmaps();
 
@@ -31,6 +37,10 @@ private:
 	vector<JVector2> mClosedList;
 	JVector2 mNeighbours[4];
 	pair<int,int> mAdj[4];
+
+	JVector2 mEnemyStartPos;
+	JVector2 mEnemyTargetPos;
+	JVector2 mEnemyExitPos;
 
 public:
 	cArena(float _x, float _y);
@@ -41,6 +51,7 @@ public:
 
 	bool LoadArenaData(const char* _filename);
 	const char* GetTyleType(JVector2 _pos);
+	void Update();
 	void Draw();
 	stack<pair<int,int>> BreadthFirst(const pair<int,int> _start, const pair<int,int> _target);
 	void GraphNeighbours(pair<int,int> _u);
@@ -49,4 +60,8 @@ public:
 	
 	inline JVector2 GetPos() const { return JVector2(x,y); }
 	void SetPos(float _x, float _y);
+	cCore* GetCore() { return mCore; }
+	const JVector2& const GetEnemyStartPos() const { return mEnemyStartPos; }
+	const JVector2& const GetEnemyTargetPos() const { return mEnemyTargetPos; }
+	const JVector2& const GetEnemyExitPos() const { return mEnemyExitPos; }
 };

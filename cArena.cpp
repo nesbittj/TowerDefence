@@ -3,6 +3,7 @@
 cArena::cArena(float _x, float _y)
 {
 	x = _x; y = _y;
+	mEnemyTargetPos = mEnemyExitPos = mEnemyStartPos = JVector2();
 }
 
 cArena::~cArena()
@@ -14,11 +15,18 @@ bool cArena::Init()
 	mRen = cRenderer::Instance();
 	mLog = cLogger::Instance();
 	if(!LoadArenaData("")) return false;
+	
+	mCore = new cCore(mEnemyTargetPos.x,mEnemyTargetPos.y,GRID_SIZE);
+	mCore->Init(0);
+
 	return true;
 }
 
 bool cArena::CleanUp()
 {
+	mCore->CleanUp();
+	delete mCore; mCore = NULL;
+
 	UnloadBitmaps();
 	mLog = NULL;
 	mRen = NULL;
@@ -60,9 +68,31 @@ bool cArena::LoadArenaData(const char* _filename)
 		mLog->LogError("cArena: XML failed to load");
 		return false;
 	}
+
+	//TODO: properly set bounds
+	for(int i = 0; i < 15; i++)
+	{
+		for(int j = 0; j < 20; j++)
+		{
+			JVector2 l_pos(j,i);
+			if(*GetTyleType(l_pos) == 'S')
+			{
+				mEnemyStartPos = l_pos;
+			}
+			if(*GetTyleType(l_pos) == 'E')
+			{
+				mEnemyExitPos = l_pos;
+			}
+			if(*GetTyleType(l_pos) == 'C')
+			{
+				mEnemyTargetPos = JVector2(l_pos * GRID_SIZE);
+			}
+		}
+	}
 	return true;
 }
 
+//TODO: spell tile correctly
 const char* cArena::GetTyleType(JVector2 _pos)
 {
 	if(_pos.x < 0 || _pos.x > 20) return "_";
@@ -70,20 +100,30 @@ const char* cArena::GetTyleType(JVector2 _pos)
 	return &mArenaTiles[(int)_pos.y][(int)_pos.x];
 }
 
+void cArena::Update()
+{
+	mCore->Update();
+}
+
 void cArena::Draw()
 {
+
+	//SetPos(mRen->GetCamera()->GetPos().x,mRen->GetCamera()->GetPos().y);
+
 	//screen space is used because x,y is set to camera pos (move has already happened)
 	//TODO: properly enumerate tiles number and render values
 	for(int i = 0; i < 15; i++)
 	{
 		for(int j = 0; j < 20; j++)
 		{
-			if(mArenaTiles[i][j] == '.')
-				mRen->RenderTexture(mTiles[0],GRID_SIZE*j+x,GRID_SIZE*i+y,0,32,32,1);
+			if(mArenaTiles[i][j] == '_')
+				mRen->RenderTexture(mTiles[0],GRID_SIZE*j+x,GRID_SIZE*i+y,0,32,32,WORLD_SPACE);
 			if(mArenaTiles[i][j] == 'P')
-				mRen->RenderTexture(mTiles[1],GRID_SIZE*j+x,GRID_SIZE*i+y,0,32,32,1);
+				mRen->RenderTexture(mTiles[1],GRID_SIZE*j+x,GRID_SIZE*i+y,0,32,32,WORLD_SPACE);
 		}
 	}
+
+	mCore->Draw();
 }
 
 stack<pair<int,int>> cArena::BreadthFirst(const pair<int,int> _start, const pair<int,int> _target)

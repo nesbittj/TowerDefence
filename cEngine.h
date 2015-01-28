@@ -11,16 +11,18 @@ singleton class
 
 #include <SDL.h>
 #include <iostream>
+
 #include "cRenderer.h"
 #include "cLogger.h"
 #include "cInput.h"
-#include "cSceneNode.h"
 #include "cTimer.h"
+
 #include "cCamera.h"
 #include "cPlayer.h"
+
+#include "cEntity.h"
 #include "cTowerController.h"
 #include "cEnemyController.h"
-#include "cCore.h"
 #include "cArena.h"
 
 #include <sstream>
@@ -43,12 +45,9 @@ private:
 	bool mRender;
 	bool mUpdate;
 
-	cSceneNode* mNodeRoot;
-
 	cPlayer mPlayer;
 	cTowerController mTowerController;
 	cEnemyController mEnemyController;
-	cCore* mCore;
 	cArena* mArena;
 	
 	void CapFrameRate();

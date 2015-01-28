@@ -1,10 +1,13 @@
 #pragma once
 
 #include <SDL.h>
-#include "cEntity.h"
-#include "cEnemy.h"
+
 #include "cMaths.h"
+
+#include "cEntity.h"
+
 #include "tinyxml2.h"
+
 using namespace tinyxml2;
 
 class cCore : public cEntity
@@ -18,8 +21,9 @@ public:
 	bool virtual Init(SDL_Texture* _bitmap);
 	bool virtual CleanUp();
 
-	void Update(cEnemy** const _enemies, int size_of_array);
+	void Update();
 	bool LoadCoreData();
 	void Heal();
-	void Damage(int _damage);
+	void Damage(float _damage);
+	void Damage(JVector2 _origin, int _range, float _damage);
 };

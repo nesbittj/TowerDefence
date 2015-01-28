@@ -1,6 +1,6 @@
 #pragma once
-#include "centity.h"
-#include "cQueue.h"
+#include "cEntity.h"
+#include "stack"
 
 struct EnemyData
 {

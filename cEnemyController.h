@@ -1,18 +1,20 @@
 #pragma once
 
 #include <SDL.h>
-#include "cEntity.h"
-#include "cInput.h"
+
 #include "cRenderer.h"
 #include "cPlayer.h"
+
+#include "cInput.h"
 #include "cLogger.h"
-#include "cEnemy.h"
 #include "cTimer.h"
-#include "cArena.h"
-#include "tinyxml2.h"
-#include "cQueue.h"
 #include "cMaths.h"
-#include <queue>
+
+#include "cEntity.h"
+#include "cEnemy.h"
+#include "cArena.h"
+
+#include "tinyxml2.h"
 
 using namespace tinyxml2;
 
@@ -28,7 +30,6 @@ private:
 	string mEnemyFileLocation;
 	Uint32 mGridSize;
 	JVector2 mEnemyStartPos;
-	JVector2 mEnemyExitPos;
 	stack<pair<int,int>> mEnemyPath;
 
 	cInput* mInput;
@@ -44,7 +45,7 @@ public:
 	bool Init(const Uint32 _grid_size, cArena* _arena);
 	bool CleanUp();
 
-	void Update(JVector2 _target);
+	void Update();
 	void DrawEnemies();
 	void DrawEnemy(Uint32 _x, Uint32 _y, Uint32 _enemy, Uint32 _space = WORLD_SPACE);
 	void DrawEnemyText(Uint32 _x, Uint32 _y, Uint32 _enemy, SDL_Color _col, Uint32 _space = WORLD_SPACE);

@@ -20,10 +20,11 @@ bool cCore::CleanUp()
 	return cEntity::CleanUp();
 }
 
-void cCore::Update(cEnemy** const _enemies, int size_of_array)
+void cCore::Update()
 {
 	if(mInput->GetKeyDown(SDLK_h)) Heal();
 
+	/*
 	JVector2 l_this_pos(x,y);
 	for(int i = 0; i < size_of_array; i++)
 	{
@@ -34,6 +35,7 @@ void cCore::Update(cEnemy** const _enemies, int size_of_array)
 			if(cMaths::InRange(l_this_pos,l_target,30)) Damage(1);
 		}
 	}
+	*/
 }
 
 bool cCore::LoadCoreData()
@@ -64,8 +66,14 @@ void cCore::Heal()
 	if(++mLives > mMaxLives) mLives = mMaxLives;
 }
 
-void cCore::Damage(int _damage)
+void cCore::Damage(float _damage)
 {
 	mLives -= _damage;
 	if(mLives < 0) mLives = 0;
+}
+
+void cCore::Damage(JVector2 _origin, int _range, float _damage)
+{
+	if(cMaths::InRange(_origin,GetPos(),_range))
+		Damage(_damage);
 }

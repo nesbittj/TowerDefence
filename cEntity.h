@@ -4,7 +4,6 @@
 #include "cRenderer.h"
 #include "cLogger.h"
 #include "cInput.h"
-#include "cArena.h"
 
 class cEntity
 {
@@ -20,8 +19,8 @@ protected:
 	cInput* mInput;
 
 public:
-	Uint32 GetX() const { return x; }
-	Uint32 GetY() const { return y; }
+	float GetX() const { return x; }
+	float GetY() const { return y; }
 	JVector2 GetPos() const { return JVector2(x,y); }
 	Uint32 GetLevel() const { return mLevel; }
 	int GetLives() const { return mLives; }
@@ -38,5 +37,5 @@ public:
 	bool virtual CleanUp();
 
 	void virtual Update();
-	void virtual Draw();
+	void virtual Draw(int _space = 0);
 };

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "centity.h"
+#include "cEntity.h"
 #include "cTimer.h"
 #include "cEnemy.h"
 
