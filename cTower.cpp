@@ -41,6 +41,7 @@ damage is done to enemy once every frame
 */
 //TODO: timer should start when an enemy comes into range,
 //TODO: however this would cause many more loops through _enemies
+//TODO: dps calc still not correct
 void cTower::Update(cEnemy** const _enemies, int size_of_array)
 {
 	bool l_freq = true;

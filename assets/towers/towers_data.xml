@@ -2,5 +2,17 @@
 <towers>
 	<tower1 name="tower 1" bitmap="tower01.bmp" damage="0.625" range="150" firefreq="1000" firedur="400" />
 	<tower1 name="tower 2" bitmap="tower02.bmp" damage="1.25" range="150" firefreq="250" firedur="50" />
-	<tower1 name="tower 3" bitmap="tower03.bmp" damage="2.7" range="150" firefreq="2000" firedur="150" />
+	<tower1 name="tower 3" bitmap="tower03.bmp" damage="3.3" range="150" firefreq="2000" firedur="150" />
 </towers>
+
+<!--
+
+	- range in pixels radius
+	- firefreq in milliseconds (seconds * 1000)
+	- firedur in milliseconds
+	
+	- damage is damage per frame
+	- dps =  firedur * damage * target_fps * firefreq
+	- to calc damage: 
+
+-->
