@@ -86,132 +86,40 @@ void cArena::Draw()
 	}
 }
 
-vector<JVector2> cArena::BreadthFirstOld(const JVector2 _start, const JVector2 _target)
-{
-	JVector2 l_current(0,0);
-	mOpenList.push_back(_start);
-	//mClosedList.push_back(l_current);
-
-	while(!mOpenList.empty())
-	{
-		l_current = mOpenList.back();
-		mOpenList.pop_back();
-
-		if(l_current.x == _target.x && l_current.y == _target.y) 
-			break;
-		
-		if(Contains(&mClosedList,l_current) < 0)
-			mClosedList.push_back(l_current);
-
-		GraphNeighbours(l_current);
-		for(int i = 0; i < 4; i++)
-		{
-			if(Contains(&mClosedList,mNeighbours[i]) < 0 && Contains(&mOpenList,mNeighbours[i]) < 0)
-			{
-				if(CheckBounds(mNeighbours[i])) //TODO: also check against obsticals
-				{
-					mOpenList.push_back(mNeighbours[i]);
-				}
-			}
-		}
-	}
-
-	vector<JVector2> l_path;
-	for(int i = 0; i < mClosedList.size(); i++)
-	{
-		const char l_tile = *GetTyleType(mClosedList[i]);
-		if(l_tile == 'P' || l_tile == 'S' || l_tile == 'C' || l_tile == 'E')
-		{
-			JVector2 l_path_pos(mClosedList[i].x*GRID_SIZE,mClosedList[i].y*GRID_SIZE);
-			l_path.push_back(l_path_pos);
-		}
-	}
-	return l_path;
-}
-
 stack<pair<int,int>> cArena::BreadthFirst(const pair<int,int> _start, const pair<int,int> _target)
 {
 	map<pair<int,int>,pair<int,int>> l_parent;
 	l_parent[_start] = make_pair(-1,-1);
 	vector<pair<int,int>> l_openList;
 	l_openList.push_back(_start);
+	pair<int,int> l_node;
 
 	while(!l_openList.empty())
 	{
-		pair<int,int> l_u = l_openList.back();
-
-		//if(l_u.first == _target.x && l_u.second == _target.y)
-		//	break;
-
-		GraphNeighbours(l_u);
+		l_node = l_openList.back();
+		if(l_node == _target) break;
+		GraphNeighbours(l_node);
 		l_openList.pop_back();
 		for(int j = 0; j < 4; j++)
 		{			
-			if(CheckBounds(JVector2(mAdj[j].first,mAdj[j].second)) && l_parent.find(mAdj[j]) == l_parent.end())
+			if(CheckBounds(mAdj[j]) && l_parent.find(mAdj[j]) == l_parent.end())
 			{
-				l_parent[mAdj[j]] = l_u;
+				l_parent[mAdj[j]] = l_node;
 				l_openList.push_back(mAdj[j]);
 			}
 		}
 	}
 	
-	pair<int,int> l_current = _target;
-	vector<pair<int,int>> l_path;
-	l_path.push_back(l_current);
-	while(l_current != _start)
-	{
-		l_current = l_parent[l_current];
-		l_path.push_back(l_current);
-	}
-
-	l_current = _target;
+	l_node = _target;
 	stack<pair<int,int>> l_path_s;
-	l_path_s.push(l_current);
-	while(l_current != _start)
+	l_path_s.push(l_node);
+	while(l_node != _start)
 	{
-		l_current = l_parent[l_current];
-		l_path_s.push(l_current);
+		l_node = l_parent[l_node];
+		l_path_s.push(l_node);
 	}
 
 	return l_path_s;
-}
-
-int cArena::Contains(JVector2* _array, JVector2 _val)
-{
-	for(int i = 0; i < 100; i++)
-		if(_array[i] == _val) return i;
-	return 99;
-}
-
-/*
-searches vector _vect for value _val.
-return index of found element,
-returns -1 if value not found
-*/
-int cArena::Contains(vector<JVector2>* _vect, JVector2 _val)
-{
-	for(int i = 0; i < (*_vect).size(); i++)
-	{
-		if((*_vect)[i] == _val)
-			return i;
-	}
-	return -1;
-}
-
-void cArena::GraphNeighbours(JVector2 _current)
-{	
-	//right
-	mNeighbours[0].x = _current.x + 1;
-	mNeighbours[0].y = _current.y;
-	//bottom
-	mNeighbours[1].x = _current.x;
-	mNeighbours[1].y = _current.y + 1;
-	//left
-	mNeighbours[2].x = _current.x - 1;
-	mNeighbours[2].y = _current.y;
-	//top
-	mNeighbours[3].x = _current.x;
-	mNeighbours[3].y = _current.y - 1;
 }
 
 void cArena::GraphNeighbours(pair<int,int> _u)
@@ -265,7 +173,11 @@ bool cArena::CheckBounds(JVector2 _pos)
 
 bool cArena::CheckBounds(pair<int,int> _u)
 {
-	return false;
+	if(_u.first  < 0.f) return false;
+	if(_u.second < 0.f) return false;
+	if(_u.first  > 19) return false;
+	if(_u.second > 15) return false;
+	return true;
 }
 
 void cArena::SetPos(float _x, float _y)

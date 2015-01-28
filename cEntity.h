@@ -11,7 +11,7 @@ class cEntity
 protected:
 	float x, y;
 	Uint32 mLevel;
-	int mLives;
+	float mLives;
 
 	SDL_Texture* mBitmap;
 	Uint32 mGridSize;

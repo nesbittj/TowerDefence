@@ -8,7 +8,7 @@ struct TowerData
 {
 	string mName;
 	SDL_Texture* mBitmap;
-	int mDamage;
+	float mDamage;
 	int mRange;
 	int mFireFreq;
 	int mFireDuration;
@@ -22,6 +22,7 @@ private:
 	cTimer mFireFreqTimer;
 	cTimer mFireDurTimer;
 	vector<JVector3> mFiringVerts;
+	float mFireDamage;
 
 	void Init(TowerData* _data);
 

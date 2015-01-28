@@ -42,15 +42,11 @@ public:
 	bool LoadArenaData(const char* _filename);
 	const char* GetTyleType(JVector2 _pos);
 	void Draw();
-	vector<JVector2> BreadthFirstOld(const JVector2 _start, const JVector2 _target);
 	stack<pair<int,int>> BreadthFirst(const pair<int,int> _start, const pair<int,int> _target);
-	void GraphNeighbours(JVector2 _current);
 	void GraphNeighbours(pair<int,int> _u);
 	bool CheckBounds(JVector2 _pos);
 	bool CheckBounds(pair<int,int> _u);
 	
-	int Contains(JVector2* _array, JVector2 _val);
-	static int Contains(vector<JVector2>* _vect, JVector2 _val);
 	inline JVector2 GetPos() const { return JVector2(x,y); }
 	void SetPos(float _x, float _y);
 };

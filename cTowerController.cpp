@@ -149,12 +149,12 @@ bool cTowerController::LoadTowersData()
 
 			mTowersData[i].mBitmap = mRen->LoadBitmap( std::string(mTowersFileLocation + l_tower->Attribute("bitmap")).c_str() );
 
-			l_tower->QueryIntAttribute("damage",&mTowersData[i].mDamage);
+			l_tower->QueryFloatAttribute("damage",&mTowersData[i].mDamage);
 			l_tower->QueryIntAttribute("range",&mTowersData[i].mRange);
 			l_tower->QueryIntAttribute("firefreq",&mTowersData[i].mFireFreq);
 			l_tower->QueryIntAttribute("firedur",&mTowersData[i].mFireDuration);
-			mTowersData[i].mFireFreq *= l_game_speed;
-			mTowersData[i].mFireDuration *= l_game_speed;
+			//mTowersData[i].mFireFreq *= l_game_speed;
+			//mTowersData[i].mFireDuration *= l_game_speed;
 			i++;
 		}
 	}

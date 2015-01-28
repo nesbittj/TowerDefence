@@ -68,13 +68,12 @@ bool cEnemyController::CleanUp()
 
 void cEnemyController::Update(JVector2 _target)
 {
-	if(mEnemySpawnTimer.getTicks() > (120 * 20))
+	if(mEnemySpawnTimer.getTicks() > (1000))
 	{
-		//if(mEnemiesAlive[0] == NULL)
+		//if(mEnemiesAlive[0] == NULL) //create only one enemy
 		{
-		//TODO: set up addenmemy spawn loacation properly
-		AddEnemy(mEnemyStartPos.x * mGridSize,mEnemyStartPos.y * mGridSize,0);
-		mEnemySpawnTimer.start();
+			AddEnemy(mEnemyStartPos.x*mGridSize,mEnemyStartPos.y*mGridSize, 0);
+			mEnemySpawnTimer.start();
 		}
 	}
 	for(int i = 0; i < mMaxEnemiesAlive; i++)
@@ -113,14 +112,14 @@ void cEnemyController::DrawEnemyText(Uint32 _x, Uint32 _y, Uint32 _enemy, SDL_Co
 {
 }
 
-void cEnemyController::AddEnemy(Uint32 _x, Uint32 _y, Uint32 _enemy)
+void cEnemyController::AddEnemy(Uint32 _x, Uint32 _y, Uint32 _enemy_type)
 {
 	for(int i = 0; i < mMaxEnemiesAlive; i++)
 	{
 		if(mEnemiesAlive[i] == NULL)
 		{
 			mEnemiesAlive[i] = new cEnemy(_x,_y,mGridSize);
-			mEnemiesAlive[i]->Init(mEnemiesData[_enemy].mBitmap,&mEnemiesData[_enemy],mEnemyPath);
+			mEnemiesAlive[i]->Init(mEnemiesData[_enemy_type].mBitmap,&mEnemiesData[_enemy_type],mEnemyPath);
 			return;
 		}
 	}

@@ -29,15 +29,13 @@ bool cEnemy::CleanUp()
 void cEnemy::Update()
 {
 	JVector2 l_0 = JVector2(x,y);
-	JVector2 l_t = l_0;
+	JVector2 l_t;
 	if(!mEnemyPath.empty())
 	{
 		l_t = JVector2(mEnemyPath.top().first,mEnemyPath.top().second);
 		l_t *= mGridSize;
-		if(l_0 == l_t) 
-			mEnemyPath.pop();
+		if(l_0 == l_t) mEnemyPath.pop();
 		JVector2 l_r = JVector2::Lerp(l_0,l_t,1);
-		printf("lerp x: %f, y: %f\n\n", l_r.x,l_r.y);
 		x += l_r.x; y += l_r.y;
 		//mRen->GetCamera()->CheckCameraBounds(x,y);
 	}
@@ -55,7 +53,7 @@ void cEnemy::Draw()
 	mRen->RenderText(y,x+34,y+10,0,col,0);
 }
 
-void cEnemy::Damage(int _value)
+void cEnemy::Damage(float _value)
 {
 	mLives -= _value;
 	if(mLives < 0) mLives = 0;

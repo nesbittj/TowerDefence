@@ -46,7 +46,7 @@ bool cCore::LoadCoreData()
 		for( l_core; l_core; l_core = l_core->NextSiblingElement())
 		{
 			l_core->QueryIntAttribute("max_lives",&mMaxLives);
-			l_core->QueryIntAttribute("start_lives",&mLives);
+			l_core->QueryFloatAttribute("start_lives",&mLives);
 			mBitmap = mRen->LoadBitmap(l_core->Attribute("bitmap"));
 			i++;
 		}

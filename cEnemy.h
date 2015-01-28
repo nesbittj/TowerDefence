@@ -24,7 +24,7 @@ public:
 
 	void Update();
 	void Draw();
-	void Damage(int _value);
+	void Damage(float _value);
 	JVector2 PathFind();
 
 private:
