@@ -44,7 +44,7 @@ int cRenderer::Init(SDL_Window* window)
 	}
 
 	//set default render colour
-	SDL_SetRenderDrawColor(mRenderer,255,255,255,255);
+	SDL_SetRenderDrawColor(mRenderer, 102,102,102, 255);
 
 	return 0;
 }

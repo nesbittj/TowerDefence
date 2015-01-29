@@ -36,8 +36,8 @@ restrics camera to level height and width
 */
 void cCamera::CheckCameraBounds(float _oldX, float _oldY)
 {
-	if(x > 0.f) x = 0.f;
-	if(y > 0.f) y = 0.f;
+	if(x > screen_w * 0.5) x = screen_w * 0.5;
+	if(y > screen_h * 0.5) y = screen_h * 0.5;
 	if(x < screen_w - level_w) x = screen_w - level_w;
 	if(y < screen_h - level_h) y = screen_h - level_h;
 }
@@ -45,6 +45,7 @@ void cCamera::CheckCameraBounds(float _oldX, float _oldY)
 /*
 restrics x,y to level height and width
 */
+//TODO: consnider moving to cArena
 void cCamera::CheckLevelBounds(float _oldX, float _oldY)
 {
 	if(_oldX < 0.f) _oldX = 0.f;

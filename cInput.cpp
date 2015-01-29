@@ -186,10 +186,10 @@ int cInput::ProcessInputEvents()
 		mJoyButtonsDown[JOYCODE] = false;
 		break;
 	case SDL_MOUSEBUTTONDOWN:
-		mMouseButtonDown[MOUSECODE] = true;
+		mMouseButtonDown[MOUSECODE-1] = true;
 		break;
 	case SDL_MOUSEBUTTONUP:
-		mMouseButtonDown[MOUSECODE] = false;
+		mMouseButtonDown[MOUSECODE-1] = false;
 		break;
 	}
 	

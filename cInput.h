@@ -17,6 +17,9 @@ singleton class
 #define JOYCODE mEvent->cbutton.button
 #define MOUSECODE mEvent->button.button
 
+enum { LEFT_MOUSE_BUTTON , CENTRE_MOUSE_BUTTON, RIGHT_MOUSE_BUTTON
+, MOUSE_BUTTON_FIVE, MOUSE_BUTTON_FOUR, SIZE_OF_MOUSE_BUTTON_ENUM };
+
 class cInput
 {
 private:
@@ -33,8 +36,8 @@ private:
 	bool mPrevKeysDown[256];
 	bool mJoyButtonsDown[14];
 	bool mPrevJoyButtonsDown[14];
-	bool mMouseButtonDown[5];
-	bool mPrevMouseButtonDown[5];
+	bool mMouseButtonDown[SIZE_OF_MOUSE_BUTTON_ENUM];
+	bool mPrevMouseButtonDown[SIZE_OF_MOUSE_BUTTON_ENUM];
 
 	int mJoyAxis[6];
 	int mMouseX, mMouseY;

@@ -65,9 +65,9 @@ void cTowerController::Update(cEnemy** const _enemies_hit, int size_of_array)
 	if(mInput->GetKeyDownRelease(SDLK_5)) SetTowerSelected(4);
 	if(mInput->GetKeyDownRelease(SDLK_6)) SetTowerSelected(5);
 
-	if(mInput->GetMouseButtonDownRelease(1))		
+	if(mInput->GetMouseButtonDownRelease(LEFT_MOUSE_BUTTON))	
 		AddTower(mPlayer->GetCurserX(),mPlayer->GetCurserY(),GetTowerSelected());
-	if(mInput->GetMouseButtonDownRelease(3))
+	if(mInput->GetMouseButtonDownRelease(RIGHT_MOUSE_BUTTON))
 		RemoveTower(mPlayer->GetCurserX(),mPlayer->GetCurserY());
 
 	for(int i = 0; i < mMaxTowersInUse; i++)

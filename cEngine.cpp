@@ -134,7 +134,21 @@ void cEngine::UpdateCamera()
 	if(mInput->GetKeyDown(SDLK_s)) new_cam.y -= new_cam.z;
 	if(mInput->GetKeyDown(SDLK_a)) new_cam.x += new_cam.z;
 	if(mInput->GetKeyDown(SDLK_d)) new_cam.x -= new_cam.z;
-	if(mInput->GetKeyDownRelease(SDLK_BACKSPACE)) new_cam.Zero();
+	
+	if(mInput->GetMouseButtonDown(CENTRE_MOUSE_BUTTON))
+	{
+		JVector2 l_d = JVector2(mRen->GetCamera()->GetPos()
+			- JVector2(mPlayer.GetCurserX(),mPlayer.GetCurserY()));
+		JVector2 new_cam2 = JVector2(JVector2(mPlayer.GetCurserX(),mPlayer.GetCurserY()) - l_d);
+		mRen->GetCamera()->UpdateAbsolute(new_cam2.x,new_cam2.y);
+	}
+	
+	if(mInput->GetKeyDownRelease(SDLK_BACKSPACE))
+	{
+		new_cam.Zero();
+		mRen->GetCamera()->UpdateAbsolute(new_cam.x,new_cam.y);
+		return;
+	}
 	if(new_cam.x != 0 || new_cam.y != 0)
 		mRen->GetCamera()->UpdateRelative(new_cam.x,new_cam.y);
 }
@@ -151,7 +165,8 @@ void cEngine::Render()
 	{
 		JVector2 cam = mRen->GetCamera()->GetPos();
 
-		//mRen->RenderTexture(mTexture,0,0,NULL);
+		//mRen->RenderTexture(mTexture,0,0,NULL,SCREEN_SPACE);
+		
 		mArena->Draw();
 
 		SDL_Color mouseColour = { 0,0,0,255 };
