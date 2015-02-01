@@ -1,19 +1,23 @@
+/*
+jonathan nesbitt
+01/02/15
+cArena class
+*/
+
 #pragma once
 
 #include <SDL.h>
-
 #include <map>
 #include <stack>
+#include "tinyxml2.h"
 
 #include "cCamera.h"
 #include "cRenderer.h"
-
 #include "cMaths.h"
 #include "cLogger.h"
 
 #include "cCore.h"
 
-#include "tinyxml2.h"
 
 using namespace tinyxml2;
 
@@ -23,14 +27,12 @@ private:
 	static const unsigned int NUM_TILES = 2;
 	static const unsigned int GRID_SIZE = 32;
 
-	float x,y;
+	int mArenaWidth, mArenaHeight, mArenaWidthProdGrid, mArenaHeightProdGrid;
 	string mArenaTiles[GRID_SIZE]; //TODO: grid size should be set in this class
 	SDL_Texture* mTiles[NUM_TILES];
 	cRenderer* mRen;
 	cLogger* mLog;
 	cCore* mCore;
-
-	bool UnloadBitmaps();
 
 	//Breadth First Search Variables
 	vector<JVector2> mOpenList;
@@ -42,24 +44,29 @@ private:
 	JVector2 mEnemyTargetPos;
 	JVector2 mEnemyExitPos;
 
+	bool LoadArenaData(const char* _filename);
 public:
-	cArena(float _x, float _y);
+	cArena();
 	~cArena();
 
 	bool Init();
 	bool CleanUp();
 
-	bool LoadArenaData(const char* _filename);
-	const char* GetTyleType(JVector2 _pos);
 	void Update();
 	void Draw();
-	stack<pair<int,int>> BreadthFirst(const pair<int,int> _start, const pair<int,int> _target);
+
+	stack<pair<int,int>> BreadthFirst(const pair<int,int> _start, const pair<int,int> _target);	
 	void GraphNeighbours(pair<int,int> _u);
-	bool CheckBounds(JVector2 _pos);
-	bool CheckBounds(pair<int,int> _u);
-	
-	inline JVector2 GetPos() const { return JVector2(x,y); }
-	void SetPos(float _x, float _y);
+
+	void CheckBounds(float* _x, float* _y);
+	bool CheckBounds(pair<int,int> _u) const;
+
+	inline int GetGridSize() const { return GRID_SIZE; }
+	//arena width * grid size
+	inline int GetArenaWidth() const { return mArenaWidthProdGrid; }
+	//arena height * grid size
+	inline int GetArenaHeight() const { return mArenaHeightProdGrid; }
+	const char* GetTileType(JVector2 _pos);
 	cCore* GetCore() { return mCore; }
 	const JVector2& const GetEnemyStartPos() const { return mEnemyStartPos; }
 	const JVector2& const GetEnemyTargetPos() const { return mEnemyTargetPos; }

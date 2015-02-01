@@ -1,9 +1,8 @@
 #include "cEntity.h"
 
-cEntity::cEntity(Uint32 _x, Uint32 _y, Uint32 _grid_size)
+cEntity::cEntity(Uint32 _x, Uint32 _y)
 {
 	SetPos(_x,_y);
-	mGridSize = _grid_size;
 	mLevel = 0;
 	mLives = 10;
 	mBitmap = NULL;

@@ -1,12 +1,11 @@
 #pragma once
 
 #include <SDL.h>
+#include "tinyxml2.h"
 
 #include "cMaths.h"
 
 #include "cEntity.h"
-
-#include "tinyxml2.h"
 
 using namespace tinyxml2;
 
@@ -15,7 +14,7 @@ class cCore : public cEntity
 private:
 	int mMaxLives;
 public:
-	cCore(Uint32 _x, Uint32 _y,Uint32 _grid_size);
+	cCore(Uint32 _x, Uint32 _y);
 	~cCore();
 
 	bool virtual Init(SDL_Texture* _bitmap);

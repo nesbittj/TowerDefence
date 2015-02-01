@@ -13,7 +13,6 @@ protected:
 	float mLives;
 
 	SDL_Texture* mBitmap;
-	Uint32 mGridSize;
 	cRenderer* mRen;
 	cLogger* mLog;
 	cInput* mInput;
@@ -30,7 +29,7 @@ public:
 	void SetLevel(Uint32 l) { mLevel = l; }
 	void SetBitmap(SDL_Texture* _bitmap) { mBitmap = _bitmap; }
 	
-	cEntity(Uint32 _x, Uint32 _y,Uint32 _grid_size);
+	cEntity(Uint32 _x, Uint32 _y);
 	~cEntity();
 	
 	bool virtual Init(SDL_Texture* _bitmap);

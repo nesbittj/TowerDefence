@@ -1,5 +1,6 @@
 #pragma once
 #include "cEntity.h"
+#include "cArena.h"
 #include "stack"
 
 struct EnemyData
@@ -13,21 +14,21 @@ struct EnemyData
 class cEnemy : public cEntity
 {
 public:
-	EnemyData* mEnemyData;
-	stack<pair<int,int>> mEnemyPath;
 
-	cEnemy(Uint32 _x, Uint32 _y, Uint32 _grid_size);
+	cEnemy(Uint32 _x, Uint32 _y);
 	~cEnemy();
 
-	bool Init(SDL_Texture* _bitmap, EnemyData* _data, stack<pair<int,int>> _enemy_path);
+	bool Init(SDL_Texture* _bitmap, cArena* _arena, EnemyData* _data, stack<pair<int,int>> _enemy_path);
 	bool CleanUp();
 
 	void Update();
 	void Draw();
 	void Damage(float _value);
-	JVector2 PathFind();
 
 private:
 	JVector3 mTargetPos;
+	cArena* mArena;
+	EnemyData* mEnemyData;
+	stack<pair<int,int>> mEnemyPath;
 };
 

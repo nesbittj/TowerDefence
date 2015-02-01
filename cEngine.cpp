@@ -28,6 +28,8 @@ int cEngine::Init()
 	mInput = cInput::Instance();
 	mInput->SetEventPtr(&mEvent);
 
+	LoadConfigFromFile("assets/config.xml");
+
 	mFPSTimer = cTimer();
 	mFPSTimer.start();
 	mFPSCap = cTimer();
@@ -54,21 +56,21 @@ int cEngine::Init()
 
 	mRen = cRenderer::Instance();
 	if(mRen->Init(mWindow)) return -1;
-	SDL_Rect cam = {0,0,SCREEN_WIDTH,SCREEN_HEIGHT};
-	mRen->SetCamera(new cCamera(0,0,SCREEN_WIDTH,SCREEN_HEIGHT,LEVEL_WIDTH,LEVEL_HIEGHT));
 
+	mArena = new cArena();
+	mArena->Init();
+
+	mRen->SetCamera(new cCamera(0,0,SCREEN_WIDTH,SCREEN_HEIGHT));
+
+	//TODO: remember to remove this debug texture
 	mTexture = mRen->LoadBitmap("assets/arena/grid_bg.bmp");
 
 	mPlayer = cPlayer(10,0,LEVEL_GRID_SIZE,mRen->mCamera);
 	mTowerController = cTowerController();
-	mTowerController.Init(LEVEL_GRID_SIZE,&mPlayer);
-	// TODO: pass level grid size by pointer
-
-	mArena = new cArena(0,0);
-	mArena->Init();
+	mTowerController.Init(mArena,&mPlayer);
 
 	mEnemyController = cEnemyController();
-	mEnemyController.Init(LEVEL_GRID_SIZE,mArena);
+	mEnemyController.Init(mArena);
 
 	return 0;
 }
@@ -99,6 +101,36 @@ int cEngine::CleanUp()
 	mLog = NULL;
 
 	return 0;
+}
+
+/*
+loads config from xml file.
+returns -1 on load file error.
+returns 0 on success.
+*/
+int cEngine::LoadConfigFromFile(const char* _filename)
+{
+	int l_result = 0;
+	XMLDocument doc;
+	if(!doc.LoadFile(_filename))
+	{
+		XMLElement* l_elem = doc.FirstChildElement("config")->FirstChildElement("display");
+		l_elem->QueryIntAttribute("width",&SCREEN_WIDTH);
+		l_elem->QueryIntAttribute("height",&SCREEN_HEIGHT);
+		l_elem->QueryIntAttribute("fps",&SCREEN_FPS);
+	}
+	else
+	{
+		SCREEN_WIDTH = 640;
+		SCREEN_HEIGHT = 480;
+		SCREEN_FPS = 60;
+		mLog->LogError("cEngine::LoadConfig failed");
+		l_result = -1;
+	}
+	SCREEN_TICKS_PER_FRAME = 1000 / SCREEN_FPS;
+	UPDATE_FREQ = SCREEN_FPS * 2;
+	UPDATE_TICKS_PER_FRAME = 1000 / UPDATE_FREQ;
+	return l_result;
 }
 
 /*
@@ -135,13 +167,25 @@ void cEngine::UpdateCamera()
 	if(mInput->GetKeyDown(SDLK_a)) new_cam.x += new_cam.z;
 	if(mInput->GetKeyDown(SDLK_d)) new_cam.x -= new_cam.z;
 	
+	static JVector2 l_mouse_to_cam = JVector2();
 	if(mInput->GetMouseButtonDown(CENTRE_MOUSE_BUTTON))
 	{
-		JVector2 l_d = JVector2(mRen->mCamera->GetPos()
-			- JVector2(mPlayer.GetCurserX(),mPlayer.GetCurserY()));
-		JVector2 new_cam2 = JVector2(JVector2(mPlayer.GetCurserX(),mPlayer.GetCurserY()) - l_d);
-		mRen->mCamera->UpdateAbsolute(new_cam2.x,new_cam2.y);
+		if(l_mouse_to_cam == JVector2())
+		{
+			JVector2 l_d1 = JVector2(mRen->mCamera->GetPos()
+			- JVector2(mInput->GetMouseX(),mInput->GetMouseY()));
+
+			l_mouse_to_cam = l_d1;
+		}
+
+		JVector2 l_d2 = JVector2(mRen->mCamera->GetPos()
+			- JVector2(mInput->GetMouseX(),mInput->GetMouseY()));
+		new_cam.x = l_mouse_to_cam.x - l_d2.x;
+		new_cam.y = l_mouse_to_cam.y - l_d2.y;
+		mRen->mCamera->UpdateRelative(new_cam.x,new_cam.y);
 	}
+	else
+		l_mouse_to_cam.SetZero();
 	
 	if(mInput->GetKeyDownRelease(SDLK_BACKSPACE))
 	{
@@ -163,8 +207,7 @@ void cEngine::Render()
 
 	if(mRender)
 	{
-		JVector2 cam = mRen->mCamera->GetPos();
-
+		//JVector2 cam = mRen->mCamera->GetPos();
 		//mRen->RenderTexture(mTexture,0,0,NULL,SCREEN_SPACE);
 		
 		mArena->Draw();

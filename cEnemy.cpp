@@ -1,7 +1,7 @@
 #include "cEnemy.h"
 
 
-cEnemy::cEnemy(Uint32 _x, Uint32 _y, Uint32 _grid_size) : cEntity(_x,_y,_grid_size)
+cEnemy::cEnemy(Uint32 _x, Uint32 _y) : cEntity(_x,_y)
 {
 	mLives = 10;
 	x = _x; y = _y;
@@ -11,9 +11,10 @@ cEnemy::~cEnemy()
 {
 }
 
-bool cEnemy::Init(SDL_Texture* _bitmap, EnemyData* _data, stack<pair<int,int>> _enemy_path)
+bool cEnemy::Init(SDL_Texture* _bitmap, cArena* _arena, EnemyData* _data, stack<pair<int,int>> _enemy_path)
 {
 	if(!cEntity::Init(_bitmap)) return false;
+	mArena = _arena;
 	mEnemyData = _data;
 	mEnemyPath = _enemy_path;
 	mLives = _data->mStartingLives;
@@ -22,26 +23,25 @@ bool cEnemy::Init(SDL_Texture* _bitmap, EnemyData* _data, stack<pair<int,int>> _
 
 bool cEnemy::CleanUp()
 {
+	mEnemyData = NULL;
+	mArena = NULL;
 	if(!cEntity::CleanUp()) return false;
 	return true;
 }
 
 void cEnemy::Update()
 {
-	JVector2 l_0 = JVector2(x,y);
-	JVector2 l_t;
 	if(!mEnemyPath.empty())
 	{
+		JVector2 l_0 = JVector2(x,y);
+		JVector2 l_t;
 		l_t = JVector2(mEnemyPath.top().first,mEnemyPath.top().second);
-		l_t *= mGridSize;
+		l_t *= mArena->GetGridSize();
 		if(l_0 == l_t) mEnemyPath.pop();
 		JVector2 l_r = JVector2::Lerp(l_0,l_t,1);
 		x += l_r.x; y += l_r.y;
-		//mRen->GetCamera()->CheckCameraBounds(x,y);
+		mArena->CheckBounds(&x,&y);
 	}
-
-	if(x > mRen->mCamera->level_w || mLives < 0)
-		mLives = 0;
 }
 
 void cEnemy::Draw()
@@ -57,26 +57,4 @@ void cEnemy::Damage(float _value)
 {
 	mLives -= _value;
 	if(mLives < 0) mLives = 0;
-}
-
-JVector2 cEnemy::PathFind()
-{	
-	/*
-	JVector2 l_current_pos(x,y);
-	int current_index = cArena::Contains(mEnemyPath,l_current_pos);
-	printf("%i\n",current_index);
-	if(current_index < 0)
-	{
-		JVector2 not_found(-1,-1);
-		return not_found;
-	}
-
-	//if(current_index+1 >= mEnemyPath->GetSize()) return mEnemyPath)[0];
-	return (*mEnemyPath)[current_index+1];
-	*/
-
-	JVector2 l_current_pos(x,y);
-
-
-	return JVector2();
 }

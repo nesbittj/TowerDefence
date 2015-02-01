@@ -10,12 +10,12 @@ cTowerController::~cTowerController()
 {	
 }
 
-bool cTowerController::Init(const Uint32 _grid_size, const cPlayer* _player)
+bool cTowerController::Init(cArena* _arena, const cPlayer* _player)
 {
 	mInput = cInput::Instance();
 	mRen = cRenderer::Instance();
 	mLog = cLogger::Instance();
-	mGridSize = _grid_size;
+	mArena = _arena;
 	mPlayer = _player;
 	if(!LoadTowersData()) return false;
 	for(int i = 0; i < mMaxTowersInUse; i++) mTowersInUse[i] = NULL;
@@ -107,7 +107,8 @@ void cTowerController::AddTower(Uint32 _x, Uint32 _y, Uint32 _tower)
 				&& mTowersInUse[j]->GetX() == l_world_pos.x && mTowersInUse[j]->GetY() == l_world_pos.y) 
 					return;
 			}
-			mTowersInUse[i] = new cTower(l_world_pos.x,l_world_pos.y,mGridSize);
+			//TODO: check bounds  of l_world_pos before creatingnew tower
+			mTowersInUse[i] = new cTower(l_world_pos.x,l_world_pos.y);
 			mTowersInUse[i]->Init(mTowersData[_tower].mBitmap,&mTowersData[_tower]);
 			return;
 		}
@@ -134,7 +135,6 @@ void cTowerController::RemoveTower(Uint32 _x, Uint32 _y)
 
 bool cTowerController::LoadTowersData()
 {
-	int l_game_speed = 120;
 	for(int i = 0; i < mMaxTowerTypes; i++)
 		mTowersData[i].mBitmap = NULL;
 
@@ -153,8 +153,6 @@ bool cTowerController::LoadTowersData()
 			l_tower->QueryIntAttribute("range",&mTowersData[i].mRange);
 			l_tower->QueryIntAttribute("firefreq",&mTowersData[i].mFireFreq);
 			l_tower->QueryIntAttribute("firedur",&mTowersData[i].mFireDuration);
-			//mTowersData[i].mFireFreq *= l_game_speed;
-			//mTowersData[i].mFireDuration *= l_game_speed;
 			i++;
 		}
 	}

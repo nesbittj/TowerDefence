@@ -2,16 +2,18 @@
 
 #include <SDL.h>
 #include "cMaths.h"
+//#include "cArena.h"
 
 class cCamera
 {
-public:
+private:
 	float x, y;
 	int screen_w, screen_h;
-	int level_w, level_h;
 	float mMoveSpeed;
+	//cArena* mArena;
 
-	cCamera(float _x, float _y, int _screen_w, int _screen_h, int _level_w, int _level_h);
+public:
+	cCamera(float _x, float _y, int _screen_w, int _screen_h);//, cArena* _arena);
 
 	void UpdateRelative(float _x, float _y);
 	void UpdateAbsolute(float _x, float _y);

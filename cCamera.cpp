@@ -1,10 +1,10 @@
 #include "cCamera.h"
 
-cCamera::cCamera(float _x, float _y, int _screen_w, int _screen_h, int _level_w, int _level_h)
+cCamera::cCamera(float _x, float _y, int _screen_w, int _screen_h)//, cArena* _arena)
 {
 	x = _x; y = _y;
 	screen_w = _screen_w; screen_h = _screen_h;
-	level_w = _level_w; level_h = _level_h;
+	//mArena = _arena;
 	mMoveSpeed = 1.0;//0.7;
 }
 
@@ -33,23 +33,14 @@ void cCamera::UpdateAbsolute(float _x, float _y)
 
 /*
 restrics camera to level height and width
+TODO: consider: does cCamera need a pointer to cArena just for camera bounds?
 */
 void cCamera::CheckCameraBounds(float _oldX, float _oldY)
 {
 	if(x > screen_w * 0.5) x = screen_w * 0.5;
 	if(y > screen_h * 0.5) y = screen_h * 0.5;
-	if(x < screen_w - level_w) x = screen_w - level_w;
-	if(y < screen_h - level_h) y = screen_h - level_h;
-}
-
-/*
-restrics x,y to level height and width
-*/
-//TODO: consnider moving to cArena
-void cCamera::CheckLevelBounds(float _oldX, float _oldY)
-{
-	if(_oldX < 0.f) _oldX = 0.f;
-	if(_oldY < 0.f) _oldY = 0.f;
-	if(_oldX > level_w) _oldX = level_w;
-	if(_oldY > level_h) _oldY = level_h;
+	//if(x < screen_w - mArena->GetArenaWidth()) x = screen_w - mArena->GetArenaWidth();
+	//if(y < screen_h - mArena->GetArenaHeight()) y = screen_h - mArena->GetArenaHeight();
+	if(x < screen_w - 1280) x = screen_w - 1280;
+	if(y < screen_h - 720) y = screen_h - 720;
 }

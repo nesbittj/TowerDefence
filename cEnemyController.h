@@ -28,7 +28,6 @@ private:
 	
 	cTimer mEnemySpawnTimer;
 	string mEnemyFileLocation;
-	Uint32 mGridSize;
 	JVector2 mEnemyStartPos;
 	stack<pair<int,int>> mEnemyPath;
 
@@ -42,7 +41,7 @@ public:
 	cEnemyController();
 	~cEnemyController();
 
-	bool Init(const Uint32 _grid_size, cArena* _arena);
+	bool Init(cArena* _arena);
 	bool CleanUp();
 
 	void Update();

@@ -9,7 +9,7 @@ cEnemyController::~cEnemyController()
 {	
 }
 
-bool cEnemyController::Init(const Uint32 _grid_size, cArena* _arena)
+bool cEnemyController::Init(cArena* _arena)
 {
 	mInput = cInput::Instance();
 	mRen = cRenderer::Instance();
@@ -19,7 +19,7 @@ bool cEnemyController::Init(const Uint32 _grid_size, cArena* _arena)
 	const JVector2& const l_enemy_exit_pos = mArena->GetEnemyExitPos();
 	mEnemyPath = mArena->BreadthFirst(
 		make_pair(mEnemyStartPos.x,mEnemyStartPos.y),make_pair(l_enemy_exit_pos.x,l_enemy_exit_pos.y));
-	mGridSize = _grid_size;
+	mEnemyStartPos *= mArena->GetGridSize();
 	if(!LoadEnemyData()) return false;
 	for(int i = 0; i < mMaxEnemiesAlive; i++) mEnemiesAlive[i] = NULL;
 
@@ -59,7 +59,7 @@ void cEnemyController::Update()
 	{
 		//if(mEnemiesAlive[0] == NULL) //create only one enemy
 		{
-			AddEnemy(mEnemyStartPos.x*mGridSize,mEnemyStartPos.y*mGridSize, 0);
+			AddEnemy(mEnemyStartPos.x,mEnemyStartPos.y, 0);
 			mEnemySpawnTimer.start();
 		}
 	}
@@ -110,8 +110,8 @@ void cEnemyController::AddEnemy(Uint32 _x, Uint32 _y, Uint32 _enemy_type)
 	{
 		if(mEnemiesAlive[i] == NULL)
 		{
-			mEnemiesAlive[i] = new cEnemy(_x,_y,mGridSize);
-			mEnemiesAlive[i]->Init(mEnemiesData[_enemy_type].mBitmap,&mEnemiesData[_enemy_type],mEnemyPath);
+			mEnemiesAlive[i] = new cEnemy(_x,_y);
+			mEnemiesAlive[i]->Init(mEnemiesData[_enemy_type].mBitmap,mArena,&mEnemiesData[_enemy_type],mEnemyPath);
 			return;
 		}
 	}

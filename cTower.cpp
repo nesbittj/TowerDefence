@@ -1,7 +1,7 @@
 #include "cTower.h"
 
 
-cTower::cTower(Uint32 _x, Uint32 _y, Uint32 _grid_size) : cEntity(_x,_y,_grid_size)
+cTower::cTower(Uint32 _x, Uint32 _y) : cEntity(_x,_y)
 {
 	mFiring = false;
 	mFiringVerts.push_back(JVector3());

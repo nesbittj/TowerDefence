@@ -27,7 +27,7 @@ private:
 	void Init(TowerData* _data);
 
 public:
-	cTower(Uint32 _x, Uint32 _y, Uint32 _grid_size);
+	cTower(Uint32 _x, Uint32 _y);
 	~cTower();
 
 	bool Init(SDL_Texture* _bitmap, TowerData* _data);

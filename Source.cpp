@@ -6,11 +6,8 @@ source file containing main()
 game loop runs until quit value is set to true
 */
 
-#include <iostream>
 #include <SDL.h>
-#include <conio.h>
 #include "cEngine.h"
-#include "cLogger.h"
 
 using namespace std;
 

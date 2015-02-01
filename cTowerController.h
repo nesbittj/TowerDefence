@@ -8,6 +8,7 @@
 #include "cTower.h"
 #include "cLogger.h"
 #include "cEnemy.h"
+#include "cArena.h"
 
 #include "tinyxml2.h"
 
@@ -23,11 +24,11 @@ private:
 
 	string mTowersFileLocation;
 	Uint32 mTowerSelected;
-	Uint32 mGridSize;
 
 	cInput* mInput;
 	cRenderer* mRen;
 	cLogger* mLog;
+	cArena* mArena;
 	const cPlayer* mPlayer;
 
 public:
@@ -38,7 +39,7 @@ public:
 	cTowerController();
 	~cTowerController();
 
-	bool Init(const Uint32 _grid_size, const cPlayer* _player);
+	bool Init(cArena* _arena, const cPlayer* _player);
 	bool CleanUp();
 
 	void Update(cEnemy** const _enemies_hit, int size_of_array);
