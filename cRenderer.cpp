@@ -43,8 +43,10 @@ int cRenderer::Init(SDL_Window* window)
 		return -1;
 	}
 
-	//set default render colour
-	SDL_SetRenderDrawColor(mRenderer, 102,102,102, 255);
+	//set defalt render colours
+	mColourDef.r = mColourDef.g = mColourDef.b = 102; mColourDef.a = 255;
+	mColourBlack.r = mColourBlack.g = mColourBlack.b = 0; mColourBlack.a = 255;
+	SetDrawColour(mColourDef,mRenderer);
 
 	return 0;
 }
@@ -68,51 +70,83 @@ int cRenderer::CleanUp()
 }
 
 /*
+sets draw color _col to renderer _ren.
+leave _ren as NULL for default/primary renderer.
+*/
+void cRenderer::SetDrawColour(SDL_Color _col, SDL_Renderer* _ren)
+{
+	if(!_ren) _ren = mRenderer;
+	if(SDL_SetRenderDrawColor(_ren,_col.r,_col.g,_col.b,_col.a) != 0)
+		mLog->LogSDLError("cRenderer::SetDrawColour()");
+}
+
+/*
+uses cRenderer::SetDrawColour(SDL_Color, SDL_Renderer*)
+*/
+void cRenderer::SetDrawColour(Uint8 _r, Uint8 _g, Uint8 _b, Uint8 _a, SDL_Renderer* _ren)
+{
+	SDL_Color l_temp = { _r,_g,_b,_a };
+	SetDrawColour(l_temp,_ren);
+}
+
+/*
+gets current draw colour from SDL_renderer* _ren.
+set _Ren to NULL for default/primary renderer.
+*/
+SDL_Color cRenderer::GetDrawColour(SDL_Renderer* _ren) const
+{
+	if(!_ren) _ren = mRenderer;
+	Uint8 l_col[4];
+	if(SDL_GetRenderDrawColor(_ren,&l_col[0],&l_col[1],&l_col[2],&l_col[3]) != 0)
+		mLog->LogSDLError("cRenderer::GetDrawColour()");
+	SDL_Color l_result = { l_col[0],l_col[1],l_col[2],l_col[3] };
+	return l_result;
+}
+
+/*
 draws a rectangle at position x,y
 with width and height w,h
 and colour col
 RenderDrawColor is set back to what it was before operation
 */
-void cRenderer::DrawRect(int x, int y, int w, int h, SDL_Color col, int _space)
+void cRenderer::DrawRect(int _x, int _y, int _w, int _h, SDL_Color _col, SDL_Renderer* _ren, int _space)
 {
-	Uint8 prevColRect[4];
-	SDL_GetRenderDrawColor(mRenderer,
-		&prevColRect[0],&prevColRect[1],&prevColRect[2],&prevColRect[3]);
+	if(!_ren) _ren = mRenderer;
+	SDL_Color l_prevCol = GetDrawColour();
+	SetDrawColour(_col);
 
-	SDL_SetRenderDrawColor(mRenderer,col.r,col.g,col.b,col.a);
 	JVector2 camPos = mCamera->GetPos();
 	if(_space == WORLD_SPACE/* && camPos.w > 0*/)
 	{
-		x += camPos.x;
-		y += camPos.y;
+		_x += camPos.x;
+		_y += camPos.y;
 	}
-	SDL_Rect aRect = {x,y,w,h};
-	if(SDL_RenderDrawRect(mRenderer,&aRect) != 0)
+	SDL_Rect aRect = {_x,_y,_w,_h};
+	if(SDL_RenderDrawRect(_ren,&aRect) != 0)
 		mLog->LogSDLError("cRenderer::DrawRect()");
 
-	if(SDL_SetRenderDrawColor(mRenderer,prevColRect[0],prevColRect[1],prevColRect[2],prevColRect[3]) != 0)
-		mLog->LogSDLError("cRenderer::DrawRect()");
+	SetDrawColour(l_prevCol);
 }
 
 /*
 renders a texture at position x,y
 renderer can be set to NULL then default renderer will be used
 */
-void cRenderer::RenderTexture(SDL_Texture* tex, int x, int y, SDL_Renderer* ren, int _space)
+void cRenderer::RenderTexture(SDL_Texture* _tex, int _x, int _y, SDL_Renderer* _ren, int _space)
 {
-	if(!ren) ren = mRenderer;
+	if(!_ren) _ren = mRenderer;
 	SDL_Rect local_rect;
 	JVector2 camPos = mCamera->GetPos();
 	if(_space == WORLD_SPACE/* && camPos.w > 0*/)
 	{
-		x += camPos.x;
-		y += camPos.y;
+		_x += camPos.x;
+		_y += camPos.y;
 	}
-	local_rect.x = x;
-	local_rect.y = y;
-	if(SDL_QueryTexture(tex,NULL,NULL,&local_rect.w,&local_rect.h) != 0)
+	local_rect.x = _x;
+	local_rect.y = _y;
+	if(SDL_QueryTexture(_tex,NULL,NULL,&local_rect.w,&local_rect.h) != 0)
 		mLog->LogSDLError("cRenderer::RenderTexture() QueryTexture() Error");
-	if(SDL_RenderCopy(ren,tex,NULL,&local_rect) != 0)		
+	if(SDL_RenderCopy(_ren,_tex,NULL,&local_rect) != 0)		
 		mLog->LogSDLError("cRenderer::RenderTexture() RenderCopy() Error");
 }
 
@@ -211,6 +245,8 @@ void cRenderer::RenderVerts(int x, int y, const vector<JVector3>& verts, bool _2
 {
 	int num_verts = verts.size();
 	vector<SDL_Point> points;
+	SDL_Color l_prev_col = GetDrawColour();
+
 	JVector2 camPos = mCamera->GetPos();
 	if(_space == WORLD_SPACE)
 	{
@@ -234,8 +270,9 @@ void cRenderer::RenderVerts(int x, int y, const vector<JVector3>& verts, bool _2
 	points.push_back(SDL_Point());
 	points.back() = points[0];
 
-	SDL_SetRenderDrawColor(mRenderer,0,0,0,255);
+	SetDrawColour(mColourBlack);
 	SDL_RenderDrawLines(mRenderer,&points.front(),num_verts + 1);
+	SetDrawColour(mColourDef);
 }
 
 /*
@@ -243,10 +280,11 @@ presents / flips renderer (back buffer) to display
 then clears renderer to RenderDrawColor
 renderer can be set to NULL then default renderer will be used
 */
-void cRenderer::Present(SDL_Renderer* ren) const
+void cRenderer::Present(SDL_Renderer* ren)
 {
 	if(!ren) ren = mRenderer;
 	SDL_RenderPresent(ren);
+	SetDrawColour(mColourDef,ren);
 	SDL_RenderClear(ren);
 }
 
