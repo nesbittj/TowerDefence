@@ -40,7 +40,7 @@ void cEnemy::Update()
 		//mRen->GetCamera()->CheckCameraBounds(x,y);
 	}
 
-	if(x > mRen->GetCamera()->level_w || mLives < 0)
+	if(x > mRen->mCamera->level_w || mLives < 0)
 		mLives = 0;
 }
 

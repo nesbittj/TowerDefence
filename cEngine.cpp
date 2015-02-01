@@ -59,7 +59,7 @@ int cEngine::Init()
 
 	mTexture = mRen->LoadBitmap("assets/arena/grid_bg.bmp");
 
-	mPlayer = cPlayer(10,0,LEVEL_GRID_SIZE,mRen->GetCamera());
+	mPlayer = cPlayer(10,0,LEVEL_GRID_SIZE,mRen->mCamera);
 	mTowerController = cTowerController();
 	mTowerController.Init(LEVEL_GRID_SIZE,&mPlayer);
 	// TODO: pass level grid size by pointer
@@ -129,7 +129,7 @@ moves camera by user input
 */
 void cEngine::UpdateCamera()
 {
-	JVector3 new_cam(0,0,mRen->GetCamera()->GetMoveSpeed());
+	JVector3 new_cam(0,0,mRen->mCamera->GetMoveSpeed());
 	if(mInput->GetKeyDown(SDLK_w)) new_cam.y += new_cam.z;
 	if(mInput->GetKeyDown(SDLK_s)) new_cam.y -= new_cam.z;
 	if(mInput->GetKeyDown(SDLK_a)) new_cam.x += new_cam.z;
@@ -137,20 +137,20 @@ void cEngine::UpdateCamera()
 	
 	if(mInput->GetMouseButtonDown(CENTRE_MOUSE_BUTTON))
 	{
-		JVector2 l_d = JVector2(mRen->GetCamera()->GetPos()
+		JVector2 l_d = JVector2(mRen->mCamera->GetPos()
 			- JVector2(mPlayer.GetCurserX(),mPlayer.GetCurserY()));
 		JVector2 new_cam2 = JVector2(JVector2(mPlayer.GetCurserX(),mPlayer.GetCurserY()) - l_d);
-		mRen->GetCamera()->UpdateAbsolute(new_cam2.x,new_cam2.y);
+		mRen->mCamera->UpdateAbsolute(new_cam2.x,new_cam2.y);
 	}
 	
 	if(mInput->GetKeyDownRelease(SDLK_BACKSPACE))
 	{
 		new_cam.Zero();
-		mRen->GetCamera()->UpdateAbsolute(new_cam.x,new_cam.y);
+		mRen->mCamera->UpdateAbsolute(new_cam.x,new_cam.y);
 		return;
 	}
 	if(new_cam.x != 0 || new_cam.y != 0)
-		mRen->GetCamera()->UpdateRelative(new_cam.x,new_cam.y);
+		mRen->mCamera->UpdateRelative(new_cam.x,new_cam.y);
 }
 
 
@@ -163,14 +163,14 @@ void cEngine::Render()
 
 	if(mRender)
 	{
-		JVector2 cam = mRen->GetCamera()->GetPos();
+		JVector2 cam = mRen->mCamera->GetPos();
 
 		//mRen->RenderTexture(mTexture,0,0,NULL,SCREEN_SPACE);
 		
 		mArena->Draw();
 
 		SDL_Color mouseColour = { 0,0,0,255 };
-		mRen->DrawRect(mPlayer.GetCurserX(),mPlayer.GetCurserY(),30,30,mouseColour,SCREEN_SPACE);
+		mRen->DrawRect(mPlayer.GetCurserX(),mPlayer.GetCurserY(),30,30,mouseColour,0,SCREEN_SPACE);
 		mRen->RenderText(mAvgFPS,34,50,0,mouseColour,NULL,SCREEN_SPACE);
 		mRen->RenderText(mAvgUpdates,34,80,0,mouseColour,NULL,SCREEN_SPACE);
 
