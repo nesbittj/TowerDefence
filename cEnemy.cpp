@@ -37,9 +37,8 @@ void cEnemy::Update()
 		if(l_0 == l_t) 
 			mEnemyPath.pop();
 		JVector2 l_r = JVector2::Lerp(l_0,l_t,1);
-		printf("lerp x: %f, y: %f\n\n", l_r.x,l_r.y);
 		x += l_r.x; y += l_r.y;
-		//mRen->GetCamera()->CheckCameraBounds(x,y);
+		mRen->GetCamera()->CheckCameraBounds(x,y);
 	}
 
 	if(x > mRen->GetCamera()->level_w || mLives < 0)

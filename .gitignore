@@ -5,6 +5,7 @@
 *.dll
 *.xlsx
 *.ttf
+*.url
 
 #################
 ## Eclipse
