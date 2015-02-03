@@ -1,11 +1,68 @@
 #include "cCamera.h"
 
-cCamera::cCamera(float _x, float _y, int _screen_w, int _screen_h)//, cArena* _arena)
+/*
+construct camera.
+_x,_y startposition.
+*/
+cCamera::cCamera(float _x, float _y)
 {
 	x = _x; y = _y;
-	screen_w = _screen_w; screen_h = _screen_h;
-	//mArena = _arena;
-	mMoveSpeed = 1.0;//0.7;
+	mMoveSpeed = 1.0;
+}
+
+int cCamera::Init(SDL_Event* _event, cInput* _input,
+		int _screen_w, int _screen_h, int _arena_w, int _arena_h)
+{
+	mEvent = _event;
+	mInput = _input;
+	screen_w_bound = _screen_w * 0.5; screen_h_bound = _screen_h * 0.5;
+	mArena_w = _arena_w; mArena_h = _arena_h;
+	return 0;
+}
+
+void cCamera::CleanUp()
+{
+	mEvent = NULL;
+	mInput = NULL;
+}
+
+void cCamera::Update()
+{
+	JVector2 new_cam(0,0);
+
+	//calc new cam from wasd key presses
+	if(mInput->GetKeyDown(SDLK_w)) new_cam.y += mMoveSpeed;
+	if(mInput->GetKeyDown(SDLK_s)) new_cam.y -= mMoveSpeed;
+	if(mInput->GetKeyDown(SDLK_a)) new_cam.x += mMoveSpeed;
+	if(mInput->GetKeyDown(SDLK_d)) new_cam.x -= mMoveSpeed;
+	
+	//calc new cam with middle mouse + mouse move
+	static JVector2 l_mouse_to_cam = JVector2();
+	if(mInput->GetMouseButtonDown(CENTRE_MOUSE_BUTTON))
+	{
+		if(l_mouse_to_cam == JVector2())
+		{
+			l_mouse_to_cam = JVector2(GetPos() - JVector2(mInput->GetMouseX(),mInput->GetMouseY()));;
+		}
+
+		JVector2 l_d = JVector2(GetPos() - JVector2(mInput->GetMouseX(),mInput->GetMouseY()));
+		new_cam.x = l_mouse_to_cam.x - l_d.x;
+		new_cam.y = l_mouse_to_cam.y - l_d.y;
+	}
+	else
+		l_mouse_to_cam.SetZero();
+	
+	//reset cam position to zero with backspace
+	if(mInput->GetKeyDownRelease(SDLK_BACKSPACE))
+	{
+		new_cam.SetZero();
+		UpdateAbsolute(new_cam.x,new_cam.y);
+		return;
+	}
+
+	//update cam with new pos
+	if(new_cam.x != 0 || new_cam.y != 0)
+		UpdateRelative(new_cam.x,new_cam.y);
 }
 
 /*
@@ -33,14 +90,16 @@ void cCamera::UpdateAbsolute(float _x, float _y)
 
 /*
 restrics camera to level height and width
-TODO: consider: does cCamera need a pointer to cArena just for camera bounds?
 */
 void cCamera::CheckCameraBounds(float _oldX, float _oldY)
 {
-	if(x > screen_w * 0.5) x = screen_w * 0.5;
-	if(y > screen_h * 0.5) y = screen_h * 0.5;
-	//if(x < screen_w - mArena->GetArenaWidth()) x = screen_w - mArena->GetArenaWidth();
-	//if(y < screen_h - mArena->GetArenaHeight()) y = screen_h - mArena->GetArenaHeight();
-	if(x < screen_w - 1280) x = screen_w - 1280;
-	if(y < screen_h - 720) y = screen_h - 720;
+	if(x > screen_w_bound) x = screen_w_bound;
+	if(y > screen_h_bound) y = screen_h_bound;
+	if(x < screen_w_bound - mArena_w) x = screen_w_bound - mArena_w;
+	if(y < screen_h_bound - mArena_h) y = screen_h_bound - mArena_h;
+}
+
+void cCamera::SetArenaSize(int _arena_w, int _arena_h)
+{
+	mArena_w = _arena_h; mArena_h = _arena_h;
 }

@@ -143,19 +143,14 @@ bool cInput::GetMouseButtonReleased(int button)
 /*
 updates current key and button presses,
 also updates old key presses.
-called once per frame by engine->update
+called  by engine->UpdateEvents() while(SDL_PollEvent(mEvent) != 0)
 returns -1 is exit key is pressed.
 */
 int cInput::UpdateInputEvents()
 {
-	while(SDL_PollEvent(mEvent) != 0)
-	{
-		if(ProcessInputEvents() == -1) return -1;
-		if(GetKeyDownRelease(SDLK_ESCAPE)) return -1;
-		if(GetJoyButtonDownRelease(JOY_START)) return -1;	
-	}
-	UpdateOldKeys();
-
+	if(ProcessInputEvents() == -1) return -1;
+	if(GetKeyDownRelease(SDLK_ESCAPE)) return -1;
+	if(GetJoyButtonDownRelease(JOY_START)) return -1;
 	return 0;
 }
 

@@ -14,7 +14,7 @@ TTF font init error returns -2.
 TTF open font error returns -3.
 success returns 0.
 */
-int cRenderer::Init(SDL_Window* _window)
+int cRenderer::Init(SDL_Window* _window, SDL_Event* _event)
 {
 	mRenderer = NULL;
 	mFont = NULL;
@@ -23,6 +23,7 @@ int cRenderer::Init(SDL_Window* _window)
 	mCamera = NULL;
 
 	mLog = cLogger::Instance();
+	mEvent = _event;
 
 	mRenderer = SDL_CreateRenderer(_window, -1, SDL_RENDERER_ACCELERATED);
 	if(!mRenderer)
@@ -49,6 +50,8 @@ int cRenderer::Init(SDL_Window* _window)
 	mColourBlack.r = mColourBlack.g = mColourBlack.b = 0; mColourBlack.a = 255;
 	SetDrawColour(mColourDef,mRenderer);
 
+	mCamera = new cCamera(0,0);
+
 	return 0;
 }
 
@@ -57,6 +60,8 @@ success returns 0.
 */
 int cRenderer::CleanUp()
 {
+	if(mCamera) mCamera->CleanUp();
+	mCamera = NULL;
 	if(mFont) TTF_CloseFont(mFont);
 	mFont = NULL;
 	if(mFontSurface) SDL_FreeSurface(mFontSurface);
@@ -67,8 +72,87 @@ int cRenderer::CleanUp()
 	if(mRenderer) SDL_DestroyRenderer(mRenderer);
 	mRenderer = NULL;
 
-	mCamera = NULL;
+	mEvent = NULL;
 	mLog = NULL;
+
+	return 0;
+}
+
+void cRenderer::Update()
+{
+	mCamera->Update();
+}
+
+int cRenderer::UpdateEvents()
+{
+	if (mEvent->type == SDL_WINDOWEVENT)
+	{
+		switch (mEvent->window.event)
+		{
+			//TODO: handel window resize events
+		case SDL_WINDOWEVENT_RESIZED:
+			{
+			SDL_Log("Window %d resized to %dx%d",
+				mEvent->window.windowID, mEvent->window.data1,
+				mEvent->window.data2);
+			} break;
+		case SDL_WINDOWEVENT_EXPOSED:
+			{
+			SDL_Log("Window %d exposed", mEvent->window.windowID);
+			} break;
+
+		//TODO: might not need to record any of these events
+		case SDL_WINDOWEVENT_SHOWN:
+			{
+			SDL_Log("Window %d shown", mEvent->window.windowID);
+			} break;
+		case SDL_WINDOWEVENT_HIDDEN:
+			{
+			SDL_Log("Window %d hidden", mEvent->window.windowID);
+			} break;		
+		case SDL_WINDOWEVENT_MOVED:
+			{
+			SDL_Log("Window %d moved to %d,%d",
+					mEvent->window.windowID, mEvent->window.data1,
+					mEvent->window.data2);
+			} break;
+		case SDL_WINDOWEVENT_MINIMIZED:
+			SDL_Log("Window %d minimized", mEvent->window.windowID);
+			break;
+		case SDL_WINDOWEVENT_MAXIMIZED:
+			SDL_Log("Window %d maximized", mEvent->window.windowID);
+			break;
+		case SDL_WINDOWEVENT_RESTORED:
+			SDL_Log("Window %d restored", mEvent->window.windowID);
+			break;
+		case SDL_WINDOWEVENT_ENTER:
+			SDL_Log("Mouse entered window %d",
+					mEvent->window.windowID);
+			break;
+		case SDL_WINDOWEVENT_LEAVE:
+			SDL_Log("Mouse left window %d", mEvent->window.windowID);
+			break;
+		case SDL_WINDOWEVENT_FOCUS_GAINED:
+			SDL_Log("Window %d gained keyboard focus",
+					mEvent->window.windowID);
+			break;
+		case SDL_WINDOWEVENT_FOCUS_LOST:
+			SDL_Log("Window %d lost keyboard focus",
+					mEvent->window.windowID);
+			break;
+		case SDL_WINDOWEVENT_CLOSE:
+			SDL_Log("Window %d closed", mEvent->window.windowID);
+			break;
+		default:
+			SDL_Log("Window %d got unknown event %d",
+					mEvent->window.windowID, mEvent->window.event);
+			break;
+		}
+	}
+	if(mEvent->type == SDL_RENDER_TARGETS_RESET)
+	{
+		/**< The render targets have been reset */
+	}
 
 	return 0;
 }

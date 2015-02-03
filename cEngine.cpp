@@ -8,11 +8,6 @@ cEngine* cEngine::Instance()
 	return mInstance;
 }
 
-/*
-initialises SDL, window and game objects
-sets game window width and height
-creates pointer to renderer and logger singleton instance
-*/
 int cEngine::Init()
 {
 	mWindow = NULL;
@@ -55,12 +50,13 @@ int cEngine::Init()
 	}
 
 	mRen = cRenderer::Instance();
-	if(mRen->Init(mWindow)) return -1;
+	if(mRen->Init(mWindow,&mEvent)) return -1;
 
 	mArena = new cArena();
 	mArena->Init();
-
-	mRen->SetCamera(new cCamera(0,0,SCREEN_WIDTH,SCREEN_HEIGHT));
+	
+	mRen->mCamera->Init(&mEvent,mInput,
+		SCREEN_WIDTH,SCREEN_HEIGHT,mArena->GetArenaWidth(),mArena->GetArenaHeight());
 
 	//TODO: remember to remove this debug texture
 	mTexture = mRen->LoadBitmap("assets/arena/grid_bg.bmp");
@@ -139,7 +135,7 @@ sets global quit value to true if close button is pressed
 */
 void cEngine::Update()
 {
-	if(mInput->UpdateInputEvents() != 0) mQuit = true;
+	UpdateEvents();
 
 	mAvgUpdates = CalcAvgUpdates();
 	CapFrameRate();
@@ -147,7 +143,7 @@ void cEngine::Update()
 
 	if(mUpdate)
 	{
-		UpdateCamera();
+		mRen->Update();
 		mPlayer.Update();
 		mTowerController.Update(mEnemyController.GetEnemies(),mEnemyController.GetMaxEnemies());
 		mEnemyController.Update();
@@ -156,47 +152,15 @@ void cEngine::Update()
 	}
 }
 
-/*
-moves camera by user input
-*/
-void cEngine::UpdateCamera()
+void cEngine::UpdateEvents()
 {
-	JVector3 new_cam(0,0,mRen->mCamera->GetMoveSpeed());
-	if(mInput->GetKeyDown(SDLK_w)) new_cam.y += new_cam.z;
-	if(mInput->GetKeyDown(SDLK_s)) new_cam.y -= new_cam.z;
-	if(mInput->GetKeyDown(SDLK_a)) new_cam.x += new_cam.z;
-	if(mInput->GetKeyDown(SDLK_d)) new_cam.x -= new_cam.z;
-	
-	static JVector2 l_mouse_to_cam = JVector2();
-	if(mInput->GetMouseButtonDown(CENTRE_MOUSE_BUTTON))
+	while(SDL_PollEvent(&mEvent) != 0)
 	{
-		if(l_mouse_to_cam == JVector2())
-		{
-			JVector2 l_d1 = JVector2(mRen->mCamera->GetPos()
-			- JVector2(mInput->GetMouseX(),mInput->GetMouseY()));
-
-			l_mouse_to_cam = l_d1;
-		}
-
-		JVector2 l_d2 = JVector2(mRen->mCamera->GetPos()
-			- JVector2(mInput->GetMouseX(),mInput->GetMouseY()));
-		new_cam.x = l_mouse_to_cam.x - l_d2.x;
-		new_cam.y = l_mouse_to_cam.y - l_d2.y;
-		mRen->mCamera->UpdateRelative(new_cam.x,new_cam.y);
+		if(mInput->UpdateInputEvents() == -1) mQuit = true;
+		if(mRen->UpdateEvents() == -1) mQuit = true;
 	}
-	else
-		l_mouse_to_cam.SetZero();
-	
-	if(mInput->GetKeyDownRelease(SDLK_BACKSPACE))
-	{
-		new_cam.Zero();
-		mRen->mCamera->UpdateAbsolute(new_cam.x,new_cam.y);
-		return;
-	}
-	if(new_cam.x != 0 || new_cam.y != 0)
-		mRen->mCamera->UpdateRelative(new_cam.x,new_cam.y);
+	mInput->UpdateOldKeys();
 }
-
 
 /*
 renders scene by calling cRenderer routines

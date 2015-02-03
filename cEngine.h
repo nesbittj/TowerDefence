@@ -56,6 +56,7 @@ public:
 	int LoadConfigFromFile(const char* _filename);
 
 	void Update();
+	void UpdateEvents();
 	void Render();
 
 	bool GetQuit();
@@ -78,9 +79,5 @@ public:
 	static const short LEVEL_WIDTH = 1280;
 	static const short LEVEL_HIEGHT = 960;
 	static const Uint32 LEVEL_GRID_SIZE = 32;
-
-	void UpdateCamera();
-
-
 };
 

@@ -28,6 +28,7 @@ private:
 	cRenderer() {};
 
 	cLogger* mLog;
+	SDL_Event* mEvent;
 
 	SDL_Renderer* mRenderer;
 	SDL_Color mColourDef;
@@ -44,10 +45,12 @@ public:
 	cCamera* mCamera;
 
 	static cRenderer* Instance();
-	int Init(SDL_Window* _window);
+	int Init(SDL_Window* _window, SDL_Event* _event);
 	int CleanUp();
 
-	void SetCamera(cCamera* _cam) { mCamera = _cam; }
+	void Update();
+	int UpdateEvents();
+
 	void DrawRect(float _x, float _y, int _w, int _h, SDL_Color _col, SDL_Renderer* _ren, int _space = WORLD_SPACE);
 	//void DrawCircleFill(float _x, float _y, int _rad, SDL_Color _col, int _space = WORLD_SPACE);
 	void RenderTexture(SDL_Texture* _tex, float _x, float _y, SDL_Renderer* _ren, int _space = WORLD_SPACE);
