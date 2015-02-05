@@ -4,7 +4,11 @@
 
 *.dll
 *.ttf
+<<<<<<< HEAD
+*.url
+=======
 docs/
+>>>>>>> develop
 
 #################
 ## Eclipse
