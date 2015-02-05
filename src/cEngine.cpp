@@ -8,11 +8,6 @@ cEngine* cEngine::Instance()
 	return mInstance;
 }
 
-/*
-initialises SDL, window and game objects
-sets game window width and height
-creates pointer to renderer and logger singleton instance
-*/
 int cEngine::Init()
 {
 	mWindow = NULL;
@@ -27,6 +22,8 @@ int cEngine::Init()
 	mLog = cLogger::Instance();
 	mInput = cInput::Instance();
 	mInput->SetEventPtr(&mEvent);
+
+	LoadConfigFromFile("assets/config.xml");
 
 	mFPSTimer = cTimer();
 	mFPSTimer.start();
@@ -45,7 +42,7 @@ int cEngine::Init()
 		return -1;
 	}
 
-	mWindow = SDL_CreateWindow("SDL Window", 100,100, SCREEN_WIDTH,SCREEN_HEIGHT, SDL_WINDOW_SHOWN);
+	mWindow = SDL_CreateWindow("SDL Window", 100,100, SCREEN_WIDTH,SCREEN_HEIGHT, SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE);
 	if(!mWindow)
 	{
 		mLog->LogSDLError("SDL_CreateWindow");
@@ -53,27 +50,23 @@ int cEngine::Init()
 	}
 
 	mRen = cRenderer::Instance();
-	if(mRen->Init(mWindow)) return -1;
-	SDL_Rect cam = {0,0,SCREEN_WIDTH,SCREEN_HEIGHT};
-	mRen->SetCamera(new cCamera(0,0,SCREEN_WIDTH,SCREEN_HEIGHT,LEVEL_WIDTH,LEVEL_HIEGHT));
+	if(mRen->Init(mWindow,&mEvent)) return -1;
 
+	mArena = new cArena();
+	mArena->Init();
+	
+	mRen->InitCamera(&mEvent,mInput,
+		SCREEN_WIDTH,SCREEN_HEIGHT,mArena->GetArenaWidth(),mArena->GetArenaHeight());
+
+	//TODO: remember to remove this debug texture
 	mTexture = mRen->LoadBitmap("assets/arena/grid_bg.bmp");
 
-	mNodeRoot = new cSceneNode();
-	mPlayer = cPlayer(10,0,LEVEL_GRID_SIZE,mRen->GetCamera());
+	mPlayer = cPlayer(10,0);
 	mTowerController = cTowerController();
-	mTowerController.Init(LEVEL_GRID_SIZE,&mPlayer);
-	// TODO: pass level grid size by pointer
-
-	mArena = new cArena(0,0);
-	mArena->Init();
+	mTowerController.Init(mArena,&mCursorX,&mCursorY);
 
 	mEnemyController = cEnemyController();
-	mEnemyController.Init(32,mArena);
-
-	mCore = new cCore(SCREEN_WIDTH,SCREEN_HEIGHT,LEVEL_GRID_SIZE);
-	mCore->Init(0);
-
+	mEnemyController.Init(mArena);
 
 	return 0;
 }
@@ -83,9 +76,6 @@ int cEngine::CleanUp()
 	mArena->CleanUp();
 	delete mArena;
 	mArena = NULL;
-
-	mCore->CleanUp();
-	delete mCore; mCore = NULL;
 
 	mEnemyController.CleanUp();
 	mTowerController.CleanUp();
@@ -110,12 +100,42 @@ int cEngine::CleanUp()
 }
 
 /*
+loads config from xml file.
+returns -1 on load file error.
+returns 0 on success.
+*/
+int cEngine::LoadConfigFromFile(const char* _filename)
+{
+	int l_result = 0;
+	XMLDocument doc;
+	if(!doc.LoadFile(_filename))
+	{
+		XMLElement* l_elem = doc.FirstChildElement("config")->FirstChildElement("display");
+		l_elem->QueryIntAttribute("width",&SCREEN_WIDTH);
+		l_elem->QueryIntAttribute("height",&SCREEN_HEIGHT);
+		l_elem->QueryIntAttribute("fps",&SCREEN_FPS);
+	}
+	else
+	{
+		SCREEN_WIDTH = 640;
+		SCREEN_HEIGHT = 480;
+		SCREEN_FPS = 60;
+		mLog->LogError("cEngine::LoadConfig failed");
+		l_result = -1;
+	}
+	SCREEN_TICKS_PER_FRAME = 1000 / SCREEN_FPS;
+	UPDATE_FREQ = SCREEN_FPS * 2;
+	UPDATE_TICKS_PER_FRAME = 1000 / UPDATE_FREQ;
+	return l_result;
+}
+
+/*
 updates game events,inputs,movement etc
 sets global quit value to true if close button is pressed
 */
 void cEngine::Update()
 {
-	if(mInput->UpdateInputEvents() != 0) mQuit = true;
+	UpdateEvents();
 
 	mAvgUpdates = CalcAvgUpdates();
 	CapFrameRate();
@@ -123,31 +143,30 @@ void cEngine::Update()
 
 	if(mUpdate)
 	{
-		UpdateCamera();
-		mPlayer.Update();
+		//TODO: find a better solution to getting cam pos, possibly another location to calc cursor.
+		JVector2 camPos = mRen->mCamera->GetPos();
+		mCursorX = cMaths::Round(mInput->GetMouseX() - camPos.x,LEVEL_GRID_SIZE);
+		mCursorY = cMaths::Round(mInput->GetMouseY() - camPos.y,LEVEL_GRID_SIZE);
+
+		mRen->Update();
+		//mPlayer.Update();
 		mTowerController.Update(mEnemyController.GetEnemies(),mEnemyController.GetMaxEnemies());
-		mEnemyController.Update(mCore->GetPos());
-		mCore->Update(mEnemyController.GetEnemies(),mEnemyController.GetMaxEnemies());
-		mArena->SetPos(mRen->GetCamera()->GetPos().x,mRen->GetCamera()->GetPos().y);
+		mEnemyController.Update();
+		mArena->Update();
+
 		mCountedUpdates++;
 	}
 }
 
-/*
-moves camera by user input
-*/
-void cEngine::UpdateCamera()
+void cEngine::UpdateEvents()
 {
-	JVector3 new_cam(0,0,mRen->GetCamera()->GetMoveSpeed());
-	if(mInput->GetKeyDown(SDLK_w)) new_cam.y += new_cam.z;
-	if(mInput->GetKeyDown(SDLK_s)) new_cam.y -= new_cam.z;
-	if(mInput->GetKeyDown(SDLK_a)) new_cam.x += new_cam.z;
-	if(mInput->GetKeyDown(SDLK_d)) new_cam.x -= new_cam.z;
-	if(mInput->GetKeyDownRelease(SDLK_BACKSPACE)) new_cam.Zero();
-	if(new_cam.x != 0 || new_cam.y != 0)
-		mRen->GetCamera()->UpdateRelative(new_cam.x,new_cam.y);
+	while(SDL_PollEvent(&mEvent) != 0)
+	{
+		if(mInput->UpdateInputEvents() == -1) mQuit = true;
+		if(mRen->UpdateEvents() == -1) mQuit = true;
+	}
+	mInput->UpdateOldKeys();
 }
-
 
 /*
 renders scene by calling cRenderer routines
@@ -158,20 +177,19 @@ void cEngine::Render()
 
 	if(mRender)
 	{
-		JVector2 cam = mRen->GetCamera()->GetPos();
-
-		mRen->RenderTexture(mTexture,0,0,NULL);
+		//JVector2 cam = mRen->mCamera->GetPos();
+		//mRen->RenderTexture(mTexture,0,0,NULL,SCREEN_SPACE);
+		
 		mArena->Draw();
 
 		SDL_Color mouseColour = { 0,0,0,255 };
-		mRen->DrawRect(mPlayer.GetCurserX(),mPlayer.GetCurserY(),30,30,mouseColour,SCREEN_SPACE);
+		mRen->DrawRect(mCursorX,mCursorY,30,30,mouseColour,0,WORLD_SPACE);
 		mRen->RenderText(mAvgFPS,34,50,0,mouseColour,NULL,SCREEN_SPACE);
 		mRen->RenderText(mAvgUpdates,34,80,0,mouseColour,NULL,SCREEN_SPACE);
 
-		mCore->Draw();
 		mTowerController.DrawTowersInUse();
-		mTowerController.DrawTower(mPlayer.GetCurserX(),mPlayer.GetCurserY(),mTowerController.GetTowerSelected(),SCREEN_SPACE);
-		mTowerController.DrawTowerText(mPlayer.GetCurserX(),mPlayer.GetCurserY() - 15,mTowerController.GetTowerSelected(),mouseColour,SCREEN_SPACE);
+		mTowerController.DrawTower(mCursorX,mCursorY,mTowerController.GetTowerSelected(),WORLD_SPACE);
+		mTowerController.DrawTowerText(mCursorX,mCursorY - 15,mTowerController.GetTowerSelected(),mouseColour,WORLD_SPACE);
 		mEnemyController.DrawEnemies();
 
 		mRen->Present(NULL);

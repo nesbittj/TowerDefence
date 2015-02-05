@@ -10,13 +10,13 @@ cTowerController::~cTowerController()
 {	
 }
 
-bool cTowerController::Init(const Uint32 _grid_size, const cPlayer* _player)
+bool cTowerController::Init(cArena* _arena, int* _cursor_x, int* _cursor_y)
 {
 	mInput = cInput::Instance();
 	mRen = cRenderer::Instance();
 	mLog = cLogger::Instance();
-	mGridSize = _grid_size;
-	mPlayer = _player;
+	mArena = _arena;
+	mCursorX = _cursor_x; mCursorY = _cursor_y;
 	if(!LoadTowersData()) return false;
 	for(int i = 0; i < mMaxTowersInUse; i++) mTowersInUse[i] = NULL;
 	return true;
@@ -40,7 +40,6 @@ bool cTowerController::CleanUp()
 	mInput = NULL;
 	mRen = NULL;
 	mLog = NULL;
-	mPlayer = NULL;
 	return true;
 }
 
@@ -65,10 +64,10 @@ void cTowerController::Update(cEnemy** const _enemies_hit, int size_of_array)
 	if(mInput->GetKeyDownRelease(SDLK_5)) SetTowerSelected(4);
 	if(mInput->GetKeyDownRelease(SDLK_6)) SetTowerSelected(5);
 
-	if(mInput->GetMouseButtonDownRelease(1))		
-		AddTower(mPlayer->GetCurserX(),mPlayer->GetCurserY(),GetTowerSelected());
-	if(mInput->GetMouseButtonDownRelease(3))
-		RemoveTower(mPlayer->GetCurserX(),mPlayer->GetCurserY());
+	if(mInput->GetMouseButtonDownRelease(LEFT_MOUSE_BUTTON))	
+		AddTower(*mCursorX,*mCursorY,GetTowerSelected());
+	if(mInput->GetMouseButtonDownRelease(RIGHT_MOUSE_BUTTON))
+		RemoveTower(*mCursorX,*mCursorY);
 
 	for(int i = 0; i < mMaxTowersInUse; i++)
 	{
@@ -100,14 +99,15 @@ void cTowerController::AddTower(Uint32 _x, Uint32 _y, Uint32 _tower)
 	{
 		if(mTowersInUse[i] == NULL)
 		{
-			JVector2 l_world_pos(_x - (int)mRen->GetCamera()->GetPos().x,_y - (int)mRen->GetCamera()->GetPos().y);
+			JVector2 l_world_pos(_x,_y);
 			for(int j = 0; j < mMaxTowersInUse; j++)
 			{
 				if(mTowersInUse[j] != NULL
 				&& mTowersInUse[j]->GetX() == l_world_pos.x && mTowersInUse[j]->GetY() == l_world_pos.y) 
 					return;
 			}
-			mTowersInUse[i] = new cTower(l_world_pos.x,l_world_pos.y,mGridSize);
+			//TODO: check bounds  of l_world_pos before creatingnew tower
+			mTowersInUse[i] = new cTower(l_world_pos.x,l_world_pos.y);
 			mTowersInUse[i]->Init(mTowersData[_tower].mBitmap,&mTowersData[_tower]);
 			return;
 		}
@@ -119,7 +119,7 @@ remove any tower at grid world pos x,y
 */
 void cTowerController::RemoveTower(Uint32 _x, Uint32 _y)
 {
-	JVector2 l_world_pos(_x - (int)mRen->GetCamera()->GetPos().x,_y - (int)mRen->GetCamera()->GetPos().y);
+	JVector2 l_world_pos(_x,_y);
 	for(int i = 0; i < mMaxTowersInUse; i++)
 	{
 		if(mTowersInUse[i] != NULL
@@ -134,7 +134,6 @@ void cTowerController::RemoveTower(Uint32 _x, Uint32 _y)
 
 bool cTowerController::LoadTowersData()
 {
-	int l_game_speed = 120;
 	for(int i = 0; i < mMaxTowerTypes; i++)
 		mTowersData[i].mBitmap = NULL;
 
@@ -149,12 +148,10 @@ bool cTowerController::LoadTowersData()
 
 			mTowersData[i].mBitmap = mRen->LoadBitmap( std::string(mTowersFileLocation + l_tower->Attribute("bitmap")).c_str() );
 
-			l_tower->QueryIntAttribute("damage",&mTowersData[i].mDamage);
+			l_tower->QueryFloatAttribute("damage",&mTowersData[i].mDamage);
 			l_tower->QueryIntAttribute("range",&mTowersData[i].mRange);
 			l_tower->QueryIntAttribute("firefreq",&mTowersData[i].mFireFreq);
 			l_tower->QueryIntAttribute("firedur",&mTowersData[i].mFireDuration);
-			mTowersData[i].mFireFreq *= l_game_speed;
-			mTowersData[i].mFireDuration *= l_game_speed;
 			i++;
 		}
 	}

@@ -9,30 +9,17 @@ cEnemyController::~cEnemyController()
 {	
 }
 
-bool cEnemyController::Init(const Uint32 _grid_size, cArena* _arena)
+bool cEnemyController::Init(cArena* _arena)
 {
 	mInput = cInput::Instance();
 	mRen = cRenderer::Instance();
 	mLog = cLogger::Instance();
 	mArena = _arena;
-	for(int i = 0; i < 15; i++)
-	{
-		for(int j = 0; j < 20; j++)
-		{
-			JVector2 l_pos(j,i);
-			if(*mArena->GetTyleType(l_pos) == 'S')
-			{
-				mEnemyStartPos = l_pos;
-			}
-			if(*mArena->GetTyleType(l_pos) == 'E')
-			{
-				mEnemyExitPos = l_pos;
-			}
-		}
-	}
+	mEnemyStartPos = mArena->GetEnemyStartPos();
+	const JVector2& const l_enemy_exit_pos = mArena->GetEnemyExitPos();
 	mEnemyPath = mArena->BreadthFirst(
-		make_pair(mEnemyStartPos.x,mEnemyStartPos.y),make_pair(mEnemyExitPos.x,mEnemyExitPos.y));
-	mGridSize = _grid_size;
+		make_pair(mEnemyStartPos.x,mEnemyStartPos.y),make_pair(l_enemy_exit_pos.x,l_enemy_exit_pos.y));
+	mEnemyStartPos *= mArena->GetGridSize();
 	if(!LoadEnemyData()) return false;
 	for(int i = 0; i < mMaxEnemiesAlive; i++) mEnemiesAlive[i] = NULL;
 
@@ -66,23 +53,27 @@ bool cEnemyController::CleanUp()
 	return true;
 }
 
-void cEnemyController::Update(JVector2 _target)
+void cEnemyController::Update()
 {
-	if(mEnemySpawnTimer.getTicks() > (120 * 20))
+	if(mEnemySpawnTimer.getTicks() > (1000))
 	{
-		//if(mEnemiesAlive[0] == NULL)
+		//if(mEnemiesAlive[0] == NULL) //create only one enemy
 		{
-		//TODO: set up addenmemy spawn loacation properly
-		AddEnemy(mEnemyStartPos.x * mGridSize,mEnemyStartPos.y * mGridSize,0);
-		mEnemySpawnTimer.start();
+			AddEnemy(mEnemyStartPos.x,mEnemyStartPos.y, 0);
+			mEnemySpawnTimer.start();
 		}
 	}
 	for(int i = 0; i < mMaxEnemiesAlive; i++)
 	{
 		if(mEnemiesAlive[i] !=  NULL)
 		{
+			//damage arena::core //could go after update, would need another != NULL
+			mArena->GetCore()->Damage(mEnemiesAlive[i]->GetPos(),30,0.1);
+
+			//update enemy
 			mEnemiesAlive[i]->Update();
 			if(mEnemiesAlive[i]->GetLives() <= 0) RemoveEnemy(i);
+
 		}
 	}
 }
@@ -113,14 +104,14 @@ void cEnemyController::DrawEnemyText(Uint32 _x, Uint32 _y, Uint32 _enemy, SDL_Co
 {
 }
 
-void cEnemyController::AddEnemy(Uint32 _x, Uint32 _y, Uint32 _enemy)
+void cEnemyController::AddEnemy(Uint32 _x, Uint32 _y, Uint32 _enemy_type)
 {
 	for(int i = 0; i < mMaxEnemiesAlive; i++)
 	{
 		if(mEnemiesAlive[i] == NULL)
 		{
-			mEnemiesAlive[i] = new cEnemy(_x,_y,mGridSize);
-			mEnemiesAlive[i]->Init(mEnemiesData[_enemy].mBitmap,&mEnemiesData[_enemy],mEnemyPath);
+			mEnemiesAlive[i] = new cEnemy(_x,_y);
+			mEnemiesAlive[i]->Init(mEnemiesData[_enemy_type].mBitmap,mArena,&mEnemiesData[_enemy_type],mEnemyPath);
 			return;
 		}
 	}

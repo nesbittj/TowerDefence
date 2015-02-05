@@ -10,22 +10,18 @@ singleton class
 #pragma once
 
 #include <SDL.h>
-#include <iostream>
+#include "tinyxml2.h"
+
 #include "cRenderer.h"
 #include "cLogger.h"
 #include "cInput.h"
-#include "cSceneNode.h"
 #include "cTimer.h"
-#include "cCamera.h"
+
 #include "cPlayer.h"
+#include "cEntity.h"
 #include "cTowerController.h"
 #include "cEnemyController.h"
-#include "cCore.h"
 #include "cArena.h"
-
-#include <sstream>
-
-using namespace std;
 
 class cEngine
 {
@@ -43,12 +39,9 @@ private:
 	bool mRender;
 	bool mUpdate;
 
-	cSceneNode* mNodeRoot;
-
 	cPlayer mPlayer;
 	cTowerController mTowerController;
 	cEnemyController mEnemyController;
-	cCore* mCore;
 	cArena* mArena;
 	
 	void CapFrameRate();
@@ -60,8 +53,10 @@ public:
 	static cEngine* Instance();
 	int Init();
 	int CleanUp();
+	int LoadConfigFromFile(const char* _filename);
 
 	void Update();
+	void UpdateEvents();
 	void Render();
 
 	bool GetQuit();
@@ -70,23 +65,21 @@ public:
 	cTimer mFPSCap;
 	Uint32 mCountedFrames;
 	Uint32 mAvgFPS;
-	static const Uint32 SCREEN_FPS = 60;
-	static const Uint32 SCREEN_TICKS_PER_FRAME = 1000 / SCREEN_FPS;
+	int SCREEN_FPS;
+	int SCREEN_TICKS_PER_FRAME;// = 1000 / SCREEN_FPS;
 
 	cTimer mUpdatesCap;
-	static const Uint32 UPDATE_FREQ = SCREEN_FPS * 2;
-	static const Uint32 UPDATE_TICKS_PER_FRAME = 1000 / UPDATE_FREQ;
+	int UPDATE_FREQ;// = SCREEN_FPS * 2;
+	int UPDATE_TICKS_PER_FRAME;// = 1000 / UPDATE_FREQ;
 	Uint32 mCountedUpdates;
 	Uint32 mAvgUpdates;
 	
-	static const short SCREEN_WIDTH = 640;
-	static const short SCREEN_HEIGHT = 480;
+	int SCREEN_WIDTH;
+	int SCREEN_HEIGHT;
 	static const short LEVEL_WIDTH = 1280;
 	static const short LEVEL_HIEGHT = 960;
 	static const Uint32 LEVEL_GRID_SIZE = 32;
 
-	void UpdateCamera();
-
-
+	int mCursorX, mCursorY;
 };
 

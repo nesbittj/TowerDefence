@@ -1,0 +1,4 @@
+<?xml version="1.0" ?>
+<core>
+	<core1  bitmap="assets/arena/core01.bmp" max_lives="100" start_lives="100"/>
+</core>

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "centity.h"
+#include "cEntity.h"
 #include "cTimer.h"
 #include "cEnemy.h"
 
@@ -8,7 +8,7 @@ struct TowerData
 {
 	string mName;
 	SDL_Texture* mBitmap;
-	int mDamage;
+	float mDamage;
 	int mRange;
 	int mFireFreq;
 	int mFireDuration;
@@ -22,11 +22,12 @@ private:
 	cTimer mFireFreqTimer;
 	cTimer mFireDurTimer;
 	vector<JVector3> mFiringVerts;
+	float mFireDamage;
 
 	void Init(TowerData* _data);
 
 public:
-	cTower(Uint32 _x, Uint32 _y, Uint32 _grid_size);
+	cTower(Uint32 _x, Uint32 _y);
 	~cTower();
 
 	bool Init(SDL_Texture* _bitmap, TowerData* _data);

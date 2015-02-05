@@ -1,0 +1,5 @@
+<?xml version="1.0" ?>
+<config>
+	<display  width="1280" height="720" fps="60"/>
+	<window x="" y="" fullscreen="false" borderless="false" />
+</config>

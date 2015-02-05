@@ -1,15 +1,9 @@
 #include "cPlayer.h"
 
-cPlayer::cPlayer(int start_lives, int start_score, int grid_size, cCamera* _camera)
+cPlayer::cPlayer(int start_lives, int start_score)
 {
-	mCurserPosX = 0;
-	mCurserPosY = 0;
 	mScore = start_score;
 	mLives = start_lives;
-	mGridSize = grid_size;
-
-	mInput = cInput::Instance();
-	mCamera = _camera;
 }
 
 /*
@@ -38,7 +32,4 @@ void cPlayer::IncromentLives(int _inc)
 
 void cPlayer::Update()
 {
-	JVector2 camPos = mCamera->GetPos();
-	SetCurserX(cMaths::Round(mInput->GetMouseX(),mGridSize) + ((int)camPos.x % mGridSize));
-	SetCurserY(cMaths::Round(mInput->GetMouseY(),mGridSize) + ((int)camPos.y % mGridSize));
 }
