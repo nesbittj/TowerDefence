@@ -13,10 +13,9 @@ bool cArena::Init()
 {
 	mRen = cRenderer::Instance();
 	mLog = cLogger::Instance();
-	if(!LoadArenaData("")) return false;
-
-	mArenaWidthProdGrid = mArenaWidth * GRID_SIZE;
-	mArenaHeightProdGrid = mArenaHeight * GRID_SIZE;
+	//if(!LoadArenaData("")) return false;
+	LoadArenaData("assets/arena/arena_01.tmx");
+	//TODO: error report
 	
 	mCore = new cCore(mEnemyTargetPos.x,mEnemyTargetPos.y);
 	mCore->Init(0);
@@ -28,12 +27,9 @@ bool cArena::CleanUp()
 {
 	mCore->CleanUp();
 	delete mCore; mCore = NULL;
-	
-	for(int i = 0; i < NUM_TILES; i++)
-	{
-		if(mTiles[i]) SDL_DestroyTexture(mTiles[i]);
-		mTiles[i] = NULL;
-	}
+
+	if(mTilesSpriteSheet) mRen->UnloadBitmap(mTilesSpriteSheet);
+	mTilesSpriteSheet = NULL;
 
 	mLog = NULL;
 	mRen = NULL;
@@ -41,67 +37,51 @@ bool cArena::CleanUp()
 	return true;
 }
 
-bool cArena::LoadArenaData(const char* _filename)
+int cArena::LoadArenaData(const char* _filename)
 {
-	//TODO: load grid size from file data
-	XMLDocument doc;
-	if(!doc.LoadFile("assets/arena/arena_data.xml"))
-	{
-		XMLElement* l_tile_line = doc.FirstChildElement("layout")->FirstChild()->ToElement();
-		int i = 0;
-		for(l_tile_line; l_tile_line; l_tile_line=l_tile_line->NextSiblingElement())
-		{
-			mArenaTiles[i] = l_tile_line->Attribute("tiles");
-			i++;
-		}
-		mArenaHeight = i;
-		mArenaWidth = mArenaTiles[0].size();
-		//TODO: only square arenas will work with this implomentation
+	TmxReturn l_error;
 
-		XMLElement* l_tile_bmp = doc.FirstChildElement("tiles")->FirstChild()->ToElement();
-		i = 0;
-		for(l_tile_bmp; l_tile_bmp; l_tile_bmp=l_tile_bmp->NextSiblingElement())
+	l_error = parseFromFile(_filename,&mArena,"assets/arena/");
+	if(!l_error)
+	{
+		mTilesSpriteSheet = mRen->LoadBitmap(mArena.tilesetCollection[0].image.source.c_str());
+		if(!mTilesSpriteSheet) mLog->LogSDLError("LoadArena LoadBitmap");
+
+		for(int i = 0; i < mArena.height; i++)
 		{
-			mTiles[i] = mRen->LoadBitmap(l_tile_bmp->Attribute("bitmap"));
-			i++;
-		}
+			for(int j = 0; j < mArena.width; j++)
+			{
+				JVector2 l_pos(j,i);
+				if(GetTileType(l_pos) == TILE_START)
+				{
+					mEnemyStartPos = l_pos;
+				}
+				if(GetTileType(l_pos) == TILE_EXIT)
+				{
+					mEnemyExitPos = l_pos;
+				}
+				if(GetTileType(l_pos) == TILE_CORE)
+				{
+					mEnemyTargetPos = JVector2(l_pos * GetGridSize());
+				}
+			}
+		}		
 	}
 	else
 	{
-		mArenaWidth = 10;
-		mArenaHeight = 10;
-		mLog->LogError("cArena: XML failed to load");
-		return false;
+		//TODO: proper error reporting
+		printf("error parsing file");
 	}
-
-	//TODO: properly set bounds
-	for(int i = 0; i < mArenaHeight; i++)
-	{
-		for(int j = 0; j < mArenaWidth; j++)
-		{
-			JVector2 l_pos(j,i);
-			if(*GetTileType(l_pos) == 'S')
-			{
-				mEnemyStartPos = l_pos;
-			}
-			if(*GetTileType(l_pos) == 'E')
-			{
-				mEnemyExitPos = l_pos;
-			}
-			if(*GetTileType(l_pos) == 'C')
-			{
-				mEnemyTargetPos = JVector2(l_pos * GRID_SIZE);
-			}
-		}
-	}
-	return true;
+	return l_error;
 }
 
-const char* cArena::GetTileType(JVector2 _pos)
+//TODO: consider changing to (int _x, int _y)
+int cArena::GetTileType(JVector2 _pos)
 {
-	if(_pos.x < 0 || _pos.x > mArenaWidth) return "_";
-	if(_pos.y < 0 || _pos.y > mArenaHeight) return "_";
-	return &mArenaTiles[(int)_pos.y][(int)_pos.x];
+	//TODO: only siupports one Tiled layer
+	if(_pos.x < 0 || _pos.x > GetArenaWidth()) return TILE_EMPTY;
+	if(_pos.y < 0 || _pos.y > GetArenaHeight()) return TILE_EMPTY;
+	return mArena.layerCollection[0].tiles[_pos.y*mArena.width + _pos.x].tileFlatIndex;
 }
 
 void cArena::Update()
@@ -111,18 +91,23 @@ void cArena::Update()
 
 void cArena::Draw()
 {
-	for(int i = 0; i < mArenaHeight; i++)
+	for(int i = 0; i < mArena.height; i++)
 	{
-		for(int j = 0; j < mArenaWidth; j++)
+		for(int j = 0; j < mArena.width; j++)
 		{
-			if(mArenaTiles[i][j] == '_')
-				mRen->RenderTexture(mTiles[0],GRID_SIZE*j,GRID_SIZE*i,0,GRID_SIZE,GRID_SIZE,WORLD_SPACE);
-			if(mArenaTiles[i][j] == 'P')
-				mRen->RenderTexture(mTiles[1],GRID_SIZE*j,GRID_SIZE*i,0,GRID_SIZE,GRID_SIZE,WORLD_SPACE);
+			DrawTile(j*mArena.tileWidth,i*mArena.tileHeight,
+				GetTileType(JVector2(j,i)),WORLD_SPACE);
 		}
 	}
 
-	mCore->Draw();
+	//mCore->Draw();
+}
+
+void cArena::DrawTile(int _x, int _y, int _tile_type, int _space)
+{
+	//TODO: might need a better method of recording tile location
+	SDL_Rect l_tile = { _tile_type*mArena.tileWidth,0,mArena.tileWidth,mArena.tileHeight };
+	mRen->RenderTexture(mTilesSpriteSheet,_x,_y,NULL,l_tile,_space);
 }
 
 stack<pair<int,int>> cArena::BreadthFirst(const pair<int,int> _start, const pair<int,int> _target)
@@ -163,9 +148,8 @@ stack<pair<int,int>> cArena::BreadthFirst(const pair<int,int> _start, const pair
 
 void cArena::GraphNeighbours(pair<int,int> _u)
 {
-	//right
-	char l_tile = *GetTileType(JVector2(_u.first + 1,_u.second));
-	if(l_tile != '_')
+	int l_tile = GetTileType(JVector2(_u.first + 1,_u.second));
+	if(l_tile != TILE_EMPTY)
 	{
 		mAdj[0].first =  _u.first + 1;
 		mAdj[0].second =  _u.second;
@@ -173,8 +157,8 @@ void cArena::GraphNeighbours(pair<int,int> _u)
 	else
 		mAdj[0] = make_pair(-1,-1);
 	//bottom
-	l_tile = *GetTileType(JVector2(_u.first,_u.second + 1));
-	if(l_tile != '_')
+	l_tile = GetTileType(JVector2(_u.first,_u.second + 1));
+	if(l_tile != TILE_EMPTY)
 	{
 		mAdj[1].first =  _u.first;
 		mAdj[1].second =  _u.second + 1;
@@ -182,8 +166,8 @@ void cArena::GraphNeighbours(pair<int,int> _u)
 	else
 		mAdj[1] = make_pair(-1,-1);
 	//left
-	l_tile = *GetTileType(JVector2(_u.first - 1,_u.second));
-	if(l_tile != '_')
+	l_tile = GetTileType(JVector2(_u.first - 1,_u.second));
+	if(l_tile != TILE_EMPTY)
 	{
 		mAdj[2].first =  _u.first - 1;
 		mAdj[2].second =  _u.second;
@@ -191,14 +175,15 @@ void cArena::GraphNeighbours(pair<int,int> _u)
 	else
 		mAdj[2] = make_pair(-1,-1);
 	//top
-	l_tile = *GetTileType(JVector2(_u.first,_u.second - 1));
-	if(l_tile != '_')
+	l_tile = GetTileType(JVector2(_u.first,_u.second - 1));
+	if(l_tile != TILE_EMPTY)
 	{
 		mAdj[3].first =  _u.first;
 		mAdj[3].second =  _u.second - 1;
 	}
 	else
 		mAdj[3] = make_pair(-1,-1);
+	
 }
 
 /*
@@ -209,8 +194,8 @@ void cArena::CheckBounds(float* _x, float* _y)
 {
 	if(*_x < 0.f) *_x = 0.f;
 	if(*_y < 0.f) *_y = 0.f;
-	if(*_x > mArenaWidthProdGrid-1) *_x = mArenaWidthProdGrid-1;
-	if(*_y > mArenaHeightProdGrid-1) *_y = mArenaHeightProdGrid-1;
+	if(*_x > GetArenaWidth()-1) *_x = GetArenaWidth()-1;
+	if(*_y > GetArenaHeight()-1) *_y = GetArenaHeight()-1;
 }
 
 /*
@@ -222,7 +207,7 @@ bool cArena::CheckBounds(pair<int,int> _u) const
 {
 	if(_u.first  < 0.f) return false;
 	if(_u.second < 0.f) return false;
-	if(_u.first  > mArenaWidth-1) return false;
-	if(_u.second > mArenaHeight-1) return false;
+	if(_u.first  > mArena.width-1) return false;
+	if(_u.second > mArena.height-1) return false;
 	return true;
 }

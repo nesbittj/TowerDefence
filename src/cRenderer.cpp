@@ -217,7 +217,8 @@ void cRenderer::DrawRect(float _x, float _y, int _w, int _h, SDL_Color _col, SDL
 }
 
 /*
-renders a texture at position x,y
+renders a texture at position x,y.
+uses origional width,height of texture.
 renderer can be set to NULL then default renderer will be used
 */
 void cRenderer::RenderTexture(SDL_Texture* _tex, float _x, float _y, SDL_Renderer* _ren, int _space)
@@ -252,7 +253,26 @@ void cRenderer::RenderTexture(SDL_Texture* _tex, float _x, float _y, SDL_Rendere
 	}
 	SDL_Rect dst = { (int)_x,(int)_y,_w,_h };
 	if(SDL_RenderCopy(_ren, _tex, NULL, &dst) != 0)
-		mLog->LogSDLError("cRenderer::RenderTexture()");
+		mLog->LogSDLError("cRenderer::RenderTexture() with w,h");
+}
+
+/*
+render texture from sprite sheet at position _x,_y.
+_tile x,y,width,height representing area of _sprite_sheet
+renderer can be set to NULL then default renderer will be used.
+*/
+void cRenderer::RenderTexture(SDL_Texture* _sprite_sheet, float _x, float _y, SDL_Renderer* _ren, SDL_Rect _tile, int _space)
+{
+	if(!_ren) _ren = mRenderer;
+	JVector2 camPos = mCamera->GetPos();
+	if(_space == WORLD_SPACE/* && camPos.w > 0*/)
+	{
+		_x += camPos.x;
+		_y += camPos.y;
+	}
+	SDL_Rect l_dst = { (int)_x,(int)_y,_tile.w,_tile.h };
+	if(SDL_RenderCopy(_ren,_sprite_sheet,&_tile,&l_dst) != 0)
+		mLog->LogSDLError("cRenderer::RenderTexture from sprite sheet");
 }
 
 /*

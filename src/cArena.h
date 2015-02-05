@@ -9,7 +9,9 @@ cArena class
 #include <SDL.h>
 #include <map>
 #include <stack>
+
 #include "tinyxml2.h"
+#include "tmxparser.h"
 
 #include "cCamera.h"
 #include "cRenderer.h"
@@ -18,33 +20,34 @@ cArena class
 
 #include "cCore.h"
 
-
 using namespace tinyxml2;
+using namespace tmxparser;
 
 class cArena
 {
 private:
-	static const unsigned int NUM_TILES = 2;
-	static const unsigned int GRID_SIZE = 32;
 
-	int mArenaWidth, mArenaHeight, mArenaWidthProdGrid, mArenaHeightProdGrid;
-	string mArenaTiles[GRID_SIZE]; //TODO: grid size should be set in this class
-	SDL_Texture* mTiles[NUM_TILES];
+	enum { TILE_EMPTY, TILE_WALL, TILE_CORE, TILE_START, TILE_EXIT } ;
+
 	cRenderer* mRen;
 	cLogger* mLog;
 	cCore* mCore;
+
+	TmxMap mArena;
+	SDL_Texture* mTilesSpriteSheet;
+
+	JVector2 mEnemyStartPos;
+	JVector2 mEnemyTargetPos;
+	JVector2 mEnemyExitPos;
 
 	//Breadth First Search Variables
 	vector<JVector2> mOpenList;
 	vector<JVector2> mClosedList;
 	JVector2 mNeighbours[4];
 	pair<int,int> mAdj[4];
+	
+	int LoadArenaData(const char* _filename);
 
-	JVector2 mEnemyStartPos;
-	JVector2 mEnemyTargetPos;
-	JVector2 mEnemyExitPos;
-
-	bool LoadArenaData(const char* _filename);
 public:
 	cArena();
 	~cArena();
@@ -54,6 +57,7 @@ public:
 
 	void Update();
 	void Draw();
+	void DrawTile(int _x, int _y, int _tile_type, int _space);
 
 	stack<pair<int,int>> BreadthFirst(const pair<int,int> _start, const pair<int,int> _target);	
 	void GraphNeighbours(pair<int,int> _u);
@@ -61,12 +65,13 @@ public:
 	void CheckBounds(float* _x, float* _y);
 	bool CheckBounds(pair<int,int> _u) const;
 
-	inline int GetGridSize() const { return GRID_SIZE; }
+	//TODO: game only supports square tiles
+	inline int GetGridSize() const { return mArena.tileWidth; }
 	//arena width * grid size
-	inline int GetArenaWidth() const { return mArenaWidthProdGrid; }
+	inline int GetArenaWidth() const { return mArena.width*mArena.tileWidth; }
 	//arena height * grid size
-	inline int GetArenaHeight() const { return mArenaHeightProdGrid; }
-	const char* GetTileType(JVector2 _pos);
+	inline int GetArenaHeight() const { return mArena.height*mArena.tileHeight; }
+	int GetTileType(JVector2 _pos);
 	cCore* GetCore() { return mCore; }
 	const JVector2& const GetEnemyStartPos() const { return mEnemyStartPos; }
 	const JVector2& const GetEnemyTargetPos() const { return mEnemyTargetPos; }
