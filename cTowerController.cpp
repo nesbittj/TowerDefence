@@ -10,13 +10,13 @@ cTowerController::~cTowerController()
 {	
 }
 
-bool cTowerController::Init(cArena* _arena, const cPlayer* _player)
+bool cTowerController::Init(cArena* _arena, int* _cursor_x, int* _cursor_y)
 {
 	mInput = cInput::Instance();
 	mRen = cRenderer::Instance();
 	mLog = cLogger::Instance();
 	mArena = _arena;
-	mPlayer = _player;
+	mCursorX = _cursor_x; mCursorY = _cursor_y;
 	if(!LoadTowersData()) return false;
 	for(int i = 0; i < mMaxTowersInUse; i++) mTowersInUse[i] = NULL;
 	return true;
@@ -40,7 +40,6 @@ bool cTowerController::CleanUp()
 	mInput = NULL;
 	mRen = NULL;
 	mLog = NULL;
-	mPlayer = NULL;
 	return true;
 }
 
@@ -66,9 +65,9 @@ void cTowerController::Update(cEnemy** const _enemies_hit, int size_of_array)
 	if(mInput->GetKeyDownRelease(SDLK_6)) SetTowerSelected(5);
 
 	if(mInput->GetMouseButtonDownRelease(LEFT_MOUSE_BUTTON))	
-		AddTower(mPlayer->GetCurserX(),mPlayer->GetCurserY(),GetTowerSelected());
+		AddTower(*mCursorX,*mCursorY,GetTowerSelected());
 	if(mInput->GetMouseButtonDownRelease(RIGHT_MOUSE_BUTTON))
-		RemoveTower(mPlayer->GetCurserX(),mPlayer->GetCurserY());
+		RemoveTower(*mCursorX,*mCursorY);
 
 	for(int i = 0; i < mMaxTowersInUse; i++)
 	{
@@ -100,7 +99,7 @@ void cTowerController::AddTower(Uint32 _x, Uint32 _y, Uint32 _tower)
 	{
 		if(mTowersInUse[i] == NULL)
 		{
-			JVector2 l_world_pos(_x - (int)mRen->mCamera->GetPos().x,_y - (int)mRen->mCamera->GetPos().y);
+			JVector2 l_world_pos(_x,_y);
 			for(int j = 0; j < mMaxTowersInUse; j++)
 			{
 				if(mTowersInUse[j] != NULL
@@ -120,7 +119,7 @@ remove any tower at grid world pos x,y
 */
 void cTowerController::RemoveTower(Uint32 _x, Uint32 _y)
 {
-	JVector2 l_world_pos(_x - (int)mRen->mCamera->GetPos().x,_y - (int)mRen->mCamera->GetPos().y);
+	JVector2 l_world_pos(_x,_y);
 	for(int i = 0; i < mMaxTowersInUse; i++)
 	{
 		if(mTowersInUse[i] != NULL

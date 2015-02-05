@@ -47,7 +47,10 @@ public:
 	static cRenderer* Instance();
 	int Init(SDL_Window* _window, SDL_Event* _event);
 	int CleanUp();
-
+	int InitCamera(SDL_Event* _event, cInput* _input,
+		int _screen_w, int _screen_h, int _arena_w, int _arena_h)
+	{ return mCamera->Init(_event,_input,_screen_w,_screen_h,_arena_w,_arena_h); }
+		
 	void Update();
 	int UpdateEvents();
 

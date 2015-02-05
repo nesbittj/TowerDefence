@@ -4,7 +4,6 @@
 #include "cEntity.h"
 #include "cInput.h"
 #include "cRenderer.h"
-#include "cPlayer.h"
 #include "cTower.h"
 #include "cLogger.h"
 #include "cEnemy.h"
@@ -29,7 +28,8 @@ private:
 	cRenderer* mRen;
 	cLogger* mLog;
 	cArena* mArena;
-	const cPlayer* mPlayer;
+
+	int *mCursorX, *mCursorY;
 
 public:
 		
@@ -39,7 +39,7 @@ public:
 	cTowerController();
 	~cTowerController();
 
-	bool Init(cArena* _arena, const cPlayer* _player);
+	bool Init(cArena* _arena, int* _cursor_x, int* _cursor_y);
 	bool CleanUp();
 
 	void Update(cEnemy** const _enemies_hit, int size_of_array);

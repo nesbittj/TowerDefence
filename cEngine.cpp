@@ -55,15 +55,15 @@ int cEngine::Init()
 	mArena = new cArena();
 	mArena->Init();
 	
-	mRen->mCamera->Init(&mEvent,mInput,
+	mRen->InitCamera(&mEvent,mInput,
 		SCREEN_WIDTH,SCREEN_HEIGHT,mArena->GetArenaWidth(),mArena->GetArenaHeight());
 
 	//TODO: remember to remove this debug texture
 	mTexture = mRen->LoadBitmap("assets/arena/grid_bg.bmp");
 
-	mPlayer = cPlayer(10,0,LEVEL_GRID_SIZE,mRen->mCamera);
+	mPlayer = cPlayer(10,0);
 	mTowerController = cTowerController();
-	mTowerController.Init(mArena,&mPlayer);
+	mTowerController.Init(mArena,&mCursorX,&mCursorY);
 
 	mEnemyController = cEnemyController();
 	mEnemyController.Init(mArena);
@@ -143,11 +143,17 @@ void cEngine::Update()
 
 	if(mUpdate)
 	{
+		//TODO: find a better solution to getting cam pos, possibly another location to calc cursor.
+		JVector2 camPos = mRen->mCamera->GetPos();
+		mCursorX = cMaths::Round(mInput->GetMouseX() - camPos.x,LEVEL_GRID_SIZE);
+		mCursorY = cMaths::Round(mInput->GetMouseY() - camPos.y,LEVEL_GRID_SIZE);
+
 		mRen->Update();
-		mPlayer.Update();
+		//mPlayer.Update();
 		mTowerController.Update(mEnemyController.GetEnemies(),mEnemyController.GetMaxEnemies());
 		mEnemyController.Update();
 		mArena->Update();
+
 		mCountedUpdates++;
 	}
 }
@@ -177,13 +183,13 @@ void cEngine::Render()
 		mArena->Draw();
 
 		SDL_Color mouseColour = { 0,0,0,255 };
-		mRen->DrawRect(mPlayer.GetCurserX(),mPlayer.GetCurserY(),30,30,mouseColour,0,SCREEN_SPACE);
+		mRen->DrawRect(mCursorX,mCursorY,30,30,mouseColour,0,WORLD_SPACE);
 		mRen->RenderText(mAvgFPS,34,50,0,mouseColour,NULL,SCREEN_SPACE);
 		mRen->RenderText(mAvgUpdates,34,80,0,mouseColour,NULL,SCREEN_SPACE);
 
 		mTowerController.DrawTowersInUse();
-		mTowerController.DrawTower(mPlayer.GetCurserX(),mPlayer.GetCurserY(),mTowerController.GetTowerSelected(),SCREEN_SPACE);
-		mTowerController.DrawTowerText(mPlayer.GetCurserX(),mPlayer.GetCurserY() - 15,mTowerController.GetTowerSelected(),mouseColour,SCREEN_SPACE);
+		mTowerController.DrawTower(mCursorX,mCursorY,mTowerController.GetTowerSelected(),WORLD_SPACE);
+		mTowerController.DrawTowerText(mCursorX,mCursorY - 15,mTowerController.GetTowerSelected(),mouseColour,WORLD_SPACE);
 		mEnemyController.DrawEnemies();
 
 		mRen->Present(NULL);
