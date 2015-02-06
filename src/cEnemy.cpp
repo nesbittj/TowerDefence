@@ -33,9 +33,8 @@ void cEnemy::Update()
 {
 	if(!mEnemyPath.empty())
 	{
-		JVector2 l_0 = JVector2(x,y);
-		JVector2 l_t;
-		l_t = JVector2(mEnemyPath.top().first,mEnemyPath.top().second);
+		JVector2 l_0(x,y);
+		JVector2 l_t(mEnemyPath.top().first,mEnemyPath.top().second);
 		l_t *= mArena->GetGridSize();
 		if(l_0 == l_t) mEnemyPath.pop();
 		JVector2 l_r = JVector2::Lerp(l_0,l_t,1);

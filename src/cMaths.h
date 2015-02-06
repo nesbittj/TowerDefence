@@ -20,28 +20,29 @@ public:
 
 	bool operator==(const JVector3& v) const;
 	bool operator!=(const JVector3& v) const;
-	JVector3& operator-() const;
-	JVector3& operator=(const JVector3& v);
+	JVector3 operator-() const;
+	JVector3 operator=(const JVector3& v);
 	
-	JVector3& operator+=(const JVector3& v);
-	JVector3& operator-=(const JVector3& v);
-	JVector3& operator+=(const float& scalar);
-	JVector3& operator-=(const float& scalar);
-	JVector3& operator*=(const float& scalar);
-	JVector3& operator/=(const float& scalar);
+	JVector3 operator+=(const JVector3& v);
+	JVector3 operator-=(const JVector3& v);
+	JVector3 operator+=(const float& scalar);
+	JVector3 operator-=(const float& scalar);
+	JVector3 operator*=(const float& scalar);
+	JVector3 operator/=(const float& scalar);
 
-	JVector3& operator+(const JVector3& v);
-	JVector3& operator-(const JVector3& v);
-	JVector3& operator+(const float& scalar);
-	JVector3& operator-(const float& scalar);
-	JVector3& operator*(const float& scalar);
-	JVector3& operator/(const float& scalar);
+	JVector3 operator+(const JVector3& v);
+	JVector3 operator-(const JVector3& v);
+	JVector3 operator+(const float& scalar);
+	JVector3 operator-(const float& scalar);
+	JVector3 operator*(const float& scalar);
+	JVector3 operator/(const float& scalar);
 
 	float Dot(const JVector3& v) const;
 	float Magnitude() const;
 	JVector3* Cross(const JVector3* v) const;
 	float Normalise();
-	void Zero() { x = 0.f; y = 0.f; z = 0.f; }
+	void Set(float _x, float _y, float _z) { x = _x; y = _y; z = _z; }
+	void SetZero() { x = 0.f; y = 0.f; z = 0.f; }
 	static JVector3 Lerp(JVector3& _v0, JVector3& _v1, const float _t);
 };
 
@@ -57,28 +58,29 @@ public:
 	bool operator!=(const JVector2& v) const;
 	bool operator<(const JVector2& v) const;
 	bool operator>(const JVector2& v) const;
-	JVector2& operator-() const;
-	JVector2& operator=(const JVector2& v);
+	JVector2 operator-() const;
+	JVector2 operator=(const JVector2& v);
 	
-	JVector2& operator+=(const JVector2& v);
-	JVector2& operator-=(const JVector2& v);
-	JVector2& operator+=(const float& scalar);
-	JVector2& operator-=(const float& scalar);
-	JVector2& operator*=(const float& scalar);
-	JVector2& operator/=(const float& scalar);
+	JVector2 operator+=(const JVector2& v);
+	JVector2 operator-=(const JVector2& v);
+	JVector2 operator+=(const float& scalar);
+	JVector2 operator-=(const float& scalar);
+	JVector2 operator*=(const float& scalar);
+	JVector2 operator/=(const float& scalar);
 
-	JVector2& operator+(const JVector2& v);
-	JVector2& operator-(const JVector2& v);
-	JVector2& operator+(const float& scalar);
-	JVector2& operator-(const float& scalar);
-	JVector2& operator*(const float& scalar);
-	JVector2& operator/(const float& scalar);
+	JVector2 operator+(const JVector2& v);
+	JVector2 operator-(const JVector2& v);
+	JVector2 operator+(const float& scalar);
+	JVector2 operator-(const float& scalar);
+	JVector2 operator*(const float& scalar);
+	JVector2 operator/(const float& scalar);
 	
 
 	float Dot(const JVector2& v) const;
 	float Magnitude() const;
 	float Normalise();
-	void SetZero() { x = 0.f; y = 0.f; }
+	inline void Set(float _x, float _y) { x = _x; y = _y; }
+	inline void SetZero() { x = 0.f; y = 0.f; }
 	static JVector2 Lerp(JVector2& _v0, JVector2& _v1, const float _t);
 };
 

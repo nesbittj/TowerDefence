@@ -22,13 +22,12 @@ cArena class
 
 using namespace tinyxml2;
 using namespace tmxparser;
+	
+typedef enum { TILE_EMPTY, TILE_WALL, TILE_CORE, TILE_START, TILE_EXIT } ARENA_TILE_TYPE;
 
 class cArena
 {
 private:
-
-	enum { TILE_EMPTY, TILE_WALL, TILE_CORE, TILE_START, TILE_EXIT } ;
-
 	cRenderer* mRen;
 	cLogger* mLog;
 	cCore* mCore;
@@ -71,9 +70,9 @@ public:
 	inline int GetArenaWidth() const { return mArena.width*mArena.tileWidth; }
 	//arena height * grid size
 	inline int GetArenaHeight() const { return mArena.height*mArena.tileHeight; }
-	int GetTileType(JVector2 _pos);
+	ARENA_TILE_TYPE GetTileType(JVector2& _pos);
 	cCore* GetCore() { return mCore; }
-	const JVector2& const GetEnemyStartPos() const { return mEnemyStartPos; }
-	const JVector2& const GetEnemyTargetPos() const { return mEnemyTargetPos; }
-	const JVector2& const GetEnemyExitPos() const { return mEnemyExitPos; }
+	inline const JVector2& const GetEnemyStartPos() const { return mEnemyStartPos; }
+	inline const JVector2& const GetEnemyTargetPos() const { return mEnemyTargetPos; }
+	inline const JVector2& const GetEnemyExitPos() const { return mEnemyExitPos; }
 };

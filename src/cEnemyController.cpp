@@ -16,9 +16,9 @@ bool cEnemyController::Init(cArena* _arena)
 	mLog = cLogger::Instance();
 	mArena = _arena;
 	mEnemyStartPos = mArena->GetEnemyStartPos();
-	const JVector2& const l_enemy_exit_pos = mArena->GetEnemyExitPos();
 	mEnemyPath = mArena->BreadthFirst(
-		make_pair(mEnemyStartPos.x,mEnemyStartPos.y),make_pair(l_enemy_exit_pos.x,l_enemy_exit_pos.y));
+		make_pair(mEnemyStartPos.x,mEnemyStartPos.y),
+		make_pair(mArena->GetEnemyExitPos().x,mArena->GetEnemyExitPos().y));
 	mEnemyStartPos *= mArena->GetGridSize();
 	if(!LoadEnemyData()) return false;
 	for(int i = 0; i < mMaxEnemiesAlive; i++) mEnemiesAlive[i] = NULL;

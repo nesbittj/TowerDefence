@@ -20,27 +20,27 @@ bool JVector3::operator==(const JVector3& v) const
 
 /* uses Jvector3::operator== */
 bool JVector3::operator!=(const JVector3& v) const { return !(*this == v); }
-JVector3& JVector3::operator-() const { return JVector3(-x,-y,-z); }
+JVector3 JVector3::operator-() const { return JVector3(-x,-y,-z); }
 
 /* uses JVector3::operator!= */
-JVector3& JVector3::operator=(const JVector3& v)
+JVector3 JVector3::operator=(const JVector3& v)
 {
 	if(this != &v) { x = v.x; y = v.y; z = v.z; }
 	return *this;
 }
 
-JVector3& JVector3::operator+=(const JVector3& v) { x += v.x; y += v.y; z += v.z; return *this; }
-JVector3& JVector3::operator-=(const JVector3& v) { x -= v.x; y -= v.y; z -= v.z; return *this; }
-JVector3& JVector3::operator+=(const float& scalar) { x += scalar; y += scalar; z += scalar; return *this; }
-JVector3& JVector3::operator-=(const float& scalar) { x -= scalar; y -= scalar; z -= scalar; return *this; }
-JVector3& JVector3::operator*=(const float& scalar) { x *= scalar; y *= scalar; z *= scalar; return *this; }
-JVector3& JVector3::operator/=(const float& scalar) { x /= scalar; y /= scalar; z /= scalar; return *this; }
-JVector3& JVector3::operator+(const JVector3& v) { JVector3 result = *this; return result += v; }
-JVector3& JVector3::operator-(const JVector3& v) { JVector3 result = *this; return result -= v; }
-JVector3& JVector3::operator+(const float& scalar) { JVector3 result = *this; return result += scalar; }
-JVector3& JVector3::operator-(const float& scalar) { JVector3 result = *this; return result -= scalar; }
-JVector3& JVector3::operator*(const float& scalar) { JVector3 result = *this; return result *= scalar; }
-JVector3& JVector3::operator/(const float& scalar) { JVector3 result = *this; return result /= scalar; }
+JVector3 JVector3::operator+=(const JVector3& v) { x += v.x; y += v.y; z += v.z; return *this; }
+JVector3 JVector3::operator-=(const JVector3& v) { x -= v.x; y -= v.y; z -= v.z; return *this; }
+JVector3 JVector3::operator+=(const float& scalar) { x += scalar; y += scalar; z += scalar; return *this; }
+JVector3 JVector3::operator-=(const float& scalar) { x -= scalar; y -= scalar; z -= scalar; return *this; }
+JVector3 JVector3::operator*=(const float& scalar) { x *= scalar; y *= scalar; z *= scalar; return *this; }
+JVector3 JVector3::operator/=(const float& scalar) { x /= scalar; y /= scalar; z /= scalar; return *this; }
+JVector3 JVector3::operator+(const JVector3& v) { JVector3 result = *this; return result += v; }
+JVector3 JVector3::operator-(const JVector3& v) { JVector3 result = *this; return result -= v; }
+JVector3 JVector3::operator+(const float& scalar) { JVector3 result = *this; return result += scalar; }
+JVector3 JVector3::operator-(const float& scalar) { JVector3 result = *this; return result -= scalar; }
+JVector3 JVector3::operator*(const float& scalar) { JVector3 result = *this; return result *= scalar; }
+JVector3 JVector3::operator/(const float& scalar) { JVector3 result = *this; return result /= scalar; }
 
 float JVector3::Dot(const JVector3& v) const
 {
@@ -100,27 +100,27 @@ bool JVector2::operator>(const JVector2& v) const
 }
 
 
-JVector2& JVector2::operator-() const { return JVector2(-x,-y); }
+JVector2 JVector2::operator-() const { return JVector2(-x,-y); }
 
 /* uses JVector2::operator!= */
-JVector2& JVector2::operator=(const JVector2& v)
+JVector2 JVector2::operator=(const JVector2& v)
 {
 	if(this != &v) { x = v.x; y = v.y; }
 	return *this;
 }
 
-JVector2& JVector2::operator+=(const JVector2& v) { x += v.x; y += v.y; return *this; }
-JVector2& JVector2::operator-=(const JVector2& v) { x -= v.x; y -= v.y; return *this; }
-JVector2& JVector2::operator+=(const float& scalar) { x += scalar; y += scalar; return *this; }
-JVector2& JVector2::operator-=(const float& scalar) { x -= scalar; y -= scalar; return *this; }
-JVector2& JVector2::operator*=(const float& scalar) { x *= scalar; y *= scalar; return *this; }
-JVector2& JVector2::operator/=(const float& scalar) { x /= scalar; y /= scalar; return *this; }
-JVector2& JVector2::operator+(const JVector2& v) { JVector2 result = *this; return result += v; }
-JVector2& JVector2::operator-(const JVector2& v) { JVector2 result = *this; return result -= v; }
-JVector2& JVector2::operator+(const float& scalar) { JVector2 result = *this; return result += scalar; }
-JVector2& JVector2::operator-(const float& scalar) { JVector2 result = *this; return result -= scalar; }
-JVector2& JVector2::operator*(const float& scalar) { JVector2 result = *this; return result *= scalar; }
-JVector2& JVector2::operator/(const float& scalar) { JVector2 result = *this; return result /= scalar; }
+JVector2 JVector2::operator+=(const JVector2& v) { x += v.x; y += v.y; return *this; }
+JVector2 JVector2::operator-=(const JVector2& v) { x -= v.x; y -= v.y; return *this; }
+JVector2 JVector2::operator+=(const float& scalar) { x += scalar; y += scalar; return *this; }
+JVector2 JVector2::operator-=(const float& scalar) { x -= scalar; y -= scalar; return *this; }
+JVector2 JVector2::operator*=(const float& scalar) { x *= scalar; y *= scalar; return *this; }
+JVector2 JVector2::operator/=(const float& scalar) { x /= scalar; y /= scalar; return *this; }
+JVector2 JVector2::operator+(const JVector2& v) { JVector2 result = *this; return result += v; }
+JVector2 JVector2::operator-(const JVector2& v) { JVector2 result = *this; return result -= v; }
+JVector2 JVector2::operator+(const float& scalar) { JVector2 result = *this; return result += scalar; }
+JVector2 JVector2::operator-(const float& scalar) { JVector2 result = *this; return result -= scalar; }
+JVector2 JVector2::operator*(const float& scalar) { JVector2 result = *this; return result *= scalar; }
+JVector2 JVector2::operator/(const float& scalar) { JVector2 result = *this; return result /= scalar; }
 
 float JVector2::Dot(const JVector2& v) const
 {

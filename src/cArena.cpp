@@ -39,19 +39,23 @@ bool cArena::CleanUp()
 
 int cArena::LoadArenaData(const char* _filename)
 {
-	TmxReturn l_error;
-
-	l_error = parseFromFile(_filename,&mArena,"assets/arena/");
-	if(!l_error)
+	int l_result = 0;
+	TmxReturn l_tmx_error = parseFromFile(_filename,&mArena,"assets/arena/");
+	if(!l_tmx_error)
 	{
 		mTilesSpriteSheet = mRen->LoadBitmap(mArena.tilesetCollection[0].image.source.c_str());
-		if(!mTilesSpriteSheet) mLog->LogSDLError("LoadArena LoadBitmap");
+		if(!mTilesSpriteSheet)
+		{
+			l_result = -1;
+			mLog->LogSDLError("LoadArenaData() LoadBitmap()");
+		}
 
+		JVector2 l_pos;
 		for(int i = 0; i < mArena.height; i++)
 		{
 			for(int j = 0; j < mArena.width; j++)
 			{
-				JVector2 l_pos(j,i);
+				l_pos.Set(j,i);
 				if(GetTileType(l_pos) == TILE_START)
 				{
 					mEnemyStartPos = l_pos;
@@ -62,26 +66,26 @@ int cArena::LoadArenaData(const char* _filename)
 				}
 				if(GetTileType(l_pos) == TILE_CORE)
 				{
-					mEnemyTargetPos = JVector2(l_pos * GetGridSize());
+					mEnemyTargetPos = l_pos * GetGridSize();
 				}
 			}
 		}		
 	}
 	else
 	{
-		//TODO: proper error reporting
-		printf("error parsing file");
+		l_result = l_tmx_error;
+		mLog->LogError("LoadArenaData() error parsing file");
 	}
-	return l_error;
+	return l_result;
 }
 
 //TODO: consider changing to (int _x, int _y)
-int cArena::GetTileType(JVector2 _pos)
+ARENA_TILE_TYPE cArena::GetTileType(JVector2& _pos)
 {
 	//TODO: only siupports one Tiled layer
 	if(_pos.x < 0 || _pos.x > GetArenaWidth()) return TILE_EMPTY;
 	if(_pos.y < 0 || _pos.y > GetArenaHeight()) return TILE_EMPTY;
-	return mArena.layerCollection[0].tiles[_pos.y*mArena.width + _pos.x].tileFlatIndex;
+	return (ARENA_TILE_TYPE)mArena.layerCollection[0].tiles[_pos.y*mArena.width + _pos.x].tileFlatIndex;
 }
 
 void cArena::Update()
