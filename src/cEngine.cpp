@@ -26,13 +26,13 @@ int cEngine::Init()
 	LoadConfigFromFile("assets/config.xml");
 
 	mFPSTimer = cTimer();
-	mFPSTimer.start();
+	mFPSTimer.Start();
 	mFPSCap = cTimer();
-	mFPSCap.start();
-	mCountedFrames = 0;
+	mFPSCap.Start();
+	mCountedFrames = 1;
 	mAvgFPS = 0;
 
-	mUpdatesCap.start();
+	mUpdatesCap.Start();
 	mCountedUpdates = 0;
 	mAvgUpdates = 0;
 
@@ -80,7 +80,7 @@ int cEngine::CleanUp()
 	mEnemyController.CleanUp();
 	mTowerController.CleanUp();
 
-	mFPSTimer.stop();
+	mFPSTimer.Stop();
 
 	if(mTexture) SDL_DestroyTexture(mTexture);
 	mTexture = NULL;
@@ -103,11 +103,12 @@ int cEngine::CleanUp()
 loads config from xml file.
 returns -1 on load file error.
 returns 0 on success.
+//TODO: if there is no config, generate one
 */
 int cEngine::LoadConfigFromFile(const char* _filename)
 {
 	int l_result = 0;
-	XMLDocument doc;
+	tinyxml2::XMLDocument doc;
 	if(!doc.LoadFile(_filename))
 	{
 		XMLElement* l_elem = doc.FirstChildElement("config")->FirstChildElement("display");
@@ -138,10 +139,10 @@ void cEngine::Update()
 	UpdateEvents();
 
 	mAvgUpdates = CalcAvgUpdates();
-	CapFrameRate();
-	CapUpdateRate();
+	//CapFrameRate();
+	//CapUpdateRate();
 
-	if(mUpdate)
+	if(mRender)
 	{
 		//TODO: find a better solution to getting cam pos, possibly another location to calc cursor.
 		JVector2 camPos = mRen->mCamera->GetPos();
@@ -184,22 +185,31 @@ void cEngine::Render()
 
 		SDL_Color mouseColour = { 0,0,0,255 };
 		mRen->DrawRect(mCursorX,mCursorY,30,30,mouseColour,0,WORLD_SPACE);
-		mRen->RenderText(mAvgFPS,34,50,0,mouseColour,NULL,SCREEN_SPACE);
-		mRen->RenderText(mAvgUpdates,34,80,0,mouseColour,NULL,SCREEN_SPACE);
+
+		//std::stringstream FPS; FPS.str(""); FPS << "FPS: " << CalcFPS() << "\n";
+		//mRen->RenderText(FPS.str().c_str(),34,50,0,mouseColour,NULL,SCREEN_SPACE);
+		//mPrevFPS = mFPSTimer.getTicks();
+
+		std::stringstream AVGFPS; AVGFPS.str(""); AVGFPS << "Avg FPS: " << mAvgFPS;
+		mRen->RenderText(AVGFPS.str().c_str(),34,80,0,mouseColour,NULL,SCREEN_SPACE);
+		
+		std::stringstream AVGUPDS; AVGUPDS.str(""); AVGUPDS << "Avg Ups: " << mAvgUpdates;
+		mRen->RenderText(AVGUPDS.str().c_str(),34,110,0,mouseColour,NULL,SCREEN_SPACE);
 
 		mTowerController.DrawTowersInUse();
 		mTowerController.DrawTower(mCursorX,mCursorY,mTowerController.GetTowerSelected(),WORLD_SPACE);
 		mTowerController.DrawTowerText(mCursorX,mCursorY - 15,mTowerController.GetTowerSelected(),mouseColour,WORLD_SPACE);
 		mEnemyController.DrawEnemies();
 
-		mRen->Present(NULL);
+		//mRen->Present(NULL);
 		mCountedFrames++;
 	}
 }
 
 bool cEngine::GetQuit() { return mQuit; }
-Uint32 cEngine::CalcAvgFPS() { return mCountedFrames / ( mFPSTimer.getTicks() / 1000.f ); }
-Uint32 cEngine::CalcAvgUpdates() { return mCountedUpdates / ( mFPSTimer.getTicks() / 1000.f ); }
+Uint32 cEngine::CalcAvgFPS() { return mCountedFrames / ( mFPSTimer.GetTicks() / 1000.f ); }
+Uint32 cEngine::CalcAvgUpdates() { return mCountedUpdates / ( mFPSTimer.GetTicks() / 1000.f ); }
+int cEngine::CalcFPS() { return 1000 / (mFPSTimer.GetTicks() - mPrevFPS); }
 
 /*
 caps framerate to SCREEN_FPS using SCREEN_TICKS_PER_FRAME
@@ -209,12 +219,27 @@ do not render. if enough time has passed, do render.
 */
 void cEngine::CapFrameRate()
 {
-	if( mFPSCap.getTicks() < SCREEN_TICKS_PER_FRAME ) mRender = false;
-	else { mRender = true; mFPSCap.start(); }
+	//if( mFPSCap.getTicks() < SCREEN_TICKS_PER_FRAME ) mRender = false;
+	//else { mRender = true; mFPSCap.start(); }
+	
+	mRender = true;
+	if(mFPSCap.GetTicks() < SCREEN_TICKS_PER_FRAME)
+	{
+		int l_sleep_time = 1000/60 - mFPSCap.GetTicks();
+		_sleep(abs(l_sleep_time));
+
+		int seconds_elapsed = mFPSTimer.GetTicks() - mPrevFPS;
+		while(seconds_elapsed < SCREEN_TICKS_PER_FRAME)
+		{
+			seconds_elapsed =  mFPSTimer.GetTicks() - mPrevFPS;
+			
+		}
+	}
+	mFPSCap.Start();
 }
 
 void cEngine::CapUpdateRate()
 {
-	if( mUpdatesCap.getTicks() < UPDATE_TICKS_PER_FRAME ) mUpdate = false;
-	else { mUpdate = true; mUpdatesCap.start(); }
+	if( mUpdatesCap.GetTicks() < UPDATE_TICKS_PER_FRAME ) mUpdate = false;
+	else { mUpdate = true; mUpdatesCap.Start(); }
 }

@@ -23,6 +23,7 @@ singleton class
 #include "cEnemyController.h"
 #include "cArena.h"
 
+
 class cEngine
 {
 private:
@@ -48,6 +49,7 @@ private:
 	Uint32 CalcAvgFPS();
 	void CapUpdateRate();
 	Uint32 CalcAvgUpdates();
+	int CalcFPS();
 
 public:
 	static cEngine* Instance();
@@ -58,6 +60,7 @@ public:
 	void Update();
 	void UpdateEvents();
 	void Render();
+	void RenderPresent() { mRen->Present(NULL); }
 
 	bool GetQuit();
 	
@@ -65,6 +68,7 @@ public:
 	cTimer mFPSCap;
 	Uint32 mCountedFrames;
 	Uint32 mAvgFPS;
+	int mPrevFPS;
 	int SCREEN_FPS;
 	int SCREEN_TICKS_PER_FRAME;// = 1000 / SCREEN_FPS;
 

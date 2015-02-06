@@ -21,7 +21,7 @@ using namespace tinyxml2;
 class cEnemyController
 {
 private:
-	static const unsigned int mMaxEnemiesAlive = 30;
+	static const unsigned int mMaxEnemiesAlive = 300;
 	static const unsigned int mMaxEnemyTypes = 10;
 	EnemyData mEnemiesData[mMaxEnemyTypes];
 	cEnemy* mEnemiesAlive[mMaxEnemiesAlive];

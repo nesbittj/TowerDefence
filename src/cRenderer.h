@@ -21,6 +21,8 @@ singleton class
 
 enum { WORLD_SPACE, SCREEN_SPACE };
 
+#define ClearToColour SDL_RenderClear 
+
 class cRenderer
 {
 private:

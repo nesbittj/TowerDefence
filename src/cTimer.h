@@ -5,30 +5,20 @@
 class cTimer
 {
     public:
-        //Initializes variables
         cTimer();
 
-        //The various clock actions
-        void start();
-        void stop();
-        void pause();
-        void unpause();
+        void Start();
+        void Stop();
+        void Pause();
+        void Unpause();
 
-        //Gets the timer's time
-        Uint32 getTicks();
-
-        //Checks the status of the timer
-        bool isStarted();
-        bool isPaused();
+        unsigned int GetTicks();
+        bool GetIsStarted() { return mStarted; }
+        bool GetIsPaused() { return mPaused && mStarted; }
 
     private:
-        //The clock time when the timer started
-        Uint32 mStartTicks;
-
-        //The ticks stored when the timer was paused
-        Uint32 mPausedTicks;
-
-        //The timer status
+        unsigned int mStartTicks;
+        unsigned int mPausedTicks;
         bool mPaused;
         bool mStarted;
 };

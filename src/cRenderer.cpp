@@ -374,7 +374,7 @@ void cRenderer::Present(SDL_Renderer* _ren)
 	if(!_ren) _ren = mRenderer;
 	SDL_RenderPresent(_ren);
 	SetDrawColour(mColourDef,_ren);
-	if(SDL_RenderClear(_ren) != 0) mLog->LogSDLError("cRenderer::Present()");
+	if(ClearToColour(_ren) != 0) mLog->LogSDLError("cRenderer::Present()");
 }
 
 /*

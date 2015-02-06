@@ -16,7 +16,7 @@ bool cTower::Init(SDL_Texture* _bitmap, TowerData* _data)
 {
 	mTowerData = _data;
 	mFireFreqTimer = cTimer();
-	mFireFreqTimer.start();
+	mFireFreqTimer.Start();
 	mFireDurTimer = cTimer();
 	if(!cEntity::Init(_bitmap)) return false;
 	return true;
@@ -24,8 +24,8 @@ bool cTower::Init(SDL_Texture* _bitmap, TowerData* _data)
 
 bool cTower::CleanUp()
 {
-	mFireDurTimer.stop();
-	mFireFreqTimer.stop();
+	mFireDurTimer.Stop();
+	mFireFreqTimer.Stop();
 	mTowerData = NULL;
 	if(!cEntity::CleanUp()) return false;
 	return true;
@@ -47,22 +47,22 @@ void cTower::Update(cEnemy** const _enemies, int size_of_array)
 	bool l_freq = true;
 	bool l_dur = true;
 	
-	if(mFireFreqTimer.getTicks() > mTowerData->mFireFreq)
+	if(mFireFreqTimer.GetTicks() > mTowerData->mFireFreq)
 	{
 		l_freq = true;
-		mFireFreqTimer.start();
+		mFireFreqTimer.Start();
 	}
 	else l_freq = false;
 
-	if(mFireDurTimer.getTicks() < mTowerData->mFireDuration)
+	if(mFireDurTimer.GetTicks() < mTowerData->mFireDuration)
 	{
 		l_dur = true;
-		if(!mFiring) mFireDurTimer.start();
+		if(!mFiring) mFireDurTimer.Start();
 	}
 	else
 	{
 		l_dur = false;
-		mFireDurTimer.stop();
+		mFireDurTimer.Stop();
 	}
 
 	if((!mFiring && l_freq)	|| (mFiring && l_dur))
@@ -98,7 +98,7 @@ void cTower::Draw()
 	
 	//firing timer text
 	SDL_Color col = { 0,0,0 };
-	mRen->RenderText(mFireFreqTimer.getTicks(),x+42,y,0,col,NULL);
-	mRen->RenderText(mFireDurTimer.getTicks(),x+42,y+15,0,col,NULL);
+	mRen->RenderText(mFireFreqTimer.GetTicks(),x+42,y,0,col,NULL);
+	mRen->RenderText(mFireDurTimer.GetTicks(),x+42,y+15,0,col,NULL);
 	
 }
