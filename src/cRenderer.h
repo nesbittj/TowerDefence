@@ -21,7 +21,7 @@ singleton class
 
 enum { WORLD_SPACE, SCREEN_SPACE };
 
-#define ClearToColour SDL_RenderClear 
+#define ClearToColour SDL_RenderClear
 
 class cRenderer
 {
@@ -69,4 +69,3 @@ public:
 	SDL_Texture* LoadBitmap(const char* _filename, SDL_Renderer* _ren = NULL);
 	void UnloadBitmap(SDL_Texture* _bitmap);
 };
-

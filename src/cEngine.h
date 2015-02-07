@@ -9,20 +9,22 @@ singleton class
 
 #pragma once
 
+//#include <Windows.h>
+//#undef LoadBitmap //stops windows.h defining as LoadBitmapA
+
 #include <SDL.h>
 #include "tinyxml2.h"
 
 #include "cRenderer.h"
 #include "cLogger.h"
 #include "cInput.h"
-#include "cTimer.h"
 
+#include "cTimer.h"
 #include "cPlayer.h"
 #include "cEntity.h"
 #include "cTowerController.h"
 #include "cEnemyController.h"
 #include "cArena.h"
-
 
 class cEngine
 {
@@ -60,7 +62,7 @@ public:
 	void Update();
 	void UpdateEvents();
 	void Render();
-	void RenderPresent() { mRen->Present(NULL); }
+	//void RenderPresent() { mRen->Present(NULL); }
 
 	bool GetQuit();
 	
@@ -85,5 +87,15 @@ public:
 	static const Uint32 LEVEL_GRID_SIZE = 32;
 
 	int mCursorX, mCursorY;
+	
+	Uint64 mPerfCountFrequency;
+	Uint64 mLastCounter;
+	int mMonitorRefreshHz;
+	int mGameUpdatesHz;
+	float mTargetSecondsPerFrame;
+	bool mSleepIsGranuler;
+
+	void SleepFPS();
+	inline float GetSecondsElapsed(Uint64 Start, Uint64 End);
 };
 

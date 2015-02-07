@@ -25,6 +25,19 @@ int cEngine::Init()
 
 	LoadConfigFromFile("assets/config.xml");
 
+	/*
+	//TODO: set timer resolution/granularity without windows.h/Winmm.lib
+	//get timer resolution
+	TIMECAPS tc;
+	timeGetDevCaps(&tc,sizeof(TIMECAPS));
+	//set timer resolution
+	Uint32 DesiredSchedulerMS = 1;
+	mSleepIsGranuler = (timeBeginPeriod(DesiredSchedulerMS) == TIMERR_NOERROR);
+	*/
+
+	mPerfCountFrequency = SDL_GetPerformanceFrequency();
+	mLastCounter = SDL_GetPerformanceCounter();
+
 	mFPSTimer = cTimer();
 	mFPSTimer.Start();
 	mFPSCap = cTimer();
@@ -127,6 +140,12 @@ int cEngine::LoadConfigFromFile(const char* _filename)
 	SCREEN_TICKS_PER_FRAME = 1000 / SCREEN_FPS;
 	UPDATE_FREQ = SCREEN_FPS * 2;
 	UPDATE_TICKS_PER_FRAME = 1000 / UPDATE_FREQ;
+
+	
+	mMonitorRefreshHz = 60;
+	mGameUpdatesHz = mMonitorRefreshHz;
+	mTargetSecondsPerFrame = 1.f / mGameUpdatesHz;
+
 	return l_result;
 }
 
@@ -186,9 +205,9 @@ void cEngine::Render()
 		SDL_Color mouseColour = { 0,0,0,255 };
 		mRen->DrawRect(mCursorX,mCursorY,30,30,mouseColour,0,WORLD_SPACE);
 
-		//std::stringstream FPS; FPS.str(""); FPS << "FPS: " << CalcFPS() << "\n";
-		//mRen->RenderText(FPS.str().c_str(),34,50,0,mouseColour,NULL,SCREEN_SPACE);
-		//mPrevFPS = mFPSTimer.getTicks();
+		std::stringstream FPS; FPS.str(""); FPS << "FPS: " << CalcFPS() << "\n";
+		mRen->RenderText(FPS.str().c_str(),34,50,0,mouseColour,NULL,SCREEN_SPACE);
+		mPrevFPS = mFPSTimer.GetTicks();
 
 		std::stringstream AVGFPS; AVGFPS.str(""); AVGFPS << "Avg FPS: " << mAvgFPS;
 		mRen->RenderText(AVGFPS.str().c_str(),34,80,0,mouseColour,NULL,SCREEN_SPACE);
@@ -201,7 +220,9 @@ void cEngine::Render()
 		mTowerController.DrawTowerText(mCursorX,mCursorY - 15,mTowerController.GetTowerSelected(),mouseColour,WORLD_SPACE);
 		mEnemyController.DrawEnemies();
 
-		//mRen->Present(NULL);
+		SleepFPS();
+
+		mRen->Present(NULL);
 		mCountedFrames++;
 	}
 }
@@ -219,27 +240,51 @@ do not render. if enough time has passed, do render.
 */
 void cEngine::CapFrameRate()
 {
-	//if( mFPSCap.getTicks() < SCREEN_TICKS_PER_FRAME ) mRender = false;
-	//else { mRender = true; mFPSCap.start(); }
-	
-	mRender = true;
-	if(mFPSCap.GetTicks() < SCREEN_TICKS_PER_FRAME)
-	{
-		int l_sleep_time = 1000/60 - mFPSCap.GetTicks();
-		_sleep(abs(l_sleep_time));
-
-		int seconds_elapsed = mFPSTimer.GetTicks() - mPrevFPS;
-		while(seconds_elapsed < SCREEN_TICKS_PER_FRAME)
-		{
-			seconds_elapsed =  mFPSTimer.GetTicks() - mPrevFPS;
-			
-		}
-	}
-	mFPSCap.Start();
+	if( mFPSCap.GetTicks() < SCREEN_TICKS_PER_FRAME ) mRender = false;
+	else { mRender = true; mFPSCap.Start(); }
 }
 
 void cEngine::CapUpdateRate()
 {
 	if( mUpdatesCap.GetTicks() < UPDATE_TICKS_PER_FRAME ) mUpdate = false;
 	else { mUpdate = true; mUpdatesCap.Start(); }
+}
+
+void cEngine::SleepFPS()
+{
+	float SecondsElapsedForFrame = GetSecondsElapsed(mLastCounter,SDL_GetPerformanceCounter());;
+	if(SecondsElapsedForFrame < mTargetSecondsPerFrame)
+	{
+		if(mSleepIsGranuler)
+		{
+			Uint32 SleepMS = (Uint32)(1000.f * (mTargetSecondsPerFrame - SecondsElapsedForFrame));
+			if(SleepMS > 0) SDL_Delay(SleepMS);
+		}
+		while(SecondsElapsedForFrame < mTargetSecondsPerFrame)
+		{
+			SecondsElapsedForFrame = GetSecondsElapsed(mLastCounter,SDL_GetPerformanceCounter());
+		}
+	}
+	else
+	{
+	}		
+
+	Uint64 EndCounter = SDL_GetPerformanceCounter();
+	mLastCounter = EndCounter;
+
+	/*
+	float MSPerFrame = 1000*GetSecondsElapsed(mLastCounter,EndCounter);
+	float FPS = 0.f; //PerfCountFrequency / CounterElapsed;
+	float MCPF = 0.f; //(INT32)(CyclesElapsed / (1000 * 1000));
+
+	char buffer[256];
+	sprintf(buffer,"%fms/f, %ff/s, %fmc/f\n",MSPerFrame,FPS,MCPF);
+	OutputDebugStringA(buffer);
+	*/
+}
+
+inline float cEngine::GetSecondsElapsed(Uint64 Start, Uint64 End)
+{
+	float result = ((float)(End - Start) / (float)mPerfCountFrequency);
+	return result;
 }
