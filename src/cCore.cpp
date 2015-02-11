@@ -28,7 +28,7 @@ void cCore::Update()
 
 bool cCore::LoadCoreData()
 {
-	XMLDocument doc;
+	tinyxml2::XMLDocument doc;
 	if(!doc.LoadFile("assets/arena/core_data.xml"))
 	{
 		XMLElement* l_core = doc.FirstChildElement("core")->FirstChild()->ToElement();

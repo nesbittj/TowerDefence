@@ -130,7 +130,7 @@ bool cEnemyController::LoadEnemyData()
 	for(int i = 0; i < mMaxEnemyTypes; i++)
 		mEnemiesData[i].mBitmap = NULL;
 
-	XMLDocument doc;
+	tinyxml2::XMLDocument doc;
 	if(!doc.LoadFile("assets/enemies/enemies_data.xml"))
 	{
 		XMLElement* l_enemy = doc.FirstChildElement("enemies")->FirstChild()->ToElement();

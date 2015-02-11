@@ -14,8 +14,9 @@ TTF font init error returns -2.
 TTF open font error returns -3.
 success returns 0.
 */
-int cRenderer::Init(SDL_Window* _window, SDL_Event* _event)
+int cRenderer::Init(SDL_Event* _event)
 {
+	mWindow = NULL;
 	mRenderer = NULL;
 	mFont = NULL;
 	mFontSurface = NULL;
@@ -24,8 +25,26 @@ int cRenderer::Init(SDL_Window* _window, SDL_Event* _event)
 
 	mLog = cLogger::Instance();
 	mEvent = _event;
+	
+	if(LoadConfigFromFile("assets/config.xml") != 0)
+	{
+		mLog->LogError("cRenderer::Init() LoadConfigFromFile");
+	}
+	
+	//set windows scheduler granularity to 1ms
+	timeBeginPeriod(1);
+	mPerfCountFrequency = SDL_GetPerformanceFrequency();
+	mLastCounter = SDL_GetPerformanceCounter();
 
-	mRenderer = SDL_CreateRenderer(_window, -1, SDL_RENDERER_ACCELERATED);
+	mWindow = SDL_CreateWindow("SDL Window", 100,100, mWindowWidth,mWindowHeight,
+								SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE);
+	if(!mWindow)
+	{
+		mLog->LogSDLError("SDL_CreateWindow");
+		return -1;
+	}
+
+	mRenderer = SDL_CreateRenderer(mWindow, -1, SDL_RENDERER_ACCELERATED);
 	if(!mRenderer)
 	{
 		mLog->LogSDLError("SDL_CreateRenderer");
@@ -71,6 +90,8 @@ int cRenderer::CleanUp()
 
 	if(mRenderer) SDL_DestroyRenderer(mRenderer);
 	mRenderer = NULL;
+	if(mWindow) SDL_DestroyWindow(mWindow);
+	mWindow = NULL;
 
 	mEvent = NULL;
 	mLog = NULL;
@@ -371,10 +392,51 @@ renderer can be set to NULL then default renderer will be used
 */
 void cRenderer::Present(SDL_Renderer* _ren)
 {
+	SleepFPS();
+
 	if(!_ren) _ren = mRenderer;
 	SDL_RenderPresent(_ren);
 	SetDrawColour(mColourDef,_ren);
 	if(ClearToColour(_ren) != 0) mLog->LogSDLError("cRenderer::Present()");
+}
+
+void cRenderer::SleepFPS()
+{
+	float SecondsElapsedForFrame = GetSecondsElapsed(mLastCounter,SDL_GetPerformanceCounter());;
+	if(SecondsElapsedForFrame < mTargetSecondsPerFrame)
+	{
+		Uint32 TimeToSleep = ((mTargetSecondsPerFrame - GetSecondsElapsed(mLastCounter, SDL_GetPerformanceCounter())) * 1000) - 1;
+		Uint32 SleepMS = (1000.f * (mTargetSecondsPerFrame - SecondsElapsedForFrame)) - 1;
+		if(TimeToSleep > 0.0) SDL_Delay(TimeToSleep);
+		while(SecondsElapsedForFrame < mTargetSecondsPerFrame)
+		{
+			SecondsElapsedForFrame = GetSecondsElapsed(mLastCounter,SDL_GetPerformanceCounter());
+		}
+	}
+	else
+	{
+		mLog->LogError("cRenderer:: missed frane rate!!");
+	}
+
+	Uint64 EndCounter = SDL_GetPerformanceCounter();
+	
+	float MSPerFrame = 1000*GetSecondsElapsed(mLastCounter,EndCounter);
+	float FPS = 0.f; //PerfCountFrequency / CounterElapsed;
+	float MCPF = 0.f; //(INT32)(CyclesElapsed / (1000 * 1000));
+
+	char buffer[256];
+	sprintf(buffer,"%fms/f, %ff/s, %fmc/f\n",MSPerFrame,FPS,MCPF);
+	printf(buffer);
+	//OutputDebugStringA(buffer);
+
+	mLastCounter = EndCounter;
+	
+}
+
+inline float cRenderer::GetSecondsElapsed(Uint64 Start, Uint64 End)
+{
+	float result = ((float)(End - Start) / (float)mPerfCountFrequency);
+	return result;
 }
 
 /*
@@ -410,4 +472,35 @@ void cRenderer::UnloadBitmap(SDL_Texture* _bitmap)
 {
 	if(_bitmap) SDL_DestroyTexture(_bitmap);
 	_bitmap = NULL;
+}
+
+/*
+loads config from xml file.
+returns -1 on load file error.
+returns 0 on success.
+//TODO: if there is no config, generate one
+*/
+int cRenderer::LoadConfigFromFile(const char* _filename)
+{
+	//TODO: also load window preferences, fullscreen etc
+	int l_result = 0;
+	tinyxml2::XMLDocument doc;
+	if(!doc.LoadFile(_filename))
+	{
+		tinyxml2::XMLElement* l_elem = doc.FirstChildElement("config")->FirstChildElement("display");
+		l_elem->QueryUnsignedAttribute("width",&mWindowWidth);
+		l_elem->QueryUnsignedAttribute("height",&mWindowHeight);
+		l_elem->QueryFloatAttribute("fps",&mTargetSecondsPerFrame);
+		mTargetSecondsPerFrame = 1.f / mTargetSecondsPerFrame;
+	}
+	else
+	{
+		mWindowWidth = 640;
+		mWindowHeight = 480;
+		mTargetSecondsPerFrame = 1.f / 30;
+		mLog->LogError("cEngine::LoadConfig failed");
+		l_result = -1;
+	}
+
+	return l_result;
 }

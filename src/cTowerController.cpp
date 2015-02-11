@@ -137,7 +137,7 @@ bool cTowerController::LoadTowersData()
 	for(int i = 0; i < mMaxTowerTypes; i++)
 		mTowersData[i].mBitmap = NULL;
 
-	XMLDocument doc;
+	tinyxml2::XMLDocument doc;
 	if(!doc.LoadFile("assets/towers/towers_data.xml"))
 	{
 		XMLElement* l_tower = doc.FirstChildElement("towers")->FirstChild()->ToElement();

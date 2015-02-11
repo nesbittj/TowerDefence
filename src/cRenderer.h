@@ -18,6 +18,10 @@ singleton class
 #include "cLogger.h"
 #include "cMaths.h"
 #include "cCamera.h"
+#include "tinyxml2.h"
+
+#include <Windows.h>
+#undef LoadBitmap LoadBitmapA
 
 enum { WORLD_SPACE, SCREEN_SPACE };
 
@@ -31,27 +35,39 @@ private:
 
 	cLogger* mLog;
 	SDL_Event* mEvent;
-
+	
+	SDL_Window* mWindow;
 	SDL_Renderer* mRenderer;
-	SDL_Color mColourDef;
-	SDL_Color mColourBlack;
 	TTF_Font* mFont;
 	SDL_Surface* mFontSurface;
 	SDL_Texture* mFontTexture;
+	SDL_Color mColourDef;
+	SDL_Color mColourBlack;
+	
+	Uint32 mWindowWidth;
+	Uint32 mWindowHeight;
+	Uint64 mPerfCountFrequency;
+	Uint64 mLastCounter;
+	Uint32 mMonitorRefreshHz;
+	Uint32 mGameUpdatesHz;
+	float mTargetSecondsPerFrame;
 
 	void SetDrawColour(SDL_Color _col, SDL_Renderer* _ren = NULL);
 	void SetDrawColour(Uint8 _r, Uint8 _g, Uint8 _b, Uint8 _a, SDL_Renderer* _ren = NULL);
 	SDL_Color GetDrawColour(SDL_Renderer* _ren = NULL) const;
 
+	void SleepFPS();
+	inline float GetSecondsElapsed(Uint64 Start, Uint64 End);
+	int LoadConfigFromFile(const char* _filename);
+
 public:
 	cCamera* mCamera;
 
 	static cRenderer* Instance();
-	int Init(SDL_Window* _window, SDL_Event* _event);
+	int Init(SDL_Event* _event);
 	int CleanUp();
-	int InitCamera(SDL_Event* _event, cInput* _input,
-		int _screen_w, int _screen_h, int _arena_w, int _arena_h)
-	{ return mCamera->Init(_event,_input,_screen_w,_screen_h,_arena_w,_arena_h); }
+	int InitCamera(SDL_Event* _event, cInput* _input, int _arena_w, int _arena_h)
+	{ return mCamera->Init(_event,_input,mWindowWidth,mWindowHeight,_arena_w,_arena_h); }
 		
 	void Update();
 	int UpdateEvents();
