@@ -20,9 +20,6 @@ singleton class
 #include "cCamera.h"
 #include "tinyxml2.h"
 
-#include <Windows.h>
-#undef LoadBitmap LoadBitmapA
-
 enum { WORLD_SPACE, SCREEN_SPACE };
 
 #define ClearToColour SDL_RenderClear
@@ -51,12 +48,14 @@ private:
 	Uint32 mMonitorRefreshHz;
 	Uint32 mGameUpdatesHz;
 	float mTargetSecondsPerFrame;
+	Uint64 mTotalWin32Time;
+	Uint32 mTotalFrames;
 
 	void SetDrawColour(SDL_Color _col, SDL_Renderer* _ren = NULL);
 	void SetDrawColour(Uint8 _r, Uint8 _g, Uint8 _b, Uint8 _a, SDL_Renderer* _ren = NULL);
 	SDL_Color GetDrawColour(SDL_Renderer* _ren = NULL) const;
 
-	void SleepFPS();
+	void SleepBeforeFlip();
 	inline float GetSecondsElapsed(Uint64 Start, Uint64 End);
 	int LoadConfigFromFile(const char* _filename);
 
@@ -80,7 +79,7 @@ public:
 	int RenderText(const char* _string, float _x, float _y, int _font, SDL_Color _col, SDL_Renderer* _ren, int _space = WORLD_SPACE);
 	int RenderText(const int _value, float _x, float _y, int _font, SDL_Color _col, SDL_Renderer* _ren, int _space = WORLD_SPACE);
 	void RenderVerts(float _x, float _y, const vector<JVector3>& _verts, bool _2D = true, int _space = WORLD_SPACE);
-	void Present(SDL_Renderer* _ren);
+	void Present(SDL_Renderer* _ren, bool _vsync = true);
 
 	SDL_Texture* LoadBitmap(const char* _filename, SDL_Renderer* _ren = NULL);
 	void UnloadBitmap(SDL_Texture* _bitmap);

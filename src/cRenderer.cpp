@@ -32,11 +32,12 @@ int cRenderer::Init(SDL_Event* _event)
 	}
 	
 	//set windows scheduler granularity to 1ms
-	timeBeginPeriod(1);
+	//timeBeginPeriod(1); //#include <windows.h> Winmm.lib
 	mPerfCountFrequency = SDL_GetPerformanceFrequency();
-	mLastCounter = SDL_GetPerformanceCounter();
+	mTotalWin32Time = mLastCounter = SDL_GetPerformanceCounter();
+	mTotalFrames = 0;
 
-	mWindow = SDL_CreateWindow("SDL Window", 100,100, mWindowWidth,mWindowHeight,
+	mWindow = SDL_CreateWindow("SDL Window", 600,200, mWindowWidth,mWindowHeight,
 								SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE);
 	if(!mWindow)
 	{
@@ -106,7 +107,7 @@ void cRenderer::Update()
 
 int cRenderer::UpdateEvents()
 {
-	if (mEvent->type == SDL_WINDOWEVENT)
+	if (false)//mEvent->type == SDL_WINDOWEVENT)
 	{
 		switch (mEvent->window.event)
 		{
@@ -388,26 +389,38 @@ void cRenderer::RenderVerts(float _x, float _y, const vector<JVector3>& _verts, 
 /*
 presents / flips renderer (back buffer) to display
 then clears renderer to RenderDrawColor
-renderer can be set to NULL then default renderer will be used
+renderer can be set to NULL then default renderer will be used.
+if _vsync is true SleepBeforeFlip will fix framerate to target fps.
+uses SleepBeforeFlip().
 */
-void cRenderer::Present(SDL_Renderer* _ren)
+void cRenderer::Present(SDL_Renderer* _ren, bool _vsync)
 {
-	SleepFPS();
+	if(_vsync) SleepBeforeFlip();
 
 	if(!_ren) _ren = mRenderer;
 	SDL_RenderPresent(_ren);
 	SetDrawColour(mColourDef,_ren);
 	if(ClearToColour(_ren) != 0) mLog->LogSDLError("cRenderer::Present()");
+	mTotalFrames++;
 }
 
-void cRenderer::SleepFPS()
+/*
+calculates time in millisecodns to sleep before flipping back buffer.
+position this after update and render, before flip.
+will sleep for target frame time - last frame time to fix framerate at target fps.
+used SDL_Sleep(), SDL_GetPerformanceCounter(), GetSecondsElapsed().
+*/
+void cRenderer::SleepBeforeFlip()
 {
+	//windows scheduler has a high default granularity, this is a temporary work around
+	//TODO: calc OS scheduler granularity at start of program
+	Uint32 win32SchedulerPadding = 1;
 	float SecondsElapsedForFrame = GetSecondsElapsed(mLastCounter,SDL_GetPerformanceCounter());;
 	if(SecondsElapsedForFrame < mTargetSecondsPerFrame)
 	{
-		Uint32 TimeToSleep = ((mTargetSecondsPerFrame - GetSecondsElapsed(mLastCounter, SDL_GetPerformanceCounter())) * 1000) - 1;
-		Uint32 SleepMS = (1000.f * (mTargetSecondsPerFrame - SecondsElapsedForFrame)) - 1;
-		if(TimeToSleep > 0.0) SDL_Delay(TimeToSleep);
+		Uint32 SleepMS = (1000.f * (mTargetSecondsPerFrame - SecondsElapsedForFrame)) - win32SchedulerPadding;
+		if(SleepMS > 0) SDL_Delay(SleepMS);
+		//printf("sleep: %d\n",TimeToSleep);
 		while(SecondsElapsedForFrame < mTargetSecondsPerFrame)
 		{
 			SecondsElapsedForFrame = GetSecondsElapsed(mLastCounter,SDL_GetPerformanceCounter());
@@ -415,28 +428,28 @@ void cRenderer::SleepFPS()
 	}
 	else
 	{
-		mLog->LogError("cRenderer:: missed frane rate!!");
+		mLog->LogError("cRenderer:: missed frame rate!!");
 	}
 
 	Uint64 EndCounter = SDL_GetPerformanceCounter();
-	
+	/*
 	float MSPerFrame = 1000*GetSecondsElapsed(mLastCounter,EndCounter);
-	float FPS = 0.f; //PerfCountFrequency / CounterElapsed;
-	float MCPF = 0.f; //(INT32)(CyclesElapsed / (1000 * 1000));
-
-	char buffer[256];
-	sprintf(buffer,"%fms/f, %ff/s, %fmc/f\n",MSPerFrame,FPS,MCPF);
-	printf(buffer);
-	//OutputDebugStringA(buffer);
-
-	mLastCounter = EndCounter;
-	
+	printf("total SDL time: %d\n", SDL_GetTicks()/1000);
+	printf("total WIN time: %f\n", GetSecondsElapsed(mTotalWin32Time,SDL_GetPerformanceCounter()));
+	printf("total FRAMES  : %d\n", mTotalFrames);
+	printf("total FPS     : %f\n", mTotalFrames/GetSecondsElapsed(mTotalWin32Time,SDL_GetPerformanceCounter()));
+	printf("total fr / fps: %d\n", mTotalFrames/60);
+	*/
+	mLastCounter = EndCounter;	
 }
 
-inline float cRenderer::GetSecondsElapsed(Uint64 Start, Uint64 End)
+/*
+use with SDL_GetPerformanceCounter().
+returns numbert of seconds passed between _start and _end.
+*/
+inline float cRenderer::GetSecondsElapsed(Uint64 _start, Uint64 _end)
 {
-	float result = ((float)(End - Start) / (float)mPerfCountFrequency);
-	return result;
+	return ((float)(_end - _start) / (float)mPerfCountFrequency);
 }
 
 /*
