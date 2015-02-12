@@ -17,21 +17,21 @@ bool cEnemyController::Init(cArena* _arena)
 	mArena = _arena;
 	mEnemyStartPos = mArena->GetEnemyStartPos();
 	mEnemyPath = mArena->BreadthFirst(
-		make_pair(mEnemyStartPos.x,mEnemyStartPos.y),
-		make_pair(mArena->GetEnemyExitPos().x,mArena->GetEnemyExitPos().y));
+		make_pair((int)mEnemyStartPos.x,(int)mEnemyStartPos.y),
+		make_pair((int)mArena->GetEnemyExitPos().x,(int)mArena->GetEnemyExitPos().y));
 	mEnemyStartPos *= mArena->GetGridSize();
 	if(!LoadEnemyData()) return false;
 	for(int i = 0; i < mMaxEnemiesAlive; i++) mEnemiesAlive[i] = NULL;
 
 	mEnemySpawnTimer = cTimer();
-	mEnemySpawnTimer.start();
+	mEnemySpawnTimer.Start();
 
 	return true;
 }
 
 bool cEnemyController::CleanUp()
 {
-	mEnemySpawnTimer.stop();
+	mEnemySpawnTimer.Stop();
 
 	for(int i = 0; i < mMaxEnemiesAlive; i++)
 	{
@@ -55,12 +55,12 @@ bool cEnemyController::CleanUp()
 
 void cEnemyController::Update()
 {
-	if(mEnemySpawnTimer.getTicks() > (1000))
+	if(mEnemySpawnTimer.GetTicks() > (1000))
 	{
 		//if(mEnemiesAlive[0] == NULL) //create only one enemy
 		{
 			AddEnemy(mEnemyStartPos.x,mEnemyStartPos.y, 0);
-			mEnemySpawnTimer.start();
+			mEnemySpawnTimer.Start();
 		}
 	}
 	for(int i = 0; i < mMaxEnemiesAlive; i++)
@@ -92,7 +92,7 @@ void cEnemyController::DrawEnemies()
 		}
 	}
 
-	mRen->RenderText(l_alive,34,110,0,col,NULL,SCREEN_SPACE);
+	mRen->RenderText(l_alive,34,140,0,col,NULL,SCREEN_SPACE);
 	
 }
 
@@ -130,7 +130,7 @@ bool cEnemyController::LoadEnemyData()
 	for(int i = 0; i < mMaxEnemyTypes; i++)
 		mEnemiesData[i].mBitmap = NULL;
 
-	XMLDocument doc;
+	tinyxml2::XMLDocument doc;
 	if(!doc.LoadFile("assets/enemies/enemies_data.xml"))
 	{
 		XMLElement* l_enemy = doc.FirstChildElement("enemies")->FirstChild()->ToElement();

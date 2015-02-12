@@ -14,8 +14,9 @@ TTF font init error returns -2.
 TTF open font error returns -3.
 success returns 0.
 */
-int cRenderer::Init(SDL_Window* _window, SDL_Event* _event)
+int cRenderer::Init(SDL_Event* _event)
 {
+	mWindow = NULL;
 	mRenderer = NULL;
 	mFont = NULL;
 	mFontSurface = NULL;
@@ -24,8 +25,27 @@ int cRenderer::Init(SDL_Window* _window, SDL_Event* _event)
 
 	mLog = cLogger::Instance();
 	mEvent = _event;
+	
+	if(LoadConfigFromFile("assets/config.xml") != 0)
+	{
+		mLog->LogError("cRenderer::Init() LoadConfigFromFile");
+	}
+	
+	//set windows scheduler granularity to 1ms
+	//timeBeginPeriod(1); //#include <windows.h> Winmm.lib
+	mPerfCountFrequency = SDL_GetPerformanceFrequency();
+	mTotalWin32Time = mLastCounter = SDL_GetPerformanceCounter();
+	mTotalFrames = 0;
 
-	mRenderer = SDL_CreateRenderer(_window, -1, SDL_RENDERER_ACCELERATED);
+	mWindow = SDL_CreateWindow("SDL Window", 600,200, mWindowWidth,mWindowHeight,
+								SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE);
+	if(!mWindow)
+	{
+		mLog->LogSDLError("SDL_CreateWindow");
+		return -1;
+	}
+
+	mRenderer = SDL_CreateRenderer(mWindow, -1, SDL_RENDERER_ACCELERATED);
 	if(!mRenderer)
 	{
 		mLog->LogSDLError("SDL_CreateRenderer");
@@ -71,6 +91,8 @@ int cRenderer::CleanUp()
 
 	if(mRenderer) SDL_DestroyRenderer(mRenderer);
 	mRenderer = NULL;
+	if(mWindow) SDL_DestroyWindow(mWindow);
+	mWindow = NULL;
 
 	mEvent = NULL;
 	mLog = NULL;
@@ -85,7 +107,7 @@ void cRenderer::Update()
 
 int cRenderer::UpdateEvents()
 {
-	if (mEvent->type == SDL_WINDOWEVENT)
+	if (false)//mEvent->type == SDL_WINDOWEVENT)
 	{
 		switch (mEvent->window.event)
 		{
@@ -367,14 +389,67 @@ void cRenderer::RenderVerts(float _x, float _y, const vector<JVector3>& _verts, 
 /*
 presents / flips renderer (back buffer) to display
 then clears renderer to RenderDrawColor
-renderer can be set to NULL then default renderer will be used
+renderer can be set to NULL then default renderer will be used.
+if _vsync is true SleepBeforeFlip will fix framerate to target fps.
+uses SleepBeforeFlip().
 */
-void cRenderer::Present(SDL_Renderer* _ren)
+void cRenderer::Present(SDL_Renderer* _ren, bool _vsync)
 {
+	if(_vsync) SleepBeforeFlip();
+
 	if(!_ren) _ren = mRenderer;
 	SDL_RenderPresent(_ren);
 	SetDrawColour(mColourDef,_ren);
-	if(SDL_RenderClear(_ren) != 0) mLog->LogSDLError("cRenderer::Present()");
+	if(ClearToColour(_ren) != 0) mLog->LogSDLError("cRenderer::Present()");
+	mTotalFrames++;
+}
+
+/*
+calculates time in millisecodns to sleep before flipping back buffer.
+position this after update and render, before flip.
+will sleep for target frame time - last frame time to fix framerate at target fps.
+used SDL_Sleep(), SDL_GetPerformanceCounter(), GetSecondsElapsed().
+*/
+void cRenderer::SleepBeforeFlip()
+{
+	//windows scheduler has a high default granularity, this is a temporary work around
+	//TODO: calc OS scheduler granularity at start of program
+	Uint32 win32SchedulerPadding = 1;
+	float SecondsElapsedForFrame = GetSecondsElapsed(mLastCounter,SDL_GetPerformanceCounter());;
+	if(SecondsElapsedForFrame < mTargetSecondsPerFrame)
+	{
+		Uint32 SleepMS = (1000.f * (mTargetSecondsPerFrame - SecondsElapsedForFrame)) - win32SchedulerPadding;
+		if(SleepMS > 0) SDL_Delay(SleepMS);
+		//printf("sleep: %d\n",TimeToSleep);
+		while(SecondsElapsedForFrame < mTargetSecondsPerFrame)
+		{
+			SecondsElapsedForFrame = GetSecondsElapsed(mLastCounter,SDL_GetPerformanceCounter());
+		}
+	}
+	else
+	{
+		mLog->LogError("cRenderer:: missed frame rate!!");
+	}
+
+	Uint64 EndCounter = SDL_GetPerformanceCounter();
+	/*
+	float MSPerFrame = 1000*GetSecondsElapsed(mLastCounter,EndCounter);
+	printf("total SDL time: %d\n", SDL_GetTicks()/1000);
+	printf("total WIN time: %f\n", GetSecondsElapsed(mTotalWin32Time,SDL_GetPerformanceCounter()));
+	printf("total FRAMES  : %d\n", mTotalFrames);
+	printf("total FPS     : %f\n", mTotalFrames/GetSecondsElapsed(mTotalWin32Time,SDL_GetPerformanceCounter()));
+	printf("total fr / fps: %d\n", mTotalFrames/60);
+	*/
+	mLastCounter = EndCounter;	
+}
+
+/*
+use with SDL_GetPerformanceCounter().
+returns numbert of seconds passed between _start and _end.
+*/
+inline float cRenderer::GetSecondsElapsed(Uint64 _start, Uint64 _end)
+{
+	return ((float)(_end - _start) / (float)mPerfCountFrequency);
 }
 
 /*
@@ -410,4 +485,35 @@ void cRenderer::UnloadBitmap(SDL_Texture* _bitmap)
 {
 	if(_bitmap) SDL_DestroyTexture(_bitmap);
 	_bitmap = NULL;
+}
+
+/*
+loads config from xml file.
+returns -1 on load file error.
+returns 0 on success.
+//TODO: if there is no config, generate one
+*/
+int cRenderer::LoadConfigFromFile(const char* _filename)
+{
+	//TODO: also load window preferences, fullscreen etc
+	int l_result = 0;
+	tinyxml2::XMLDocument doc;
+	if(!doc.LoadFile(_filename))
+	{
+		tinyxml2::XMLElement* l_elem = doc.FirstChildElement("config")->FirstChildElement("display");
+		l_elem->QueryUnsignedAttribute("width",&mWindowWidth);
+		l_elem->QueryUnsignedAttribute("height",&mWindowHeight);
+		l_elem->QueryFloatAttribute("fps",&mTargetSecondsPerFrame);
+		mTargetSecondsPerFrame = 1.f / mTargetSecondsPerFrame;
+	}
+	else
+	{
+		mWindowWidth = 640;
+		mWindowHeight = 480;
+		mTargetSecondsPerFrame = 1.f / 30;
+		mLog->LogError("cEngine::LoadConfig failed");
+		l_result = -1;
+	}
+
+	return l_result;
 }

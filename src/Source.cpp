@@ -6,6 +6,8 @@ source file containing main()
 game loop runs until quit value is set to true
 */
 
+#include <windows.h>
+
 #include <SDL.h>
 #include "cEngine.h"
 
@@ -13,15 +15,16 @@ using namespace std;
 
 int main(int argc, char *argv[])
 {
-	if(!cEngine::Instance()->Init())
+	cEngine* Engine = cEngine::Instance();
+	if(!Engine->Init())
 	{
-		while(!cEngine::Instance()->GetQuit())
+		while(!Engine->GetQuit())
 		{
-			cEngine::Instance()->Update();
-			cEngine::Instance()->Render();
+			Engine->Update();
+			Engine->Render();			
 		}
 	}
-	cEngine::Instance()->CleanUp();
-
-	return 0;
+	int l_result = Engine->CleanUp();
+	Engine = NULL;
+	return l_result;
 }

@@ -30,3 +30,5 @@ void cLogger::LogError(const char* msg)
 {
 	os << msg << endl;
 }
+
+//TODO: use SDL_Log("text %d text", value);
