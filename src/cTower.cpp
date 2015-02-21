@@ -68,15 +68,14 @@ void cTower::Update(cEnemy** const _enemies, int size_of_array)
 	if((!mFiring && l_freq)	|| (mFiring && l_dur))
 	{
 		mFiring = false;
-		//TODO: make more efficient, could reduce number of calls/searches
-		//TODO: consider reporting enemies hit then damaging them inside enemiesConstroller::Update()
 		for(int i = 0; i < size_of_array; i++)
 		{
 			if(_enemies[i] != NULL)
 			{
 				JVector2 l_target(_enemies[i]->GetX(),_enemies[i]->GetY());
 				JVector2 l_this_pos(x,y);
-				if(cMaths::InRange(l_this_pos,l_target,mTowerData->mRange))
+				//if(cMaths::InRange(l_this_pos,l_target,mTowerData->mRange))
+				if(JVector2::Distance(l_this_pos,l_target) < mTowerData->mRange)
 				{
 					mFiringVerts[0] = JVector3(0,0,1);
 					mFiringVerts[1] = JVector3(l_target.x,l_target.y,WORLD_SPACE);
@@ -88,13 +87,18 @@ void cTower::Update(cEnemy** const _enemies, int size_of_array)
 		}
 	}
 	else mFiring = false;
+	
+	//TODO: check robustness of freq == 0
+	if(mFiring && mTowerData->mFireSound && mFireFreqTimer.GetTicks() == 0) Mix_PlayChannel(-1,mTowerData->mFireSound,0);
 }
 
 void cTower::Draw()
 {
 	mRen->RenderTexture(mBitmap,x,y,NULL);
-	if(mFiring)	
+	if(mFiring)
+	{
 		mRen->RenderVerts(x,y,mFiringVerts);
+	}
 	
 	//firing timer text
 	SDL_Color col = { 0,0,0 };

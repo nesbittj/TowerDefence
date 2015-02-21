@@ -55,7 +55,7 @@ bool cEnemyController::CleanUp()
 
 void cEnemyController::Update()
 {
-	if(mEnemySpawnTimer.GetTicks() > (1000))
+	if(mEnemySpawnTimer.GetTicks() >= (2500))
 	{
 		//if(mEnemiesAlive[0] == NULL) //create only one enemy
 		{

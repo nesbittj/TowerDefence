@@ -117,10 +117,10 @@ JVector2 JVector2::operator*=(const float& scalar) { x *= scalar; y *= scalar; r
 JVector2 JVector2::operator/=(const float& scalar) { x /= scalar; y /= scalar; return *this; }
 JVector2 JVector2::operator+(const JVector2& v) { JVector2 result = *this; return result += v; }
 JVector2 JVector2::operator-(const JVector2& v) { JVector2 result = *this; return result -= v; }
-JVector2 JVector2::operator+(const float& scalar) { JVector2 result = *this; return result += scalar; }
-JVector2 JVector2::operator-(const float& scalar) { JVector2 result = *this; return result -= scalar; }
-JVector2 JVector2::operator*(const float& scalar) { JVector2 result = *this; return result *= scalar; }
-JVector2 JVector2::operator/(const float& scalar) { JVector2 result = *this; return result /= scalar; }
+JVector2 JVector2::operator+(const float scalar) { return JVector2(x+scalar,y+scalar); }
+JVector2 JVector2::operator-(const float scalar) { return JVector2(x-scalar,y-scalar); }
+JVector2 JVector2::operator*(const float scalar) { return JVector2(x*scalar,y*scalar); }
+JVector2 JVector2::operator/(const float scalar) { return JVector2(x/scalar,y/scalar); }
 
 float JVector2::Dot(const JVector2& v) const
 {
@@ -143,12 +143,25 @@ float JVector2::Normalise()
 	return inverseMag;
 }
 
+JVector2 JVector2::Normalised()
+{
+	if(x == 0.0f && y == 0.0f) return *this;
+	float inverseMag = 1/Magnitude();
+	x *= inverseMag; y *= inverseMag;
+	return *this;
+}
+
 JVector2 JVector2::Lerp(JVector2& _v0, JVector2& _v1, const float _t)
 {
-	JVector2 result = JVector2(_v1 - _v0);
-	result.Normalise();
-	return  result * _t;
+	//faster
+	//if(_t <= 0) return _v0; 
+	if(_t >= 1) return _v1;
+	return (_v0 + (_v1 - _v0) * _t);
+	//more accurate
+	//return ((_v0 * (1 - _t)) + (_v1 * _t));
 }
+
+float JVector2::Distance(JVector2& _v0, JVector2& _v1) { return (_v1 - _v0).Magnitude(); }
 
 ///////////////////////////////////////////////////////////////////////////////////////
 //JMatrix3
@@ -419,4 +432,9 @@ bool cMaths::InRange(JVector2 _origin, JVector2 _target, float _range)
 	if(abs((int)(_origin.x - _target.x)) > _range) return false;
 	if(abs((int)(_origin.y - _target.y)) > _range) return false;
 	return true;
+}
+
+float cMaths::Lerp(float _a, float _b, float _t)
+{	
+	return (_a + (_b - _a) * _t);
 }

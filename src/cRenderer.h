@@ -38,8 +38,6 @@ private:
 	TTF_Font* mFont;
 	SDL_Surface* mFontSurface;
 	SDL_Texture* mFontTexture;
-	SDL_Color mColourDef;
-	SDL_Color mColourBlack;
 	
 	Uint32 mWindowWidth;
 	Uint32 mWindowHeight;
@@ -48,6 +46,7 @@ private:
 	Uint32 mMonitorRefreshHz;
 	Uint32 mGameUpdatesHz;
 	float mTargetSecondsPerFrame;
+	float mSecondsElapsedForFrame;
 	Uint64 mTotalWin32Time;
 	Uint32 mTotalFrames;
 
@@ -61,6 +60,8 @@ private:
 
 public:
 	cCamera* mCamera;
+	SDL_Color mColourDef;
+	SDL_Color mColourBlack;
 
 	static cRenderer* Instance();
 	int Init(SDL_Event* _event);
@@ -83,4 +84,7 @@ public:
 
 	SDL_Texture* LoadBitmap(const char* _filename, SDL_Renderer* _ren = NULL);
 	void UnloadBitmap(SDL_Texture* _bitmap);
+
+	/*The time in seconds it took to complete the last frame*/
+	inline float GetDeltaTime() { return mSecondsElapsedForFrame; }
 };

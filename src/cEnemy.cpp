@@ -18,6 +18,9 @@ bool cEnemy::Init(SDL_Texture* _bitmap, cArena* _arena, EnemyData* _data, stack<
 	mEnemyData = _data;
 	mEnemyPath = _enemy_path;
 	mLives = _data->mStartingLives;
+	mTransformStart = mTransformTarget = JVector2(x,y);
+	mTransformProgress = 0.f;
+	mTransformPrecision = 0.01f;
 	return true;
 }
 
@@ -31,15 +34,27 @@ bool cEnemy::CleanUp()
 
 void cEnemy::Update()
 {
+	//TODO: profiling, when enemy reached end of path, CPU usage goes up!
 	if(!mEnemyPath.empty())
 	{
-		JVector2 l_0(x,y);
-		JVector2 l_t(mEnemyPath.top().first,mEnemyPath.top().second);
-		l_t *= mArena->GetGridSize();
-		if(l_0 == l_t) mEnemyPath.pop();
-		JVector2 l_r = JVector2::Lerp(l_0,l_t,1);
-		x += l_r.x; y += l_r.y;
-		mArena->CheckBounds(&x,&y);
+		float l_speed = 2*mRen->GetDeltaTime();
+		JVector2 local_v(x,y);
+		if((mTransformProgress < 1))//JVector2::Distance(local_v,mTransformTarget) > mTransformPrecision)
+		{
+			local_v = JVector2::Lerp(mTransformStart,mTransformTarget,mTransformProgress);
+			mTransformProgress += l_speed;
+			x = local_v.x; y = local_v.y;
+			mArena->CheckBounds(&x,&y);
+		}
+		else
+		{
+			mEnemyPath.pop();
+			mTransformProgress = l_speed;
+			mTransformStart = local_v;
+			if(!mEnemyPath.empty())
+				mTransformTarget = JVector2(mEnemyPath.top().first,mEnemyPath.top().second)
+				* mArena->GetGridSize();
+		}
 	}
 }
 

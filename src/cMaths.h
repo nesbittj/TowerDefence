@@ -70,18 +70,20 @@ public:
 
 	JVector2 operator+(const JVector2& v);
 	JVector2 operator-(const JVector2& v);
-	JVector2 operator+(const float& scalar);
-	JVector2 operator-(const float& scalar);
-	JVector2 operator*(const float& scalar);
-	JVector2 operator/(const float& scalar);
+	JVector2 operator+(const float scalar);
+	JVector2 operator-(const float scalar);
+	JVector2 operator*(const float scalar);
+	JVector2 operator/(const float scalar);
 	
 
 	float Dot(const JVector2& v) const;
 	float Magnitude() const;
 	float Normalise();
+	JVector2 Normalised();
 	inline void Set(float _x, float _y) { x = _x; y = _y; }
 	inline void SetZero() { x = 0.f; y = 0.f; }
 	static JVector2 Lerp(JVector2& _v0, JVector2& _v1, const float _t);
+	static float Distance(JVector2& _v0, JVector2& _v1);
 };
 
 class JMatrix3
@@ -137,4 +139,5 @@ public:
 	static int Round(int num, int multiple);
 	static int RoundUp(int num, int multiple);
 	static bool InRange(JVector2 _origin, JVector2 _target, float _range);
+	static float Lerp(float _a, float _b, float _t);
 };

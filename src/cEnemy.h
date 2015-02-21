@@ -26,9 +26,13 @@ public:
 	void Damage(float _value);
 
 private:
-	JVector3 mTargetPos;
 	cArena* mArena;
 	EnemyData* mEnemyData;
 	stack<pair<int,int>> mEnemyPath;
+	
+	JVector2 mTransformStart;
+	JVector2 mTransformTarget;
+	float mTransformProgress;
+	float mTransformPrecision;
 };
 

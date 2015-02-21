@@ -31,6 +31,13 @@ int cEngine::Init()
 	if(mRen->Init(&mEvent)) return -1;
 	//TODO: init logging
 
+	 //Initialize SDL_mixer
+	if( Mix_OpenAudio( 44100, MIX_DEFAULT_FORMAT, 2, 2048 ) < 0 )
+	{
+		//TODO: log sound open properly
+		printf( "SDL_mixer could not initialize! SDL_mixer Error: %s\n", Mix_GetError() );
+	}
+
 	mArena = new cArena();
 	mArena->Init();
 	
@@ -54,6 +61,8 @@ int cEngine::CleanUp()
 
 	mEnemyController.CleanUp();
 	mTowerController.CleanUp();
+
+	Mix_Quit();
 
 	if(mRen) mRen->CleanUp();
 	mRen = NULL;

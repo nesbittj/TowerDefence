@@ -35,6 +35,7 @@ int cRenderer::Init(SDL_Event* _event)
 	//timeBeginPeriod(1); //#include <windows.h> Winmm.lib
 	mPerfCountFrequency = SDL_GetPerformanceFrequency();
 	mTotalWin32Time = mLastCounter = SDL_GetPerformanceCounter();
+	mSecondsElapsedForFrame = 0.f;
 	mTotalFrames = 0;
 
 	mWindow = SDL_CreateWindow("SDL Window", 600,200, mWindowWidth,mWindowHeight,
@@ -415,15 +416,15 @@ void cRenderer::SleepBeforeFlip()
 	//windows scheduler has a high default granularity, this is a temporary work around
 	//TODO: calc OS scheduler granularity at start of program
 	Uint32 win32SchedulerPadding = 1;
-	float SecondsElapsedForFrame = GetSecondsElapsed(mLastCounter,SDL_GetPerformanceCounter());;
-	if(SecondsElapsedForFrame < mTargetSecondsPerFrame)
+	mSecondsElapsedForFrame = GetSecondsElapsed(mLastCounter,SDL_GetPerformanceCounter());;
+	if(mSecondsElapsedForFrame < mTargetSecondsPerFrame)
 	{
-		Uint32 SleepMS = (1000.f * (mTargetSecondsPerFrame - SecondsElapsedForFrame)) - win32SchedulerPadding;
-		if(SleepMS > 0) SDL_Delay(SleepMS);
+		Uint32 SleepMS = (1000.f * (mTargetSecondsPerFrame - mSecondsElapsedForFrame)) - win32SchedulerPadding;
+		//if(SleepMS > 0) SDL_Delay(SleepMS);
 		//printf("sleep: %d\n",TimeToSleep);
-		while(SecondsElapsedForFrame < mTargetSecondsPerFrame)
+		while(mSecondsElapsedForFrame < mTargetSecondsPerFrame)
 		{
-			SecondsElapsedForFrame = GetSecondsElapsed(mLastCounter,SDL_GetPerformanceCounter());
+			mSecondsElapsedForFrame = GetSecondsElapsed(mLastCounter,SDL_GetPerformanceCounter());
 		}
 	}
 	else
@@ -440,7 +441,7 @@ void cRenderer::SleepBeforeFlip()
 	printf("total FPS     : %f\n", mTotalFrames/GetSecondsElapsed(mTotalWin32Time,SDL_GetPerformanceCounter()));
 	printf("total fr / fps: %d\n", mTotalFrames/60);
 	*/
-	mLastCounter = EndCounter;	
+	mLastCounter = EndCounter;
 }
 
 /*

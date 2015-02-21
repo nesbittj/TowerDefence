@@ -1,6 +1,7 @@
 #pragma once
 
 #include <SDL.h>
+#include <SDL_mixer.h>
 #include "cRenderer.h"
 #include "cLogger.h"
 #include "cInput.h"

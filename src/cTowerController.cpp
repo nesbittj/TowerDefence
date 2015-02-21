@@ -36,6 +36,8 @@ bool cTowerController::CleanUp()
 	for(int i = 0; i < mMaxTowerTypes; i++)
 	{
 		mRen->UnloadBitmap(mTowersData[i].mBitmap);
+		Mix_FreeChunk(mTowersData[i].mFireSound);
+		mTowersData[i].mFireSound = NULL;
 	}
 	mInput = NULL;
 	mRen = NULL;
@@ -69,6 +71,7 @@ void cTowerController::Update(cEnemy** const _enemies_hit, int size_of_array)
 	if(mInput->GetMouseButtonDownRelease(RIGHT_MOUSE_BUTTON))
 		RemoveTower(*mCursorX,*mCursorY);
 
+	//TODO: consider indexing/sorting to top towers in use
 	for(int i = 0; i < mMaxTowersInUse; i++)
 	{
 		if(mTowersInUse[i] != NULL) mTowersInUse[i]->Update(_enemies_hit,size_of_array);
@@ -134,8 +137,12 @@ void cTowerController::RemoveTower(Uint32 _x, Uint32 _y)
 
 bool cTowerController::LoadTowersData()
 {
+	//TODO: cosolidate into file load
 	for(int i = 0; i < mMaxTowerTypes; i++)
+	{
 		mTowersData[i].mBitmap = NULL;
+		mTowersData[i].mFireSound = NULL;
+	}
 
 	tinyxml2::XMLDocument doc;
 	if(!doc.LoadFile("assets/towers/towers_data.xml"))
@@ -152,6 +159,21 @@ bool cTowerController::LoadTowersData()
 			l_tower->QueryIntAttribute("range",&mTowersData[i].mRange);
 			l_tower->QueryIntAttribute("firefreq",&mTowersData[i].mFireFreq);
 			l_tower->QueryIntAttribute("firedur",&mTowersData[i].mFireDuration);
+
+			string l_sound_location(mTowersFileLocation + l_tower->Attribute("sound"));
+			if(l_sound_location != mTowersFileLocation)
+			{
+				SDL_RWops l_file = *SDL_RWFromFile(l_sound_location.c_str(),"rb");
+				mTowersData[i].mFireSound = Mix_LoadWAV_RW(&l_file,1);
+				if(!mTowersData[i].mFireSound) mLog->LogSDLError("failed to load tower sound");
+			}
+			else
+			{
+				//TODO: this could become NULL / silence if no sound file is loaded,
+				//rather than sharing sound file
+				if(mTowersData[0].mFireSound) mTowersData[i].mFireSound = mTowersData[0].mFireSound;
+			}
+
 			i++;
 		}
 	}
@@ -160,5 +182,6 @@ bool cTowerController::LoadTowersData()
 		mLog->LogError("cTowerController XML failed to load");
 		return false;
 	}
+
 	return true;
 }

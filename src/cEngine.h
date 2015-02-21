@@ -13,6 +13,7 @@ singleton class
 //#undef LoadBitmap //stops windows.h defining as LoadBitmapA
 
 #include <SDL.h>
+#include <SDL_mixer.h>
 #include "tinyxml2.h"
 
 #include "cRenderer.h"
