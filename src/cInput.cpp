@@ -202,7 +202,7 @@ int cInput::ProcessInputEvents()
 		for(int i = JOY_AXIS_LX; i <= JOY_AXIS_RT; i++)
 		{
 			mJoyAxis[i] = SDL_JoystickGetAxis(mJoy,i);
-			if(abs(mJoyAxis[i]) < mJoyAxisDeadZone) mJoyAxis[i] = 0.f;
+			if(abs(mJoyAxis[i]) < mJoyAxisDeadZone) mJoyAxis[i] = 0;
 		}
 	}
 

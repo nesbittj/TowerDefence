@@ -2,7 +2,7 @@
 
 cEntity::cEntity(Uint32 _x, Uint32 _y)
 {
-	SetPos(_x,_y);
+	SetPos((float)_x,(float)_y);
 	mLevel = 0;
 	mLives = 10;
 	mBitmap = NULL;
@@ -34,7 +34,7 @@ bool cEntity::CleanUp()
 	return true;
 }
 
-void cEntity::SetPos(Uint32 _x, Uint32 _y) { x = _x; y = _y; }
+void cEntity::SetPos(float _x, float _y) { x = _x; y = _y; }
 
 void cEntity::Update()
 {
@@ -44,5 +44,5 @@ void cEntity::Draw(int _space)
 {
 	SDL_Color col = { 0,0,0,0 };
 	mRen->RenderTexture(mBitmap,x,y,NULL,_space);
-	mRen->RenderText(mLives,x+5,y+8,0,col,NULL,_space);
+	mRen->RenderText((int)mLives,x+5,y+8,0,col,NULL,_space);
 }

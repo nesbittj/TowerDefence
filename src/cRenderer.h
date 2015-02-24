@@ -78,7 +78,7 @@ public:
 	void RenderTexture(SDL_Texture* _tex, float _x, float _y, SDL_Renderer* _ren, int _w, int _h, int _space = WORLD_SPACE);
 	void RenderTexture(SDL_Texture* _sprite_sheet, float _x, float _y, SDL_Renderer* _ren, SDL_Rect _tile, int _space = WORLD_SPACE);
 	int RenderText(const char* _string, float _x, float _y, int _font, SDL_Color _col, SDL_Renderer* _ren, int _space = WORLD_SPACE);
-	int RenderText(const int _value, float _x, float _y, int _font, SDL_Color _col, SDL_Renderer* _ren, int _space = WORLD_SPACE);
+	int RenderText(Sint32 _value, float _x, float _y, int _font, SDL_Color _col, SDL_Renderer* _ren, int _space = WORLD_SPACE);
 	void RenderVerts(float _x, float _y, const vector<JVector3>& _verts, bool _2D = true, int _space = WORLD_SPACE);
 	void Present(SDL_Renderer* _ren, bool _vsync = true);
 

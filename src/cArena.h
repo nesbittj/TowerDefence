@@ -72,7 +72,7 @@ public:
 	inline int GetArenaHeight() const { return mArena.height*mArena.tileHeight; }
 	ARENA_TILE_TYPE GetTileType(JVector2& _pos);
 	cCore* GetCore() { return mCore; }
-	inline const JVector2& const GetEnemyStartPos() const { return mEnemyStartPos; }
-	inline const JVector2& const GetEnemyTargetPos() const { return mEnemyTargetPos; }
-	inline const JVector2& const GetEnemyExitPos() const { return mEnemyExitPos; }
+	inline const JVector2& GetEnemyStartPos() const { return mEnemyStartPos; }
+	inline const JVector2& GetEnemyTargetPos() const { return mEnemyTargetPos; }
+	inline const JVector2& GetEnemyExitPos() const { return mEnemyExitPos; }
 };

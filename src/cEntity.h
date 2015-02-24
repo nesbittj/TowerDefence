@@ -23,10 +23,10 @@ public:
 	inline float GetY() const { return y; }
 	inline JVector2 GetPos() const { return JVector2(x,y); }
 	Uint32 GetLevel() const { return mLevel; }
-	int GetLives() const { return mLives; }
+	int GetLives() const { return (int)mLives; }
 	SDL_Texture* GetBitmap() const { return mBitmap; }
 
-	void SetPos(Uint32 _x, Uint32 _y);
+	void SetPos(float _x, float _y);
 	void SetLevel(Uint32 l) { mLevel = l; }
 	void SetBitmap(SDL_Texture* _bitmap) { mBitmap = _bitmap; }
 	

@@ -29,12 +29,12 @@ THE SOFTWARE.
 
 
 #if (defined(_WIN32))
-     #include <string.h>
+	 #include <string.h>
 #endif
 
 #if (( defined(ANDROID)))
-     #include <android/log.h>
-     #include <string.h>
+	 #include <android/log.h>
+	 #include <string.h>
 #else
 	#include <cstdlib>
 	#include <cstdio>
@@ -69,23 +69,23 @@ THE SOFTWARE.
 
 // LOGGING
 #if (( defined(ANDROID)))
-     #ifdef DEBUG
-          #define LOGD(...) __android_log_print(ANDROID_LOG_DEBUG, LOG_TAG, " (" __FILE__ ":" QUOTEME(__LINE__) ") " __VA_ARGS__ )
-     #else
-          #define LOGD(...)
-     #endif
+	 #ifdef DEBUG
+		  #define LOGD(...) __android_log_print(ANDROID_LOG_DEBUG, LOG_TAG, " (" __FILE__ ":" QUOTEME(__LINE__) ") " __VA_ARGS__ )
+	 #else
+		  #define LOGD(...)
+	 #endif
 
-     #define LOGI(...) __android_log_print(ANDROID_LOG_INFO, LOG_TAG, "" __VA_ARGS__ )
-     #define LOGE(...) __android_log_print(ANDROID_LOG_ERROR, LOG_TAG, __VA_ARGS__ )
+	 #define LOGI(...) __android_log_print(ANDROID_LOG_INFO, LOG_TAG, "" __VA_ARGS__ )
+	 #define LOGE(...) __android_log_print(ANDROID_LOG_ERROR, LOG_TAG, __VA_ARGS__ )
 	 #define LOGW(...) __android_log_print(ANDROID_LOG_WARN, LOG_TAG, __VA_ARGS__ )
 #else
-     #ifdef DEBUG
-     #define LOGD(...) fprintf(stderr, "D/" LOG_TAG " (" __FILE__ ":" QUOTEME(__LINE__) "): " __VA_ARGS__ ); fprintf(stderr, "\n");
-     #else
-     #define LOGD(...)
-     #endif
-     #define LOGI(...) fprintf(stdout, "I/" QUOTEME(LOG_TAG) "(" ")" __VA_ARGS__ ); fprintf(stdout, "\n");
-     #define LOGE(...) fprintf(stderr, "E/" QUOTEME(LOG_TAG) "(" ")" __VA_ARGS__ ); fprintf(stderr, "\n");
+	 #ifdef DEBUG
+	 #define LOGD(...) fprintf(stderr, "D/" LOG_TAG " (" __FILE__ ":" QUOTEME(__LINE__) "): " __VA_ARGS__ ); fprintf(stderr, "\n");
+	 #else
+	 #define LOGD(...)
+	 #endif
+	 #define LOGI(...) fprintf(stdout, "I/" QUOTEME(LOG_TAG) "(" ")" __VA_ARGS__ ); fprintf(stdout, "\n");
+	 #define LOGE(...) fprintf(stderr, "E/" QUOTEME(LOG_TAG) "(" ")" __VA_ARGS__ ); fprintf(stderr, "\n");
 	 #define LOGW(...) fprintf(stderr, "W/" QUOTEME(LOG_TAG) "(" ")" __VA_ARGS__ ); fprintf(stderr, "\n");
 #endif
 
@@ -422,7 +422,7 @@ TmxReturn _parseLayerNode(tinyxml2::XMLElement* element, const TmxTilesetCollect
 
 	outLayer->name = element->Attribute("name");
 	outLayer->opacity = element->FloatAttribute("opacity");
-	outLayer->visible = element->IntAttribute("visible");
+	outLayer->visible = element->BoolAttribute("visible");
 	outLayer->width = element->UnsignedAttribute("width");
 	outLayer->height = element->UnsignedAttribute("height");
 
@@ -696,9 +696,9 @@ TmxReturn _parseObjectNode(tinyxml2::XMLElement* element, TmxObject* outObj)
 			std::istringstream pointStringString(pairToken);
 			std::string pointToken;
 			std::getline(pointStringString, pointToken, ',');
-			pair.first = atof(pointToken.c_str());
+			pair.first = (float)atof(pointToken.c_str());
 			std::getline(pointStringString, pointToken, ',');
-			pair.second = atof(pointToken.c_str());
+			pair.second = (float)atof(pointToken.c_str());
 
 			outObj->shapePoints.push_back(pair);
 		}
@@ -730,8 +730,8 @@ TmxReturn calculateTileCoordinatesUV(const TmxTileset& tileset,  unsigned int ti
 	if (flipY)
 	{
 		float tmpV = v;
-		v = 1.0 - v2;
-		v2 = 1.0 - tmpV;
+		v = 1.0f - v2;
+		v2 = 1.0f - tmpV;
 	}
 
 	outRect.u = u;

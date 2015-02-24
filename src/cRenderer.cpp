@@ -338,7 +338,7 @@ int cRenderer::RenderText(const char* _string, float _x, float _y, int _font,
 uses and returns result of
 RenderText(const char*,int,int,int,SDL_Color,SDL_Renderer*,int).
 */
-int cRenderer::RenderText(const int _value, float _x, float _y, int _font,
+int cRenderer::RenderText(Sint32 _value, float _x, float _y, int _font,
 						  SDL_Color _col, SDL_Renderer* _ren, int _space)
 {
 	std::stringstream textStream;
@@ -419,7 +419,7 @@ void cRenderer::SleepBeforeFlip()
 	mSecondsElapsedForFrame = GetSecondsElapsed(mLastCounter,SDL_GetPerformanceCounter());
 	if(mSecondsElapsedForFrame < mTargetSecondsPerFrame)
 	{
-		Uint32 SleepMS = (1000.f * (mTargetSecondsPerFrame - mSecondsElapsedForFrame)) - win32SchedulerPadding;
+		Uint32 SleepMS = (Uint32)(1000 * (mTargetSecondsPerFrame - mSecondsElapsedForFrame)) - win32SchedulerPadding;
 		if(SleepMS > 0) SDL_Delay(SleepMS);
 		//printf("sleep: %d\n",TimeToSleep);
 		while(mSecondsElapsedForFrame < mTargetSecondsPerFrame)

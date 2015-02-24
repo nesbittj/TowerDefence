@@ -19,7 +19,7 @@ bool cEnemyController::Init(cArena* _arena)
 	mEnemyPath = mArena->BreadthFirst(
 		make_pair((int)mEnemyStartPos.x,(int)mEnemyStartPos.y),
 		make_pair((int)mArena->GetEnemyExitPos().x,(int)mArena->GetEnemyExitPos().y));
-	mEnemyStartPos *= mArena->GetGridSize();
+	mEnemyStartPos *= (float)mArena->GetGridSize();
 	if(!LoadEnemyData()) return false;
 	for(int i = 0; i < mMaxEnemiesAlive; i++) mEnemiesAlive[i] = NULL;
 
@@ -59,7 +59,7 @@ void cEnemyController::Update()
 	{
 		//if(mEnemiesAlive[0] == NULL) //create only one enemy
 		{
-			AddEnemy(mEnemyStartPos.x,mEnemyStartPos.y, 0);
+			AddEnemy((Uint32)mEnemyStartPos.x,(Uint32)mEnemyStartPos.y, 0);
 			mEnemySpawnTimer.Start();
 		}
 	}
@@ -68,7 +68,7 @@ void cEnemyController::Update()
 		if(mEnemiesAlive[i] !=  NULL)
 		{
 			//damage arena::core //could go after update, would need another != NULL
-			mArena->GetCore()->Damage(mEnemiesAlive[i]->GetPos(),30,0.1);
+			mArena->GetCore()->Damage(mEnemiesAlive[i]->GetPos(),30,0.1f);
 
 			//update enemy
 			mEnemiesAlive[i]->Update();

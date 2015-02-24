@@ -46,7 +46,7 @@ private:
 	cEnemyController mEnemyController;
 	cArena* mArena;
 
-	int mCursorX, mCursorY;
+	Uint32 mCursorX, mCursorY;
 
 public:
 	static cEngine* Instance();

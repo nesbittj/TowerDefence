@@ -82,6 +82,9 @@ void cTower::Update(cEnemy** const _enemies, int size_of_array)
 			mFiring = true;
 			mFireTimer.Start();
 		}
+
+		//TODO: may not want sound to play every fire, eg machine gun could be one long(er) track
+		//if(mFiring && mTowerData->mFireSound) Mix_PlayChannel(-1,mTowerData->mFireSound,0);
 	}
 
 	if(mFiring)
@@ -104,16 +107,12 @@ void cTower::Update(cEnemy** const _enemies, int size_of_array)
 			_enemies[mCurrentTargetIndex]->Damage(mTowerData->mDamage * mRen->GetDeltaTime());
 		}
 	}
-
-	//TODO: check robustness of freq == 0
-	//TODO: may not want sound to play every fire, eg machine gun could be one long(er) track
-	//if(mFiring && mTowerData->mFireSound && mFireFreqTimer.GetTicks() == 0) Mix_PlayChannel(-1,mTowerData->mFireSound,0);
 }
 
 void cTower::Draw()
 {
 	mRen->RenderTexture(mBitmap,x,y,NULL);
-	if(mFiring)
+	if(mFiring && mCurrentTargetIndex >= 0)
 	{
 		mRen->RenderVerts(x,y,mFiringVerts);
 	}

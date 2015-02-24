@@ -87,8 +87,8 @@ void cEngine::Update()
 	{
 		//TODO: find a better solution to getting cam pos, possibly another location to calc cursor.
 		JVector2 camPos = mRen->mCamera->GetPos();
-		mCursorX = cMaths::Round(mInput->GetMouseX() - camPos.x,32);
-		mCursorY = cMaths::Round(mInput->GetMouseY() - camPos.y,32);
+		mCursorX = cMaths::Round(mInput->GetMouseX() - (Uint32)camPos.x,32);
+		mCursorY = cMaths::Round(mInput->GetMouseY() - (Uint32)camPos.y,32);
 
 		mRen->Update();
 		//mPlayer.Update();
@@ -118,11 +118,11 @@ void cEngine::Render()
 		mArena->Draw();
 
 		SDL_Color mouseColour = { 0,0,0,255 };
-		mRen->DrawRect(mCursorX,mCursorY,30,30,mouseColour,0,WORLD_SPACE);
+		mRen->DrawRect((float)mCursorX,(float)mCursorY,30,30,mouseColour,0,WORLD_SPACE);
 
 		mTowerController.DrawTowersInUse();
-		mTowerController.DrawTower(mCursorX,mCursorY,mTowerController.GetTowerSelected(),WORLD_SPACE);
-		mTowerController.DrawTowerText(mCursorX,mCursorY - 15,mTowerController.GetTowerSelected(),mouseColour,WORLD_SPACE);
+		mTowerController.DrawTower((float)mCursorX,(float)mCursorY,mTowerController.GetTowerSelected(),WORLD_SPACE);
+		mTowerController.DrawTowerText((float)mCursorX,(float)(mCursorY - 15),mTowerController.GetTowerSelected(),mouseColour,WORLD_SPACE);
 		mEnemyController.DrawEnemies();
 
 		mRen->Present(NULL);

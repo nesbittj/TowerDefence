@@ -15,7 +15,7 @@ cSceneNode::cSceneNode(void)
 
 cSceneNode::~cSceneNode(void)
 {
-	for(int i = 0; i < mChildren.size(); i++)
+	for(unsigned int i = 0; i < mChildren.size(); i++)
 	{
 		if(mChildren[i]) delete mChildren[i]; //not sure if i need this, nodes could be initialised as non-pointer
 		mChildren[i] = NULL;
@@ -29,7 +29,7 @@ and returns false.
 */
 bool cSceneNode::AddChild(cSceneNode* node)
 {
-	for(int i = 0; i < mChildren.size(); i++)
+	for(unsigned int i = 0; i < mChildren.size(); i++)
 	{
 		if(mChildren[i] == node) return false;
 	}
@@ -64,7 +64,7 @@ bool cSceneNode::HasChild(const cSceneNode* child) const
 {
 	if(!child) return false;
 
-	for(int i = 0; i < mChildren.size(); i++)
+	for(unsigned int i = 0; i < mChildren.size(); i++)
 		if(mChildren[i] == child) return true;
 
 	return false;
@@ -87,7 +87,7 @@ bool cSceneNode::CheckCollisions(const cSceneNode* compare_root) const
 		return true;
 
 	//check for collision against children recursivly
-	for(int i = 0; i < compare_root->mChildren.size(); i++)
+	for(unsigned int i = 0; i < compare_root->mChildren.size(); i++)
 		if(CheckCollisions(compare_root->mChildren[i])) return true;
 
 	return false;
@@ -178,8 +178,8 @@ void cSceneNode::Draw()
 }
 
 void cSceneNode::SetPosition(const JVector3& _pos) { mPos = _pos; }
-void cSceneNode::SetX(int x) { mPos.x = x; }
-void cSceneNode::SetY(int y) { mPos.y = y; }
+void cSceneNode::SetX(int x) { mPos.x = (float)x; }
+void cSceneNode::SetY(int y) { mPos.y = (float)y; }
 void cSceneNode::SetMovable(bool movable) { mMovable = movable; }
 
 void cSceneNode::SetVerts(JVector3* verts)
@@ -222,8 +222,8 @@ bool cSceneNode::SetVerts(char* filename)
 
 void cSceneNode::CalculateVertsCentre()
 {
-	int min_x = 0, min_y = 0, min_z = 0;
-	int max_x = 0, max_y = 0, max_z = 0;
+	float min_x = 0.f, min_y = 0.f, min_z = 0.f;
+	float max_x = 0.f, max_y = 0.f, max_z = 0.f;
 	for(unsigned int i = 0; i < mVerts.size(); i++)
 	{
 		//calculate max verts

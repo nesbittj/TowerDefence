@@ -39,7 +39,7 @@ public:
 
 	float Dot(const JVector3& v) const;
 	float Magnitude() const;
-	JVector3* Cross(const JVector3* v) const;
+	JVector3 Cross(const JVector3* v) const;
 	float Normalise();
 	void Set(float _x, float _y, float _z) { x = _x; y = _y; z = _z; }
 	void SetZero() { x = 0.f; y = 0.f; z = 0.f; }
@@ -100,8 +100,8 @@ public:
 	bool operator!=(const JMatrix3& M2);
 	JMatrix3& operator=(const JMatrix3 M2);
 
-	JVector3* Column(const int column) const;
-	JMatrix3* Dot(const JMatrix3& M2) const;
+	JVector3 Column(const int column) const;
+	JMatrix3 Dot(const JMatrix3& M2) const;
 	void Dot(JVector3* verts, const int num_verts);
 	
 	void RotationMatrix(const float theta);
@@ -122,9 +122,9 @@ public:
 
 	void Normalise();
 	float PlaneEquationValue(const JVector3* intersect_point) const;
-	JVector3* PlaneIntersection(JVector3* p1, JVector3* p2) const;
+	JVector3 PlaneIntersection(JVector3* p1, JVector3* p2) const;
 
-	static JVector3* PlaneNormal(JVector3* u, JVector3* v, JVector3* w);
+	static JVector3 PlaneNormal(JVector3* u, JVector3* v, JVector3* w);
 };
 
 class cMaths

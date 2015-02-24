@@ -10,7 +10,7 @@ cTowerController::~cTowerController()
 {	
 }
 
-bool cTowerController::Init(cArena* _arena, int* _cursor_x, int* _cursor_y)
+bool cTowerController::Init(cArena* _arena, Uint32* _cursor_x, Uint32* _cursor_y)
 {
 	mInput = cInput::Instance();
 	mRen = cRenderer::Instance();
@@ -84,13 +84,13 @@ void cTowerController::DrawTowersInUse()
 		if(mTowersInUse[i] != NULL) mTowersInUse[i]->Draw();
 }
 
-void cTowerController::DrawTower(Uint32 _x, Uint32 _y, Uint32 _tower, Uint32 _space)
+void cTowerController::DrawTower(float _x, float _y, Uint32 _tower, Uint32 _space)
 {
 	if(_tower < mMaxTowerTypes)
 		mRen->RenderTexture(mTowersData[_tower].mBitmap,_x,_y,NULL,_space);
 }
 
-void cTowerController::DrawTowerText(Uint32 _x, Uint32 _y, Uint32 _tower, SDL_Color _col, Uint32 _space)
+void cTowerController::DrawTowerText(float _x, float _y, Uint32 _tower, SDL_Color _col, Uint32 _space)
 {
 	if(_tower < mMaxTowerTypes)
 		mRen->RenderText(mTowersData[_tower].mName.c_str(),_x,_y,0,_col,NULL,_space);
@@ -102,7 +102,7 @@ void cTowerController::AddTower(Uint32 _x, Uint32 _y, Uint32 _tower)
 	{
 		if(mTowersInUse[i] == NULL)
 		{
-			JVector2 l_world_pos(_x,_y);
+			JVector2 l_world_pos((float)_x,(float)_y);
 			for(int j = 0; j < mMaxTowersInUse; j++)
 			{
 				if(mTowersInUse[j] != NULL
@@ -110,7 +110,7 @@ void cTowerController::AddTower(Uint32 _x, Uint32 _y, Uint32 _tower)
 					return;
 			}
 			//TODO: check bounds  of l_world_pos before creatingnew tower
-			mTowersInUse[i] = new cTower(l_world_pos.x,l_world_pos.y);
+			mTowersInUse[i] = new cTower((Uint32)l_world_pos.x,(Uint32)l_world_pos.y);
 			mTowersInUse[i]->Init(mTowersData[_tower].mBitmap,&mTowersData[_tower]);
 			return;
 		}
@@ -122,7 +122,7 @@ remove any tower at grid world pos x,y
 */
 void cTowerController::RemoveTower(Uint32 _x, Uint32 _y)
 {
-	JVector2 l_world_pos(_x,_y);
+	JVector2 l_world_pos((float)_x,(float)_y);
 	for(int i = 0; i < mMaxTowersInUse; i++)
 	{
 		if(mTowersInUse[i] != NULL
@@ -156,9 +156,9 @@ bool cTowerController::LoadTowersData()
 			mTowersData[i].mBitmap = mRen->LoadBitmap( std::string(mTowersFileLocation + l_tower->Attribute("bitmap")).c_str() );
 
 			l_tower->QueryFloatAttribute("damage",&mTowersData[i].mDamage);
-			l_tower->QueryIntAttribute("range",&mTowersData[i].mRange);
-			l_tower->QueryIntAttribute("firefreq",&mTowersData[i].mFireFreq);
-			l_tower->QueryIntAttribute("firedur",&mTowersData[i].mFireDuration);
+			l_tower->QueryUnsignedAttribute("range",&mTowersData[i].mRange);
+			l_tower->QueryUnsignedAttribute("firefreq",&mTowersData[i].mFireFreq);
+			l_tower->QueryUnsignedAttribute("firedur",&mTowersData[i].mFireDuration);
 
 			string l_sound_location(mTowersFileLocation + l_tower->Attribute("sound"));
 			if(l_sound_location != mTowersFileLocation)

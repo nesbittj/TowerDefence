@@ -57,11 +57,11 @@ float JVector3::Normalise()
 	return inverseMag;
 }
 
-JVector3* JVector3::Cross(const JVector3* v) const
+JVector3 JVector3::Cross(const JVector3* v) const
 {
-	return &JVector3(y*v->z - z*v->y,
-					 z*v->x - x*v->z,
-					 x*v->y - y*v->x);
+	return JVector3(y*v->z - z*v->y,
+					z*v->x - x*v->z,
+					x*v->y - y*v->x);
 }
 
 JVector3 JVector3::Lerp(JVector3& _v0, JVector3& _v1, const float _t)
@@ -196,34 +196,34 @@ returns a JVector3* containing the vaulues of a
 given column if a matrix.
 if parameter is invalid returns nullptr.
 */
-JVector3* JMatrix3::Column(const int column) const
+JVector3 JMatrix3::Column(const int column) const
 {
 	switch(column)
 	{
-	case 0:	return &JVector3(x.x,y.x,z.x);
-	case 1:	return &JVector3(x.y,y.y,z.y);
-	case 2:	return &JVector3(x.z,y.z,z.z);
-	default: return &JVector3(0.f,0.f,0.f);
+	case 0:	return JVector3(x.x,y.x,z.x);
+	case 1:	return JVector3(x.y,y.y,z.y);
+	case 2:	return JVector3(x.z,y.z,z.z);
+	default: return JVector3(0.f,0.f,0.f);
 	}
 }
 
-JMatrix3* JMatrix3::Dot(const JMatrix3& M2) const
+JMatrix3 JMatrix3::Dot(const JMatrix3& M2) const
 {
 	JMatrix3 result;
 
-	result.x.x = x.Dot(*M2.Column(0));
-	result.x.y = x.Dot(*M2.Column(1));
-	result.x.z = x.Dot(*M2.Column(2));
+	result.x.x = x.Dot(M2.Column(0));
+	result.x.y = x.Dot(M2.Column(1));
+	result.x.z = x.Dot(M2.Column(2));
 
-	result.y.x = y.Dot(*M2.Column(0));
-	result.y.y = y.Dot(*M2.Column(1));
-	result.y.z = y.Dot(*M2.Column(2));
+	result.y.x = y.Dot(M2.Column(0));
+	result.y.y = y.Dot(M2.Column(1));
+	result.y.z = y.Dot(M2.Column(2));
 
-	result.z.x = z.Dot(*M2.Column(0));
-	result.z.y = z.Dot(*M2.Column(1));
-	result.z.z = z.Dot(*M2.Column(2));
+	result.z.x = z.Dot(M2.Column(0));
+	result.z.y = z.Dot(M2.Column(1));
+	result.z.z = z.Dot(M2.Column(2));
 
-	return &result;
+	return result;
 }
 
 void JMatrix3::Dot(JVector3* verts, const int num_verts)
@@ -288,7 +288,7 @@ void JMatrix3::ScaleMatrix(const float scale)
 JPlane::JPlane() { normal = JVector3(); d = 0.0f; }
 JPlane::JPlane(JVector3* u, JVector3* v, JVector3* w)
 {
-	normal = *PlaneNormal(u,v,w);
+	normal = PlaneNormal(u,v,w);
 	d = -u->Dot(normal);
 }
 
@@ -305,14 +305,14 @@ calculates and returns a plane normal
 used to represent a plane equation.
 takes perameters, three points of a triangle
 */
-JVector3* JPlane::PlaneNormal(JVector3* u, JVector3* v, JVector3* w)
+JVector3 JPlane::PlaneNormal(JVector3* u, JVector3* v, JVector3* w)
 {
 	JVector3 v_1(u->x - v->x, u->y - v->y, u->z - v->z);
 	JVector3 v_2(u->x - w->x, u->y - w->y, u->z - w->z);
-	JVector3 normal_vector = *v_1.Cross(&v_2);
+	JVector3 normal_vector = v_1.Cross(&v_2);
 	normal_vector.Normalise();
 
-	return &normal_vector;
+	return normal_vector;
 }
 
 /*
@@ -328,7 +328,7 @@ float JPlane::PlaneEquationValue(const JVector3* intersect_point) const
 		 + (normal.z * intersect_point->z) + d;
 }
 
-JVector3* JPlane::PlaneIntersection(JVector3* p1, JVector3* p2) const
+JVector3 JPlane::PlaneIntersection(JVector3* p1, JVector3* p2) const
 {
 	JVector3 intersection_point;
 
@@ -348,7 +348,7 @@ JVector3* JPlane::PlaneIntersection(JVector3* p1, JVector3* p2) const
 		intersection_point.z = p1->z + (ray.z*t);
 	}
 
-	return &intersection_point;
+	return intersection_point;
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////
@@ -364,9 +364,9 @@ bool cMaths::InTriangle(const JVector3* t0, const JVector3* t1, const JVector3* 
 	JVector3 BP(p->x - t1->x,p->y - t1->y,p->z - t1->z);
 	JVector3 CP(p->x - t2->x,p->y - t2->y,p->z - t2->z);
 
-	JVector3 APxAB = *AP.Cross(&AB);
-	JVector3 BPxBC = *BP.Cross(&BC);
-	JVector3 CPxCA = *CP.Cross(&CA);
+	JVector3 APxAB = AP.Cross(&AB);
+	JVector3 BPxBC = BP.Cross(&BC);
+	JVector3 CPxCA = CP.Cross(&CA);
 
 	if(APxAB.Dot(BPxBC) >= 0)
 		if(BPxBC.Dot(CPxCA) >= 0)
@@ -398,10 +398,10 @@ void cMaths::Truncatef(float& value, const float threshold)
 	}
 
 	int l_int = 0;
-	if(value >= 0) l_int = floor(value + 0.5) + 1;
+	if(value >= 0) l_int = (int)floor(value + 0.5) + 1;
 
-	if(l_int - value < threshold) value = l_int - 1;
-	if(l_int - value > 1 - threshold) value = l_int - 1;
+	if(l_int - value < threshold) value = (float)(l_int - 1);
+	if(l_int - value > 1 - threshold) value = (float)(l_int - 1);
 
 	if(neg) value = -value;
 }

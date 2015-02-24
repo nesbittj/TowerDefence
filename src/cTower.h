@@ -10,9 +10,9 @@ struct TowerData
 	SDL_Texture* mBitmap;
 	Mix_Chunk* mFireSound;
 	float mDamage;
-	int mRange;
-	int mFireFreq;
-	int mFireDuration;
+	Uint32 mRange;
+	Uint32 mFireFreq;
+	Uint32 mFireDuration;
 };
 
 class cTower : public cEntity

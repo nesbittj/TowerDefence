@@ -17,7 +17,7 @@ bool cArena::Init()
 	LoadArenaData("assets/arena/arena_01.tmx");
 	//TODO: error report
 	
-	mCore = new cCore(mEnemyTargetPos.x,mEnemyTargetPos.y);
+	mCore = new cCore((Uint32)mEnemyTargetPos.x,(Uint32)mEnemyTargetPos.y);
 	mCore->Init(0);
 
 	return true;
@@ -51,11 +51,11 @@ int cArena::LoadArenaData(const char* _filename)
 		}
 
 		JVector2 l_pos;
-		for(int i = 0; i < mArena.height; i++)
+		for(Uint32 i = 0; i < mArena.height; i++)
 		{
-			for(int j = 0; j < mArena.width; j++)
+			for(Uint32 j = 0; j < mArena.width; j++)
 			{
-				l_pos.Set(j,i);
+				l_pos.Set((float)j,(float)i);
 				if(GetTileType(l_pos) == TILE_START)
 				{
 					mEnemyStartPos = l_pos;
@@ -66,7 +66,7 @@ int cArena::LoadArenaData(const char* _filename)
 				}
 				if(GetTileType(l_pos) == TILE_CORE)
 				{
-					mEnemyTargetPos = l_pos * GetGridSize();
+					mEnemyTargetPos = l_pos * (float)GetGridSize();
 				}
 			}
 		}		
@@ -85,7 +85,7 @@ ARENA_TILE_TYPE cArena::GetTileType(JVector2& _pos)
 	//TODO: only siupports one Tiled layer
 	if(_pos.x < 0 || _pos.x > GetArenaWidth()) return TILE_EMPTY;
 	if(_pos.y < 0 || _pos.y > GetArenaHeight()) return TILE_EMPTY;
-	return (ARENA_TILE_TYPE)mArena.layerCollection[0].tiles[_pos.y*mArena.width + _pos.x].tileFlatIndex;
+	return (ARENA_TILE_TYPE)mArena.layerCollection[0].tiles[(unsigned int)(_pos.y*mArena.width + _pos.x)].tileFlatIndex;
 }
 
 void cArena::Update()
@@ -95,12 +95,12 @@ void cArena::Update()
 
 void cArena::Draw()
 {
-	for(int i = 0; i < mArena.height; i++)
+	for(Uint32 i = 0; i < mArena.height; i++)
 	{
-		for(int j = 0; j < mArena.width; j++)
+		for(Uint32 j = 0; j < mArena.width; j++)
 		{
 			DrawTile(j*mArena.tileWidth,i*mArena.tileHeight,
-				GetTileType(JVector2(j,i)),WORLD_SPACE);
+				GetTileType(JVector2((float)j,(float)i)),WORLD_SPACE);
 		}
 	}
 
@@ -111,7 +111,7 @@ void cArena::DrawTile(int _x, int _y, int _tile_type, int _space)
 {
 	//TODO: might need a better method of recording tile location
 	SDL_Rect l_tile = { _tile_type*mArena.tileWidth,0,mArena.tileWidth,mArena.tileHeight };
-	mRen->RenderTexture(mTilesSpriteSheet,_x,_y,NULL,l_tile,_space);
+	mRen->RenderTexture(mTilesSpriteSheet,(float)_x,(float)_y,NULL,l_tile,_space);
 }
 
 stack<pair<int,int>> cArena::BreadthFirst(const pair<int,int> _start, const pair<int,int> _target)
@@ -152,7 +152,7 @@ stack<pair<int,int>> cArena::BreadthFirst(const pair<int,int> _start, const pair
 
 void cArena::GraphNeighbours(pair<int,int> _u)
 {
-	int l_tile = GetTileType(JVector2(_u.first + 1,_u.second));
+	int l_tile = GetTileType(JVector2((float)_u.first + 1,(float)_u.second));
 	if(l_tile != TILE_EMPTY)
 	{
 		mAdj[0].first =  _u.first + 1;
@@ -161,7 +161,7 @@ void cArena::GraphNeighbours(pair<int,int> _u)
 	else
 		mAdj[0] = make_pair(-1,-1);
 	//bottom
-	l_tile = GetTileType(JVector2(_u.first,_u.second + 1));
+	l_tile = GetTileType(JVector2((float)_u.first,(float)_u.second + 1));
 	if(l_tile != TILE_EMPTY)
 	{
 		mAdj[1].first =  _u.first;
@@ -170,7 +170,7 @@ void cArena::GraphNeighbours(pair<int,int> _u)
 	else
 		mAdj[1] = make_pair(-1,-1);
 	//left
-	l_tile = GetTileType(JVector2(_u.first - 1,_u.second));
+	l_tile = GetTileType(JVector2((float)_u.first - 1,(float)_u.second));
 	if(l_tile != TILE_EMPTY)
 	{
 		mAdj[2].first =  _u.first - 1;
@@ -179,7 +179,7 @@ void cArena::GraphNeighbours(pair<int,int> _u)
 	else
 		mAdj[2] = make_pair(-1,-1);
 	//top
-	l_tile = GetTileType(JVector2(_u.first,_u.second - 1));
+	l_tile = GetTileType(JVector2((float)_u.first,(float)_u.second - 1));
 	if(l_tile != TILE_EMPTY)
 	{
 		mAdj[3].first =  _u.first;
@@ -198,8 +198,8 @@ void cArena::CheckBounds(float* _x, float* _y)
 {
 	if(*_x < 0.f) *_x = 0.f;
 	if(*_y < 0.f) *_y = 0.f;
-	if(*_x > GetArenaWidth()-1) *_x = GetArenaWidth()-1;
-	if(*_y > GetArenaHeight()-1) *_y = GetArenaHeight()-1;
+	if(*_x > GetArenaWidth()-1) *_x = (float)(GetArenaWidth()-1);
+	if(*_y > GetArenaHeight()-1) *_y = (float)(GetArenaHeight()-1);
 }
 
 /*
@@ -209,9 +209,9 @@ only for tile array index values
 */
 bool cArena::CheckBounds(pair<int,int> _u) const
 {
-	if(_u.first  < 0.f) return false;
-	if(_u.second < 0.f) return false;
-	if(_u.first  > mArena.width-1) return false;
-	if(_u.second > mArena.height-1) return false;
+	if(_u.first  < 0) return false;
+	if(_u.second < 0) return false;
+	if((unsigned int)_u.first  > mArena.width-1) return false;
+	if((unsigned int)_u.second > mArena.height-1) return false;
 	return true;
 }

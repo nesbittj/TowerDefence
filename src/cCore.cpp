@@ -51,7 +51,7 @@ bool cCore::LoadCoreData()
 
 void cCore::Heal()
 {
-	if(++mLives > mMaxLives) mLives = mMaxLives;
+	if(++mLives > mMaxLives) mLives = (float)mMaxLives;
 }
 
 void cCore::Damage(float _damage)
@@ -62,6 +62,6 @@ void cCore::Damage(float _damage)
 
 void cCore::Damage(JVector2 _origin, int _range, float _damage)
 {
-	if(cMaths::InRange(_origin,GetPos(),_range))
+	if(cMaths::InRange(_origin,GetPos(),(float)_range))
 		Damage(_damage);
 }
