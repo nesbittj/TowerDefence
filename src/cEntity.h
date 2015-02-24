@@ -19,9 +19,9 @@ protected:
 	cInput* mInput;
 
 public:
-	float GetX() const { return x; }
-	float GetY() const { return y; }
-	JVector2 GetPos() const { return JVector2(x,y); }
+	inline float GetX() const { return x; }
+	inline float GetY() const { return y; }
+	inline JVector2 GetPos() const { return JVector2(x,y); }
 	Uint32 GetLevel() const { return mLevel; }
 	int GetLives() const { return mLives; }
 	SDL_Texture* GetBitmap() const { return mBitmap; }

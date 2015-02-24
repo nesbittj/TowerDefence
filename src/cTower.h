@@ -18,14 +18,17 @@ struct TowerData
 class cTower : public cEntity
 {
 private:
-	bool mFiring;
 	TowerData* mTowerData;
 	cTimer mFireFreqTimer;
 	cTimer mFireDurTimer;
+	cTimer mFireTimer;
+	bool mTimersOn;
 	vector<JVector3> mFiringVerts;
-	float mFireDamage;
 
 	void Init(TowerData* _data);
+
+	bool mFiring;
+	int mCurrentTargetIndex;
 
 public:
 	cTower(Uint32 _x, Uint32 _y);
@@ -37,6 +40,5 @@ public:
 	void Update(cEnemy** const _enemies, int size_of_array);
 	void Draw();
 
-	bool GetFiring() { return mFiring; }
 };
 

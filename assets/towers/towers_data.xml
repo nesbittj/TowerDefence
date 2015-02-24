@@ -1,25 +1,19 @@
 <?xml version="1.0" ?>
 <towers>
-	<tower1 name="tower 1" bitmap="tower01.bmp" sound="tower01.wav"	damage="0.625"	range="150" firefreq="1000" 	firedur="400" />
-	<tower1 name="tower 2" bitmap="tower02.bmp" sound="" 						damage="1.25" 	range="150" firefreq="250" 		firedur="50" />
-	<tower1 name="tower 3" bitmap="tower03.bmp" sound="" 						damage="3.3" 	range="150" firefreq="2000" 	firedur="150" />
-	<tower1 name="tower 4" bitmap="tower04.bmp" sound=""						damage="1" 		range="150" firefreq="0" 			firedur="0" />
+	<tower name="tower 1" bitmap="tower01.bmp" sound="tower01.wav"	damage="0.625"	range="150" 	firefreq="1000" 	firedur="400" />
+	<tower name="tower 2" bitmap="tower02.bmp" sound="" 						damage="1.25" 	range="150" 	firefreq="250" 	firedur="50" />
+	<tower name="tower 3" bitmap="tower03.bmp" sound="" 						damage="3.3" 	range="150" 	firefreq="2000" 	firedur="150" />
+	<tower name="tower 4" bitmap="tower04.bmp" sound=""						damage="1" 		range="150" 	firefreq="0" 		firedur="0" />
+	<tower name="tower 5" bitmap="tower01.bmp" sound=""						damage="20" 		range="150" firefreq="1000" 	firedur="1000" />
 </towers>
 
 <!--
 
 	- range in pixels radius
-	- firefreq in milliseconds (seconds * 1000)
-	- firedur in milliseconds
+	- firefreq, time to reload, starts when target found or after firedur is reached
+	- firedur, duration of single fire (time  to overheat) in milliseconds
+	- damage, damage per hit (over the duration of firdur
 	
-	- damage is damage per frame
-	- dps =  firedur * damage * target_fps * firefreq
-	- to calc damage: 
-	
-	
-	target fps 60
-	target frame time 1/60 0.01666
-	
-	
+	- dps =  damage / ((firefreq + firedur) / 1000) 
 
 -->

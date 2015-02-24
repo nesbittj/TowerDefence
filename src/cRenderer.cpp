@@ -416,11 +416,11 @@ void cRenderer::SleepBeforeFlip()
 	//windows scheduler has a high default granularity, this is a temporary work around
 	//TODO: calc OS scheduler granularity at start of program
 	Uint32 win32SchedulerPadding = 1;
-	mSecondsElapsedForFrame = GetSecondsElapsed(mLastCounter,SDL_GetPerformanceCounter());;
+	mSecondsElapsedForFrame = GetSecondsElapsed(mLastCounter,SDL_GetPerformanceCounter());
 	if(mSecondsElapsedForFrame < mTargetSecondsPerFrame)
 	{
 		Uint32 SleepMS = (1000.f * (mTargetSecondsPerFrame - mSecondsElapsedForFrame)) - win32SchedulerPadding;
-		//if(SleepMS > 0) SDL_Delay(SleepMS);
+		if(SleepMS > 0) SDL_Delay(SleepMS);
 		//printf("sleep: %d\n",TimeToSleep);
 		while(mSecondsElapsedForFrame < mTargetSecondsPerFrame)
 		{
