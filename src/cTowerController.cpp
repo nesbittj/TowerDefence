@@ -10,13 +10,12 @@ cTowerController::~cTowerController()
 {	
 }
 
-bool cTowerController::Init(cArena* _arena, Uint32* _cursor_x, Uint32* _cursor_y)
+bool cTowerController::Init(cArena* _arena)
 {
 	mInput = cInput::Instance();
 	mRen = cRenderer::Instance();
 	mLog = cLogger::Instance();
 	mArena = _arena;
-	mCursorX = _cursor_x; mCursorY = _cursor_y;
 	if(!LoadTowersData()) return false;
 	for(int i = 0; i < mMaxTowersInUse; i++) mTowersInUse[i] = NULL;
 	return true;
@@ -57,7 +56,7 @@ void cTowerController::SetTowerSelected(Uint32 _tower)
 	}
 }
 
-void cTowerController::Update(cEnemy** const _enemies_hit, int size_of_array)
+void cTowerController::Update(cEnemy** const _enemies, int size_of_array)
 {
 	if(mInput->GetKeyDownRelease(SDLK_1)) SetTowerSelected(0);
 	if(mInput->GetKeyDownRelease(SDLK_2)) SetTowerSelected(1);
@@ -67,14 +66,14 @@ void cTowerController::Update(cEnemy** const _enemies_hit, int size_of_array)
 	if(mInput->GetKeyDownRelease(SDLK_6)) SetTowerSelected(5);
 
 	if(mInput->GetMouseButtonDownRelease(LEFT_MOUSE_BUTTON))	
-		AddTower(*mCursorX,*mCursorY,GetTowerSelected());
-	if(mInput->GetMouseButtonDownRelease(RIGHT_MOUSE_BUTTON))
-		RemoveTower(*mCursorX,*mCursorY);
+		AddTower(mRen->mCamera->GetCursorX(),mRen->mCamera->GetCursorY(),GetTowerSelected());
+	else if(mInput->GetMouseButtonDownRelease(RIGHT_MOUSE_BUTTON))
+		RemoveTower(mRen->mCamera->GetCursorX(),mRen->mCamera->GetCursorY());
 
 	//TODO: consider indexing/sorting to top towers in use
 	for(int i = 0; i < mMaxTowersInUse; i++)
 	{
-		if(mTowersInUse[i] != NULL) mTowersInUse[i]->Update(_enemies_hit,size_of_array);
+		if(mTowersInUse[i] != NULL) mTowersInUse[i]->Update(_enemies,size_of_array);
 	}
 }
 

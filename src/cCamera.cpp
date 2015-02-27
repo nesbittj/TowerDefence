@@ -8,6 +8,7 @@ cCamera::cCamera(float _x, float _y)
 {
 	x = _x; y = _y;
 	mMoveSpeed = 1.0;
+	mCursorX = mCursorY = 0;
 }
 
 int cCamera::Init(SDL_Event* _event, cInput* _input,
@@ -63,6 +64,9 @@ void cCamera::Update()
 	//update cam with new pos
 	if(new_cam.x != 0 || new_cam.y != 0)
 		UpdateRelative(new_cam.x,new_cam.y);
+	
+	mCursorX = cMaths::Round(mInput->GetMouseX() - (Uint32)x,32);
+	mCursorY = cMaths::Round(mInput->GetMouseY() - (Uint32)y,32);
 }
 
 /*

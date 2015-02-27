@@ -21,7 +21,7 @@ using namespace tinyxml2;
 class cEnemyController
 {
 private:
-	static const unsigned int mMaxEnemiesAlive = 300;
+	static const unsigned int mMaxEnemiesAlive = 100;
 	static const unsigned int mMaxEnemyTypes = 10;
 	EnemyData mEnemiesData[mMaxEnemyTypes];
 	cEnemy* mEnemiesAlive[mMaxEnemiesAlive];
@@ -46,8 +46,6 @@ public:
 
 	void Update();
 	void DrawEnemies();
-	void DrawEnemy(Uint32 _x, Uint32 _y, Uint32 _enemy, Uint32 _space = WORLD_SPACE);
-	void DrawEnemyText(Uint32 _x, Uint32 _y, Uint32 _enemy, SDL_Color _col, Uint32 _space = WORLD_SPACE);
 	void AddEnemy(Uint32 _x, Uint32 _y, Uint32 _enemy_type);
 	void RemoveEnemy(Uint32 _enemy);
 	bool LoadEnemyData();

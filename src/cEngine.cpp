@@ -14,8 +14,6 @@ int cEngine::Init()
 	mLog = NULL;
 	mInput = NULL;
 	mQuit = false;
-	mRender = true;
-	mUpdate = true;
 
 	mLog = cLogger::Instance();
 	mInput = cInput::Instance();
@@ -45,7 +43,7 @@ int cEngine::Init()
 
 	mPlayer = cPlayer(10,0);
 	mTowerController = cTowerController();
-	mTowerController.Init(mArena,&mCursorX,&mCursorY);
+	mTowerController.Init(mArena);
 
 	mEnemyController = cEnemyController();
 	mEnemyController.Init(mArena);
@@ -83,19 +81,11 @@ void cEngine::Update()
 {
 	UpdateEvents();
 
-	if(mRender)
-	{
-		//TODO: find a better solution to getting cam pos, possibly another location to calc cursor.
-		JVector2 camPos = mRen->mCamera->GetPos();
-		mCursorX = cMaths::Round(mInput->GetMouseX() - (Uint32)camPos.x,32);
-		mCursorY = cMaths::Round(mInput->GetMouseY() - (Uint32)camPos.y,32);
-
-		mRen->Update();
-		//mPlayer.Update();
-		mTowerController.Update(mEnemyController.GetEnemies(),mEnemyController.GetMaxEnemies());
-		mEnemyController.Update();
-		mArena->Update();
-	}
+	mRen->Update();
+	//mPlayer.Update();
+	mTowerController.Update(mEnemyController.GetEnemies(),mEnemyController.GetMaxEnemies());
+	mEnemyController.Update();
+	mArena->Update();
 }
 
 void cEngine::UpdateEvents()
@@ -108,25 +98,25 @@ void cEngine::UpdateEvents()
 	mInput->UpdateOldKeys();
 }
 
-/*
-renders scene by calling cRenderer routines
-*/
 void cEngine::Render()
 {
-	if(mRender)
-	{		
-		mArena->Draw();
+	mArena->Draw();
 
-		SDL_Color mouseColour = { 0,0,0,255 };
-		mRen->DrawRect((float)mCursorX,(float)mCursorY,30,30,mouseColour,0,WORLD_SPACE);
+	SDL_Color mouseColour = { 0,0,0,255 };
+	mRen->DrawRect(
+		(float)mRen->mCamera->GetCursorX(),(float)mRen->mCamera->GetCursorY(),
+		30,30,mouseColour,0,WORLD_SPACE);
 
-		mTowerController.DrawTowersInUse();
-		mTowerController.DrawTower((float)mCursorX,(float)mCursorY,mTowerController.GetTowerSelected(),WORLD_SPACE);
-		mTowerController.DrawTowerText((float)mCursorX,(float)(mCursorY - 15),mTowerController.GetTowerSelected(),mouseColour,WORLD_SPACE);
-		mEnemyController.DrawEnemies();
+	mTowerController.DrawTowersInUse();
+	mTowerController.DrawTower(
+		(float)mRen->mCamera->GetCursorX(),(float)mRen->mCamera->GetCursorY(),
+		mTowerController.GetTowerSelected(),WORLD_SPACE);
+	mTowerController.DrawTowerText(
+		(float)mRen->mCamera->GetCursorX(),((float)mRen->mCamera->GetCursorY() - 15),
+		mTowerController.GetTowerSelected(),mouseColour,WORLD_SPACE);
+	mEnemyController.DrawEnemies();
 
-		mRen->Present(NULL);
-	}
+	mRen->Present(NULL);
 }
 
 bool cEngine::GetQuit() { return mQuit; }

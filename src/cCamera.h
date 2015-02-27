@@ -12,6 +12,7 @@ private:
 	float mMoveSpeed;
 	SDL_Event* mEvent;
 	cInput* mInput;
+	Uint32 mCursorX, mCursorY;
 
 public:
 	cCamera(float _x, float _y);
@@ -29,4 +30,6 @@ public:
 	void SetArenaSize(int _arena_w, int _arena_h);
 	inline JVector2 GetPos() const { return JVector2(x,y); } 
 	inline float GetMoveSpeed() const { return mMoveSpeed; }
+	inline Uint32 GetCursorX() { return mCursorX; }
+	inline Uint32 GetCursorY() { return mCursorY; }
 };

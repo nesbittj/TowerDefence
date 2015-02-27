@@ -222,10 +222,4 @@ void cInput::UpdateOldKeys()
 	memcpy(mPrevMouseButtonDown,mMouseButtonDown,sizeof(mPrevMouseButtonDown));
 }
 
-/*
-return mouse x and y position
-*/
-int cInput::GetMouseX() { return mMouseX; }
-int cInput::GetMouseY() { return mMouseY; }
-
 int cInput::GetJoyAxis(int axis) { return mJoyAxis[axis]; }

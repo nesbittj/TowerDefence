@@ -57,9 +57,9 @@ void cEnemyController::Update()
 {
 	if(mEnemySpawnTimer.GetTicks() >= (2500))
 	{
-		//if(mEnemiesAlive[0] == NULL) //create only one enemy
+		//if(mEnemiesAlive[0] == NULL) //create only one enemy at one time
 		{
-			AddEnemy((Uint32)mEnemyStartPos.x,(Uint32)mEnemyStartPos.y, 0);
+			AddEnemy((Uint32)mEnemyStartPos.x,(Uint32)mEnemyStartPos.y, rand() % 3);
 			mEnemySpawnTimer.Start();
 		}
 	}
@@ -92,16 +92,7 @@ void cEnemyController::DrawEnemies()
 		}
 	}
 
-	mRen->RenderText(l_alive,34,140,0,col,NULL,SCREEN_SPACE);
-	
-}
-
-void cEnemyController::DrawEnemy(Uint32 _x, Uint32 _y, Uint32 _enemy, Uint32 _space)
-{
-}
-
-void cEnemyController::DrawEnemyText(Uint32 _x, Uint32 _y, Uint32 _enemy, SDL_Color _col, Uint32 _space)
-{
+	mRen->RenderText(l_alive,34,140,0,col,NULL,SCREEN_SPACE);	
 }
 
 void cEnemyController::AddEnemy(Uint32 _x, Uint32 _y, Uint32 _enemy_type)

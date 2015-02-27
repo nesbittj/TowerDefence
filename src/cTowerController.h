@@ -30,9 +30,6 @@ private:
 	cLogger* mLog;
 	cArena* mArena;
 
-	//TODO: must find a better solution to cursor location/access
-	Uint32 *mCursorX, *mCursorY;
-
 public:
 		
 	Uint32 GetTowerSelected() const { return mTowerSelected; }
@@ -41,10 +38,10 @@ public:
 	cTowerController();
 	~cTowerController();
 
-	bool Init(cArena* _arena, Uint32* _cursor_x, Uint32* _cursor_y);
+	bool Init(cArena* _arena);
 	bool CleanUp();
 
-	void Update(cEnemy** const _enemies_hit, int size_of_array);
+	void Update(cEnemy** const _enemies, int size_of_array);
 	void DrawTowersInUse();
 	void DrawTower(float _x, float _y, Uint32 _tower, Uint32 _space = WORLD_SPACE);
 	void DrawTowerText(float _x, float _y, Uint32 _tower, SDL_Color _col, Uint32 _space = WORLD_SPACE);

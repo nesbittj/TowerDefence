@@ -59,8 +59,8 @@ public:
 	bool GetMouseButtonDownRelease(int button);
 	bool GetMouseButtonReleased(int button);
 
-	int GetMouseX();
-	int GetMouseY();
+	inline int GetMouseX() { return mMouseX; }
+	inline int GetMouseY() { return mMouseY; }
 	int GetJoyAxis(int axis);
 
 	int UpdateInputEvents();

@@ -38,15 +38,11 @@ private:
 
 	SDL_Event mEvent;
 	bool mQuit;
-	bool mRender;
-	bool mUpdate;
 
 	cPlayer mPlayer;
 	cTowerController mTowerController;
 	cEnemyController mEnemyController;
 	cArena* mArena;
-
-	Uint32 mCursorX, mCursorY;
 
 public:
 	static cEngine* Instance();
