@@ -10,8 +10,8 @@ cArena class
 #include <map>
 #include <stack>
 
-#include "tinyxml2.h"
-#include "tmxparser.h"
+#include "tinyxml2\tinyxml2.h"
+#include "tmxparser\tmxparser.h"
 
 #include "cCamera.h"
 #include "cRenderer.h"

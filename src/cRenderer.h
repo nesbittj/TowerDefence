@@ -18,7 +18,7 @@ singleton class
 #include "cLogger.h"
 #include "cMaths.h"
 #include "cCamera.h"
-#include "tinyxml2.h"
+#include "tinyxml2\tinyxml2.h"
 
 enum { WORLD_SPACE, SCREEN_SPACE };
 

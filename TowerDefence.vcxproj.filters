@@ -1,0 +1,68 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="src\cArena.cpp" />
+    <ClCompile Include="src\cCamera.cpp" />
+    <ClCompile Include="src\cCore.cpp" />
+    <ClCompile Include="src\cEnemy.cpp" />
+    <ClCompile Include="src\cEnemyController.cpp" />
+    <ClCompile Include="src\cEngine.cpp" />
+    <ClCompile Include="src\cEntity.cpp" />
+    <ClCompile Include="src\cInput.cpp" />
+    <ClCompile Include="src\cLogger.cpp" />
+    <ClCompile Include="src\cMaths.cpp" />
+    <ClCompile Include="src\cPlayer.cpp" />
+    <ClCompile Include="src\cRenderer.cpp" />
+    <ClCompile Include="src\cSceneNode.cpp" />
+    <ClCompile Include="src\cTimer.cpp" />
+    <ClCompile Include="src\cTower.cpp" />
+    <ClCompile Include="src\cTowerController.cpp" />
+    <ClCompile Include="src\Source.cpp" />
+    <ClCompile Include="src\tinyxml2\tinyxml2.cpp">
+      <Filter>tinyxml2</Filter>
+    </ClCompile>
+    <ClCompile Include="src\tmxparser\base64.cpp">
+      <Filter>tmxparser</Filter>
+    </ClCompile>
+    <ClCompile Include="src\tmxparser\tmxparser.cpp">
+      <Filter>tmxparser</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="src\cArena.h" />
+    <ClInclude Include="src\cCamera.h" />
+    <ClInclude Include="src\cCore.h" />
+    <ClInclude Include="src\cEnemy.h" />
+    <ClInclude Include="src\cEnemyController.h" />
+    <ClInclude Include="src\cEngine.h" />
+    <ClInclude Include="src\cEntity.h" />
+    <ClInclude Include="src\cInput.h" />
+    <ClInclude Include="src\cLogger.h" />
+    <ClInclude Include="src\cMaths.h" />
+    <ClInclude Include="src\cPlayer.h" />
+    <ClInclude Include="src\cQueue.h" />
+    <ClInclude Include="src\cRenderer.h" />
+    <ClInclude Include="src\cSceneNode.h" />
+    <ClInclude Include="src\cTimer.h" />
+    <ClInclude Include="src\cTower.h" />
+    <ClInclude Include="src\cTowerController.h" />
+    <ClInclude Include="src\XInputButtons.h" />
+    <ClInclude Include="src\tinyxml2\tinyxml2.h">
+      <Filter>tinyxml2</Filter>
+    </ClInclude>
+    <ClInclude Include="src\tmxparser\base64.h">
+      <Filter>tmxparser</Filter>
+    </ClInclude>
+    <ClInclude Include="src\tmxparser\tmxparser.h">
+      <Filter>tmxparser</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="tinyxml2">
+      <UniqueIdentifier>{fefb2e30-f7e9-43fc-8892-fa4d12ce6564}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="tmxparser">
+      <UniqueIdentifier>{14cbccba-29a8-4d87-bf8d-7cae1272fbb2}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

@@ -11,7 +11,6 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\base64.cpp" />
     <ClCompile Include="src\cArena.cpp" />
     <ClCompile Include="src\cCamera.cpp" />
     <ClCompile Include="src\cCore.cpp" />
@@ -29,11 +28,11 @@
     <ClCompile Include="src\cTower.cpp" />
     <ClCompile Include="src\cTowerController.cpp" />
     <ClCompile Include="src\Source.cpp" />
-    <ClCompile Include="src\tinyxml2.cpp" />
-    <ClCompile Include="src\tmxparser.cpp" />
+    <ClCompile Include="src\tinyxml2\tinyxml2.cpp" />
+    <ClCompile Include="src\tmxparser\base64.cpp" />
+    <ClCompile Include="src\tmxparser\tmxparser.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="src\base64.h" />
     <ClInclude Include="src\cArena.h" />
     <ClInclude Include="src\cCamera.h" />
     <ClInclude Include="src\cCore.h" />
@@ -51,8 +50,9 @@
     <ClInclude Include="src\cTimer.h" />
     <ClInclude Include="src\cTower.h" />
     <ClInclude Include="src\cTowerController.h" />
-    <ClInclude Include="src\tinyxml2.h" />
-    <ClInclude Include="src\tmxparser.h" />
+    <ClInclude Include="src\tinyxml2\tinyxml2.h" />
+    <ClInclude Include="src\tmxparser\base64.h" />
+    <ClInclude Include="src\tmxparser\tmxparser.h" />
     <ClInclude Include="src\XInputButtons.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">

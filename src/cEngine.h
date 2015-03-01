@@ -14,7 +14,7 @@ singleton class
 
 #include <SDL.h>
 #include <SDL_mixer.h>
-#include "tinyxml2.h"
+#include "tinyxml2\tinyxml2.h"
 
 #include "cRenderer.h"
 #include "cLogger.h"
