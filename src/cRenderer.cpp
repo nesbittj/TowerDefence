@@ -240,6 +240,32 @@ void cRenderer::DrawRect(float _x, float _y, int _w, int _h, SDL_Color _col, SDL
 }
 
 /*
+draws a filled circle at x,y
+uses SDL2_gfx::circleRGBA
+use _ren = NULL for dafault renderer
+*/
+void cRenderer::DrawFilledCircle(Sint16 _x, Sint16 _y, Sint16 _radius, SDL_Color _col,
+		SDL_Renderer* _ren, int _space)
+{
+	if(!_ren) _ren = mRenderer;
+	SDL_Color l_prevCol = GetDrawColour();
+	SetDrawColour(_col);
+	//TODO: move this sattup stuff to a function,
+	//TODO: do i even need to do this? could set colour for every operation instead
+	JVector2 camPos = mCamera->GetPos();
+	if(_space == WORLD_SPACE/* && camPos.w > 0*/)
+	{
+		_x += camPos.x;
+		_y += camPos.y;
+	}
+	
+	if(filledCircleRGBA(_ren,_x,_y,_radius,GetDrawColour().r,GetDrawColour().g,GetDrawColour().b,GetDrawColour().a) != 0)
+		mLog->LogSDLError("cRenderer::DrawFilledCircle()");
+
+	SetDrawColour(l_prevCol);
+}
+
+/*
 renders a texture at position x,y.
 uses origional width,height of texture.
 renderer can be set to NULL then default renderer will be used

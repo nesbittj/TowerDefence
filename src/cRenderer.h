@@ -11,6 +11,7 @@ singleton class
 
 #include <SDL.h>
 #include <SDL_ttf.h>
+#include "SDL2_gfx\SDL2_gfxPrimitives.h"
 
 #include <sstream>
 #include <vector>
@@ -73,7 +74,7 @@ public:
 	int UpdateEvents();
 
 	void DrawRect(float _x, float _y, int _w, int _h, SDL_Color _col, SDL_Renderer* _ren, int _space = WORLD_SPACE);
-	//void DrawCircleFill(float _x, float _y, int _rad, SDL_Color _col, int _space = WORLD_SPACE);
+	void DrawFilledCircle(Sint16 _x, Sint16 _y, Sint16 _radius, SDL_Color _col,	SDL_Renderer* _ren, int _space = WORLD_SPACE);
 	void RenderTexture(SDL_Texture* _tex, float _x, float _y, SDL_Renderer* _ren, int _space = WORLD_SPACE);
 	void RenderTexture(SDL_Texture* _tex, float _x, float _y, SDL_Renderer* _ren, int _w, int _h, int _space = WORLD_SPACE);
 	void RenderTexture(SDL_Texture* _sprite_sheet, float _x, float _y, SDL_Renderer* _ren, SDL_Rect _tile, int _space = WORLD_SPACE);

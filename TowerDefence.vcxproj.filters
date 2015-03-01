@@ -27,6 +27,18 @@
     <ClCompile Include="src\tmxparser\tmxparser.cpp">
       <Filter>tmxparser</Filter>
     </ClCompile>
+    <ClCompile Include="src\SDL2_gfx\SDL2_framerate.c">
+      <Filter>SDL2_gfx</Filter>
+    </ClCompile>
+    <ClCompile Include="src\SDL2_gfx\SDL2_gfxPrimitives.c">
+      <Filter>SDL2_gfx</Filter>
+    </ClCompile>
+    <ClCompile Include="src\SDL2_gfx\SDL2_imageFilter.c">
+      <Filter>SDL2_gfx</Filter>
+    </ClCompile>
+    <ClCompile Include="src\SDL2_gfx\SDL2_rotozoom.c">
+      <Filter>SDL2_gfx</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\cArena.h" />
@@ -56,6 +68,21 @@
     <ClInclude Include="src\tmxparser\tmxparser.h">
       <Filter>tmxparser</Filter>
     </ClInclude>
+    <ClInclude Include="src\SDL2_gfx\SDL2_framerate.h">
+      <Filter>SDL2_gfx</Filter>
+    </ClInclude>
+    <ClInclude Include="src\SDL2_gfx\SDL2_gfxPrimitives.h">
+      <Filter>SDL2_gfx</Filter>
+    </ClInclude>
+    <ClInclude Include="src\SDL2_gfx\SDL2_gfxPrimitives_font.h">
+      <Filter>SDL2_gfx</Filter>
+    </ClInclude>
+    <ClInclude Include="src\SDL2_gfx\SDL2_imageFilter.h">
+      <Filter>SDL2_gfx</Filter>
+    </ClInclude>
+    <ClInclude Include="src\SDL2_gfx\SDL2_rotozoom.h">
+      <Filter>SDL2_gfx</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="tinyxml2">
@@ -63,6 +90,9 @@
     </Filter>
     <Filter Include="tmxparser">
       <UniqueIdentifier>{14cbccba-29a8-4d87-bf8d-7cae1272fbb2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="SDL2_gfx">
+      <UniqueIdentifier>{b8588a78-976c-422b-9a50-59dc6dfa56cf}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

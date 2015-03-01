@@ -112,6 +112,13 @@ void cTower::Update(cEnemy** const _enemies, int size_of_array)
 
 void cTower::Draw()
 {
+	if(mRen->mCamera->GetCursorX() == x && mRen->mCamera->GetCursorY() == y)
+	{
+		SDL_Color rang_col = { 0, 255, 100, 50 };
+		mRen->DrawFilledCircle(x,y,mTowerData->mRange,rang_col,0);
+		//TODO: position needs to be offset to be at enter of tower sprite
+	}
+
 	mRen->RenderTexture(mBitmap,x,y,NULL);
 	if(mFiring && mCurrentTargetIndex >= 0)
 	{

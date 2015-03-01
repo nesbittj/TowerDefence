@@ -27,6 +27,10 @@
     <ClCompile Include="src\cTimer.cpp" />
     <ClCompile Include="src\cTower.cpp" />
     <ClCompile Include="src\cTowerController.cpp" />
+    <ClCompile Include="src\SDL2_gfx\SDL2_framerate.c" />
+    <ClCompile Include="src\SDL2_gfx\SDL2_gfxPrimitives.c" />
+    <ClCompile Include="src\SDL2_gfx\SDL2_imageFilter.c" />
+    <ClCompile Include="src\SDL2_gfx\SDL2_rotozoom.c" />
     <ClCompile Include="src\Source.cpp" />
     <ClCompile Include="src\tinyxml2\tinyxml2.cpp" />
     <ClCompile Include="src\tmxparser\base64.cpp" />
@@ -50,6 +54,11 @@
     <ClInclude Include="src\cTimer.h" />
     <ClInclude Include="src\cTower.h" />
     <ClInclude Include="src\cTowerController.h" />
+    <ClInclude Include="src\SDL2_gfx\SDL2_framerate.h" />
+    <ClInclude Include="src\SDL2_gfx\SDL2_gfxPrimitives.h" />
+    <ClInclude Include="src\SDL2_gfx\SDL2_gfxPrimitives_font.h" />
+    <ClInclude Include="src\SDL2_gfx\SDL2_imageFilter.h" />
+    <ClInclude Include="src\SDL2_gfx\SDL2_rotozoom.h" />
     <ClInclude Include="src\tinyxml2\tinyxml2.h" />
     <ClInclude Include="src\tmxparser\base64.h" />
     <ClInclude Include="src\tmxparser\tmxparser.h" />

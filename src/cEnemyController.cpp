@@ -59,7 +59,7 @@ void cEnemyController::Update()
 	{
 		//if(mEnemiesAlive[0] == NULL) //create only one enemy at one time
 		{
-			AddEnemy((Uint32)mEnemyStartPos.x,(Uint32)mEnemyStartPos.y, rand() % 3);
+			AddEnemy((Uint32)mEnemyStartPos.x,(Uint32)mEnemyStartPos.y, rand() % 3); //TODO: better rand, needs a seed
 			mEnemySpawnTimer.Start();
 		}
 	}
