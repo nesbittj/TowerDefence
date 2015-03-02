@@ -19,8 +19,9 @@ singleton class
 #include "cRenderer.h"
 #include "cLogger.h"
 #include "cInput.h"
-
+#include "cGUI.h"
 #include "cTimer.h"
+
 #include "cPlayer.h"
 #include "cEntity.h"
 #include "cTowerController.h"
@@ -35,8 +36,10 @@ private:
 	cRenderer* mRen;
 	cLogger* mLog;
 	cInput* mInput;
+	cGUInamepsace::cGUI* mGUI;
 
 	SDL_Event mEvent;
+	bool mPaused;
 	bool mQuit;
 
 	cPlayer mPlayer;

@@ -39,6 +39,7 @@
     <ClCompile Include="src\SDL2_gfx\SDL2_rotozoom.c">
       <Filter>SDL2_gfx</Filter>
     </ClCompile>
+    <ClCompile Include="src\cGUI.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\cArena.h" />
@@ -83,6 +84,7 @@
     <ClInclude Include="src\SDL2_gfx\SDL2_rotozoom.h">
       <Filter>SDL2_gfx</Filter>
     </ClInclude>
+    <ClInclude Include="src\cGUI.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="tinyxml2">

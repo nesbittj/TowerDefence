@@ -17,8 +17,6 @@ cTower::~cTower()
 bool cTower::Init(SDL_Texture* _bitmap, TowerData* _data)
 {
 	mTowerData = _data;
-	mFireFreqTimer = cTimer();
-	mFireDurTimer = cTimer();
 	mFireTimer = cTimer();
 	mFireTimer.Start();
 	//if(!mTowerData->mFireFreq && !mTowerData->mFireDuration) mTimersOn = false;
@@ -33,8 +31,6 @@ bool cTower::Init(SDL_Texture* _bitmap, TowerData* _data)
 
 bool cTower::CleanUp()
 {
-	mFireDurTimer.Stop();
-	mFireFreqTimer.Stop();
 	mTowerData = NULL;
 	if(!cEntity::CleanUp()) return false;
 	return true;

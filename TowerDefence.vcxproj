@@ -18,6 +18,7 @@
     <ClCompile Include="src\cEnemyController.cpp" />
     <ClCompile Include="src\cEngine.cpp" />
     <ClCompile Include="src\cEntity.cpp" />
+    <ClCompile Include="src\cGUI.cpp" />
     <ClCompile Include="src\cInput.cpp" />
     <ClCompile Include="src\cLogger.cpp" />
     <ClCompile Include="src\cMaths.cpp" />
@@ -44,6 +45,7 @@
     <ClInclude Include="src\cEnemyController.h" />
     <ClInclude Include="src\cEngine.h" />
     <ClInclude Include="src\cEntity.h" />
+    <ClInclude Include="src\cGUI.h" />
     <ClInclude Include="src\cInput.h" />
     <ClInclude Include="src\cLogger.h" />
     <ClInclude Include="src\cMaths.h" />

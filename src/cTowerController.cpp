@@ -184,3 +184,15 @@ bool cTowerController::LoadTowersData()
 
 	return true;
 }
+
+void cTowerController::Pause()
+{
+	for(unsigned int i = 0; i < mMaxTowersInUse; i++)
+		if(mTowersInUse[i]) mTowersInUse[i]->Pause();
+}
+
+void cTowerController::UnPause()
+{
+	for(unsigned int i = 0; i < mMaxTowersInUse; i++)
+		if(mTowersInUse[i]) mTowersInUse[i]->UnPause();
+}

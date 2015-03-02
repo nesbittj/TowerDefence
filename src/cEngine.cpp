@@ -13,6 +13,7 @@ int cEngine::Init()
 	mRen = NULL;
 	mLog = NULL;
 	mInput = NULL;
+	mPaused = false;
 	mQuit = false;
 
 	mLog = cLogger::Instance();
@@ -48,6 +49,12 @@ int cEngine::Init()
 	mEnemyController = cEnemyController();
 	mEnemyController.Init(mArena);
 
+	mGUI = new cGUInamepsace::cGUI();
+	SDL_Color theme_colour = { 255, 255, 0, 255 };
+	mGUI->Init(theme_colour);
+	cGUInamepsace::panel* l_panel = mGUI->AddElementPanel(200,200,200,200,"Menu",0);
+	l_panel->AddElementButton(10,30,100,20,"BUTTON!!",l_panel);
+
 	return 0;
 }
 
@@ -81,11 +88,32 @@ void cEngine::Update()
 {
 	UpdateEvents();
 
-	mRen->Update();
-	//mPlayer.Update();
-	mTowerController.Update(mEnemyController.GetEnemies(),mEnemyController.GetMaxEnemies());
-	mEnemyController.Update();
-	mArena->Update();
+	if(mPaused)	//TODO: NEED TO PAUSE TIMERS!!
+	{
+		//update menu events
+		if(mInput->GetKeyDownRelease(SDLK_p))
+		{
+			mPaused = false;
+			mTowerController.UnPause();
+			mEnemyController.UnPause();
+		}
+	}
+	else
+	{
+		if(mInput->GetKeyDownRelease(SDLK_p))
+		{
+			mPaused = true;
+			mRen->TakeSnapshot(0,0);
+			mTowerController.Pause();
+			mEnemyController.Pause();
+		}
+
+		mRen->mCamera->Update();
+		//mPlayer.Update();
+		mTowerController.Update(mEnemyController.GetEnemies(),mEnemyController.GetMaxEnemies());
+		mEnemyController.Update();
+		mArena->Update();
+	}
 }
 
 void cEngine::UpdateEvents()
@@ -100,21 +128,31 @@ void cEngine::UpdateEvents()
 
 void cEngine::Render()
 {
-	mArena->Draw();
+	mRen->ClearToColour(0);
 
-	SDL_Color mouseColour = { 0,0,0,255 };
-	mRen->DrawRect(
-		(float)mRen->mCamera->GetCursorX(),(float)mRen->mCamera->GetCursorY(),
-		30,30,mouseColour,0,WORLD_SPACE);
+	if(mPaused)
+	{
+		mRen->RenderSnapshot(0,0,0);
+		mGUI->Render();
+	}
+	else
+	{
+		mArena->Draw();
 
-	mTowerController.DrawTowersInUse();
-	mTowerController.DrawTower(
-		(float)mRen->mCamera->GetCursorX(),(float)mRen->mCamera->GetCursorY(),
-		mTowerController.GetTowerSelected(),WORLD_SPACE);
-	mTowerController.DrawTowerText(
-		(float)mRen->mCamera->GetCursorX(),((float)mRen->mCamera->GetCursorY() - 15),
-		mTowerController.GetTowerSelected(),mouseColour,WORLD_SPACE);
-	mEnemyController.DrawEnemies();
+		SDL_Color mouseColour = { 0,0,0,255 };
+		mRen->DrawRect(
+			(float)mRen->mCamera->GetCursorX(),(float)mRen->mCamera->GetCursorY(),
+			30,30,mouseColour,0,WORLD_SPACE);
+
+		mTowerController.DrawTowersInUse();
+		mTowerController.DrawTower(
+			(float)mRen->mCamera->GetCursorX(),(float)mRen->mCamera->GetCursorY(),
+			mTowerController.GetTowerSelected(),WORLD_SPACE);
+		mTowerController.DrawTowerText(
+			(float)mRen->mCamera->GetCursorX(),((float)mRen->mCamera->GetCursorY() - 15),
+			mTowerController.GetTowerSelected(),mouseColour,WORLD_SPACE);
+		mEnemyController.DrawEnemies();
+	}
 
 	mRen->Present(NULL);
 }

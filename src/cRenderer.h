@@ -23,8 +23,6 @@ singleton class
 
 enum { WORLD_SPACE, SCREEN_SPACE };
 
-#define ClearToColour SDL_RenderClear
-
 class cRenderer
 {
 private:
@@ -39,6 +37,7 @@ private:
 	TTF_Font* mFont;
 	SDL_Surface* mFontSurface;
 	SDL_Texture* mFontTexture;
+	SDL_Texture* mSnapshot;
 	
 	Uint32 mWindowWidth;
 	Uint32 mWindowHeight;
@@ -69,11 +68,11 @@ public:
 	int CleanUp();
 	int InitCamera(SDL_Event* _event, cInput* _input, int _arena_w, int _arena_h)
 	{ return mCamera->Init(_event,_input,mWindowWidth,mWindowHeight,_arena_w,_arena_h); }
-		
-	void Update();
-	int UpdateEvents();
 
+	int UpdateEvents();
+	
 	void DrawRect(float _x, float _y, int _w, int _h, SDL_Color _col, SDL_Renderer* _ren, int _space = WORLD_SPACE);
+	void DrawFilledRect(float _x, float _y, int _w, int _h, SDL_Color _col, SDL_Renderer* _ren, int _space = WORLD_SPACE);
 	void DrawFilledCircle(Sint16 _x, Sint16 _y, Sint16 _radius, SDL_Color _col,	SDL_Renderer* _ren, int _space = WORLD_SPACE);
 	void RenderTexture(SDL_Texture* _tex, float _x, float _y, SDL_Renderer* _ren, int _space = WORLD_SPACE);
 	void RenderTexture(SDL_Texture* _tex, float _x, float _y, SDL_Renderer* _ren, int _w, int _h, int _space = WORLD_SPACE);
@@ -82,10 +81,14 @@ public:
 	int RenderText(Sint32 _value, float _x, float _y, int _font, SDL_Color _col, SDL_Renderer* _ren, int _space = WORLD_SPACE);
 	void RenderVerts(float _x, float _y, const vector<JVector3>& _verts, bool _2D = true, int _space = WORLD_SPACE);
 	void Present(SDL_Renderer* _ren, bool _vsync = true);
+	void ClearToColour(SDL_Renderer* _ren);
 
 	SDL_Texture* LoadBitmap(const char* _filename, SDL_Renderer* _ren = NULL);
 	void UnloadBitmap(SDL_Texture* _bitmap);
 
 	/*The time in seconds it took to complete the last frame*/
 	inline float GetDeltaTime() { return mSecondsElapsedForFrame; }
+
+	int TakeSnapshot(SDL_Window* _win, SDL_Renderer* _ren);
+	int RenderSnapshot(Sint32 _x, Sint32 _y, SDL_Renderer* _ren, Sint32 _space = WORLD_SPACE);
 };

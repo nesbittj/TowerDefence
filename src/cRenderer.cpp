@@ -21,6 +21,7 @@ int cRenderer::Init(SDL_Event* _event)
 	mFont = NULL;
 	mFontSurface = NULL;
 	mFontTexture = NULL;
+	mSnapshot = NULL;
 	mCamera = NULL;
 
 	mLog = cLogger::Instance();
@@ -99,11 +100,6 @@ int cRenderer::CleanUp()
 	mLog = NULL;
 
 	return 0;
-}
-
-void cRenderer::Update()
-{
-	mCamera->Update();
 }
 
 int cRenderer::UpdateEvents()
@@ -234,6 +230,24 @@ void cRenderer::DrawRect(float _x, float _y, int _w, int _h, SDL_Color _col, SDL
 	}
 	SDL_Rect aRect = {(int)_x,(int)_y,_w,_h};
 	if(SDL_RenderDrawRect(_ren,&aRect) != 0)
+		mLog->LogSDLError("cRenderer::DrawRect()");
+
+	SetDrawColour(l_prevCol);
+}
+
+void cRenderer::DrawFilledRect(float _x, float _y, int _w, int _h, SDL_Color _col, SDL_Renderer* _ren, int _space)
+{
+	if(!_ren) _ren = mRenderer;
+	SDL_Color l_prevCol = GetDrawColour();
+	SetDrawColour(_col);
+
+	JVector2 camPos = mCamera->GetPos();
+	if(_space == WORLD_SPACE/* && camPos.w > 0*/)
+	{
+		_x += camPos.x;
+		_y += camPos.y;
+	}
+	if(boxRGBA(_ren,_x,_y,_x+_w,_y+_h,GetDrawColour().r,GetDrawColour().g,GetDrawColour().b,GetDrawColour().a) != 0)
 		mLog->LogSDLError("cRenderer::DrawRect()");
 
 	SetDrawColour(l_prevCol);
@@ -427,8 +441,13 @@ void cRenderer::Present(SDL_Renderer* _ren, bool _vsync)
 	if(!_ren) _ren = mRenderer;
 	SDL_RenderPresent(_ren);
 	SetDrawColour(mColourDef,_ren);
-	if(ClearToColour(_ren) != 0) mLog->LogSDLError("cRenderer::Present()");
 	mTotalFrames++;
+}
+
+void cRenderer::ClearToColour(SDL_Renderer* _ren)
+{
+	if(!_ren) _ren = mRenderer;
+	if(SDL_RenderClear(_ren) != 0) mLog->LogSDLError("cRenderer::ClearToColour()");
 }
 
 /*
@@ -445,8 +464,13 @@ void cRenderer::SleepBeforeFlip()
 	mSecondsElapsedForFrame = GetSecondsElapsed(mLastCounter,SDL_GetPerformanceCounter());
 	if(mSecondsElapsedForFrame < mTargetSecondsPerFrame)
 	{
-		Uint32 SleepMS = (Uint32)(1000 * (mTargetSecondsPerFrame - mSecondsElapsedForFrame)) - win32SchedulerPadding;
-		if(SleepMS > 0) SDL_Delay(SleepMS);
+		Sint32 SleepMS = (Sint32)(1000 * (mTargetSecondsPerFrame - mSecondsElapsedForFrame)) - win32SchedulerPadding;
+		if(SleepMS > 0)
+		{
+			printf("startsleeping %i\n",SleepMS);
+			SDL_Delay(SleepMS);
+			printf("stop sleeping _________\n");
+		}
 		//printf("sleep: %d\n",TimeToSleep);
 		while(mSecondsElapsedForFrame < mTargetSecondsPerFrame)
 		{
@@ -543,4 +567,45 @@ int cRenderer::LoadConfigFromFile(const char* _filename)
 	}
 
 	return l_result;
+}
+
+int cRenderer::TakeSnapshot(SDL_Window* _win, SDL_Renderer* _ren)
+{
+	if(!_ren) _ren = mRenderer;
+
+	SDL_Surface* l_surface = SDL_CreateRGBSurface(0, mWindowWidth, mWindowHeight,
+		32, 0, 0, 0, 0);	
+	if(!l_surface)
+	{
+		mLog->LogSDLError("cRenderer::TakeSnapshot()");
+		return -1;
+	}
+
+	if(SDL_RenderReadPixels(_ren,0,0,l_surface->pixels,l_surface->pitch) != 0)
+	{
+		mLog->LogSDLError("cRenderer::TakeSnapshot()");
+		return -2;
+	}
+
+	//SDL_SaveBMP(l_surface,"snapshot.bmp");
+	mSnapshot = SDL_CreateTextureFromSurface(_ren,l_surface);
+	if(!mSnapshot)
+	{
+		mLog->LogSDLError("cRenderer::TakeSnapshot()");
+		return -3;
+	}
+
+	SDL_FreeSurface(l_surface);
+	return 0;
+}
+
+int cRenderer::RenderSnapshot(Sint32 _x, Sint32 _y, SDL_Renderer* _ren, Sint32 _space)
+{
+	if(!_ren) _ren = mRenderer;
+	if(!mSnapshot)
+	{
+		mLog->LogError("cRenderer::RenderSnapshot, no snapshot to render");
+		return -1;
+	}
+	RenderTexture(mSnapshot,0,0,_ren,_space);
 }

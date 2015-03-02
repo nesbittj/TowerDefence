@@ -52,4 +52,7 @@ public:
 
 	cEnemy** const GetEnemies() { return mEnemiesAlive; }
 	inline int GetMaxEnemies() const { return mMaxEnemiesAlive; }
+	
+	void cEnemyController::Pause() { mEnemySpawnTimer.Pause(); }
+	void cEnemyController::UnPause() { mEnemySpawnTimer.Unpause(); }
 };

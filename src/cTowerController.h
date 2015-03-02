@@ -48,4 +48,7 @@ public:
 	void AddTower(Uint32 _x, Uint32 _y, Uint32 _tower);
 	void RemoveTower(Uint32 _x, Uint32 _y);
 	bool LoadTowersData();
+	
+	void Pause();
+	void UnPause();
 };

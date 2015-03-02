@@ -19,8 +19,6 @@ class cTower : public cEntity
 {
 private:
 	TowerData* mTowerData;
-	cTimer mFireFreqTimer;
-	cTimer mFireDurTimer;
 	cTimer mFireTimer;
 	bool mTimersOn;
 	vector<JVector3> mFiringVerts;
@@ -39,6 +37,9 @@ public:
 
 	void Update(cEnemy** const _enemies, int size_of_array);
 	void Draw();
+	
+	void Pause() { mFireTimer.Pause(); }
+	void UnPause() { mFireTimer.Unpause(); }
 
 };
 
