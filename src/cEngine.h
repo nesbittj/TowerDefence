@@ -37,6 +37,8 @@ private:
 	cLogger* mLog;
 	cInput* mInput;
 	cGUInamepsace::cGUI* mGUI;
+	cGUInamepsace::panel* mPausePanel;
+	cGUInamepsace::panel* mHUD;
 
 	SDL_Event mEvent;
 	bool mPaused;

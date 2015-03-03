@@ -131,6 +131,7 @@ class cMaths
 {
 public:
 	static bool InTriangle(const JVector3* t0, const JVector3* t1, const JVector3* t2, const JVector3* p);
+	static bool InRect(int _x, int _y, int _x1, int _y1, int _x2, int _y2);
 	static int Sign(float number);
 	static float PythagorasSqrd(float a, float b);
 	static float Pythagoras(float a, float b);

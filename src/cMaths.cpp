@@ -376,6 +376,13 @@ bool cMaths::InTriangle(const JVector3* t0, const JVector3* t1, const JVector3* 
 	return false;
 }
 
+bool cMaths::InRect(int _x, int _y, int _x1, int _y1, int _x2, int _y2)
+{
+	if(_x > _x1 && _x < _x2
+	&& _y > _y1 && _y < _y2) return true;
+	return false;
+}
+
 /* returns 1 or -1 depending on sign of number, or 0 if zero */
 int cMaths::Sign(float number) { return (number < 0.0f ? -1 : (number > 0.0f ? 1 : 0)); }
 float cMaths::PythagorasSqrd(float a, float b) { return a*a + b*b; }

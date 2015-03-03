@@ -464,12 +464,11 @@ void cRenderer::SleepBeforeFlip()
 	mSecondsElapsedForFrame = GetSecondsElapsed(mLastCounter,SDL_GetPerformanceCounter());
 	if(mSecondsElapsedForFrame < mTargetSecondsPerFrame)
 	{
+		//TODO: needs to be more robust clamping of sleepms
 		Sint32 SleepMS = (Sint32)(1000 * (mTargetSecondsPerFrame - mSecondsElapsedForFrame)) - win32SchedulerPadding;
 		if(SleepMS > 0)
 		{
-			printf("startsleeping %i\n",SleepMS);
 			SDL_Delay(SleepMS);
-			printf("stop sleeping _________\n");
 		}
 		//printf("sleep: %d\n",TimeToSleep);
 		while(mSecondsElapsedForFrame < mTargetSecondsPerFrame)

@@ -25,6 +25,7 @@ private:
 	static const unsigned int mMaxEnemyTypes = 10;
 	EnemyData mEnemiesData[mMaxEnemyTypes];
 	cEnemy* mEnemiesAlive[mMaxEnemiesAlive];
+	Uint32 mNumEnemiesAlive;
 	
 	cTimer mEnemySpawnTimer;
 	string mEnemyFileLocation;
@@ -52,6 +53,7 @@ public:
 
 	cEnemy** const GetEnemies() { return mEnemiesAlive; }
 	inline int GetMaxEnemies() const { return mMaxEnemiesAlive; }
+	inline Uint32* GetNumEnemiesAlive() { return &mNumEnemiesAlive; }
 	
 	void cEnemyController::Pause() { mEnemySpawnTimer.Pause(); }
 	void cEnemyController::UnPause() { mEnemySpawnTimer.Unpause(); }

@@ -22,6 +22,7 @@ bool cEnemyController::Init(cArena* _arena)
 	mEnemyStartPos *= (float)mArena->GetGridSize();
 	if(!LoadEnemyData()) return false;
 	for(int i = 0; i < mMaxEnemiesAlive; i++) mEnemiesAlive[i] = NULL;
+	mNumEnemiesAlive = 0;
 
 	mEnemySpawnTimer = cTimer();
 	mEnemySpawnTimer.Start();
@@ -73,7 +74,6 @@ void cEnemyController::Update()
 			//update enemy
 			mEnemiesAlive[i]->Update();
 			if(mEnemiesAlive[i]->GetLives() <= 0) RemoveEnemy(i);
-
 		}
 	}
 }
@@ -81,18 +81,14 @@ void cEnemyController::Update()
 void cEnemyController::DrawEnemies()
 {
 	SDL_Color col = { 0,0,0,255 };
-	int l_alive = 0;
 
 	for(int i = 0; i < mMaxEnemiesAlive; i++)
 	{
 		if(mEnemiesAlive[i] != NULL)
 		{
 			mEnemiesAlive[i]->Draw();
-			l_alive++;
 		}
 	}
-
-	mRen->RenderText(l_alive,34,140,0,col,NULL,SCREEN_SPACE);	
 }
 
 void cEnemyController::AddEnemy(Uint32 _x, Uint32 _y, Uint32 _enemy_type)
@@ -103,6 +99,7 @@ void cEnemyController::AddEnemy(Uint32 _x, Uint32 _y, Uint32 _enemy_type)
 		{
 			mEnemiesAlive[i] = new cEnemy(_x,_y);
 			mEnemiesAlive[i]->Init(mEnemiesData[_enemy_type].mBitmap,mArena,&mEnemiesData[_enemy_type],mEnemyPath);
+			mNumEnemiesAlive++;
 			return;
 		}
 	}
@@ -110,9 +107,11 @@ void cEnemyController::AddEnemy(Uint32 _x, Uint32 _y, Uint32 _enemy_type)
 
 void cEnemyController::RemoveEnemy(Uint32 _enemy)
 {
+	if(_enemy < 0 || _enemy > mMaxEnemiesAlive) return;
 	mEnemiesAlive[_enemy]->CleanUp();
 	delete mEnemiesAlive[_enemy];
 	mEnemiesAlive[_enemy] = NULL;
+	mNumEnemiesAlive--;
 }
 
 bool cEnemyController::LoadEnemyData()

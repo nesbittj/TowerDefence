@@ -8,6 +8,10 @@ cEngine* cEngine::Instance()
 	return mInstance;
 }
 
+//TODO: consider more secure approach
+bool* gQuit;
+void RunQuit(void) { printf("cEngine:: RUN QUit!\n"); *gQuit = true; }
+
 int cEngine::Init()
 {
 	mRen = NULL;
@@ -30,7 +34,7 @@ int cEngine::Init()
 	if(mRen->Init(&mEvent)) return -1;
 	//TODO: init logging
 
-	 //Initialize SDL_mixer
+	//Initialize SDL_mixer
 	if( Mix_OpenAudio( 44100, MIX_DEFAULT_FORMAT, 2, 2048 ) < 0 )
 	{
 		//TODO: log sound open properly
@@ -49,11 +53,16 @@ int cEngine::Init()
 	mEnemyController = cEnemyController();
 	mEnemyController.Init(mArena);
 
-	mGUI = new cGUInamepsace::cGUI();
+	mGUI = cGUInamepsace::cGUI::Instance();
 	SDL_Color theme_colour = { 255, 255, 0, 255 };
 	mGUI->Init(theme_colour);
-	cGUInamepsace::panel* l_panel = mGUI->AddElementPanel(200,200,200,200,"Menu",0);
-	l_panel->AddElementButton(10,30,100,20,"BUTTON!!",l_panel);
+	mPausePanel = mGUI->AddElementPanel(200,200,200,200);	
+	gQuit = &mQuit;
+	mPausePanel->AddElementButton(10,30,160,20,"Quit Game To Desktop",RunQuit);
+	mHUD = mGUI->AddElementPanel(0,0,150,50);
+	mHUD->AddElementTextfield(15,15,96,15,"Enemies Alive: ");
+	mHUD->AddElementTextfield(115,15,15,15,(Sint32*)mEnemyController.GetNumEnemiesAlive());
+	mHUD->SetFocus(cGUInamepsace::GUI_FOCUS_NO_MOUSE);
 
 	return 0;
 }
@@ -87,8 +96,9 @@ sets global quit value to true if close button is pressed
 void cEngine::Update()
 {
 	UpdateEvents();
+	mGUI->Update();
 
-	if(mPaused)	//TODO: NEED TO PAUSE TIMERS!!
+	if(mPaused)
 	{
 		//update menu events
 		if(mInput->GetKeyDownRelease(SDLK_p))
@@ -96,6 +106,8 @@ void cEngine::Update()
 			mPaused = false;
 			mTowerController.UnPause();
 			mEnemyController.UnPause();
+			mPausePanel->SetFocus(cGUInamepsace::GUI_FOCUS_NONE);
+			mHUD->SetFocus(cGUInamepsace::GUI_FOCUS_NO_MOUSE);
 		}
 	}
 	else
@@ -106,6 +118,8 @@ void cEngine::Update()
 			mRen->TakeSnapshot(0,0);
 			mTowerController.Pause();
 			mEnemyController.Pause();
+			mPausePanel->SetFocus(cGUInamepsace::GUI_FOCUS_NO_MOUSE);
+			mHUD->SetFocus(cGUInamepsace::GUI_FOCUS_NONE);
 		}
 
 		mRen->mCamera->Update();
@@ -118,12 +132,12 @@ void cEngine::Update()
 
 void cEngine::UpdateEvents()
 {
+	mInput->UpdateOldKeys();
 	while(SDL_PollEvent(&mEvent) != 0)
 	{
 		if(mInput->UpdateInputEvents() == -1) mQuit = true;
 		if(mRen->UpdateEvents() == -1) mQuit = true;
 	}
-	mInput->UpdateOldKeys();
 }
 
 void cEngine::Render()
@@ -133,7 +147,6 @@ void cEngine::Render()
 	if(mPaused)
 	{
 		mRen->RenderSnapshot(0,0,0);
-		mGUI->Render();
 	}
 	else
 	{
@@ -153,6 +166,8 @@ void cEngine::Render()
 			mTowerController.GetTowerSelected(),mouseColour,WORLD_SPACE);
 		mEnemyController.DrawEnemies();
 	}
+
+	mGUI->Render();
 
 	mRen->Present(NULL);
 }
