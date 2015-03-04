@@ -9,6 +9,7 @@ cArena class
 #include <SDL.h>
 #include <map>
 #include <stack>
+#include <queue>
 
 #include "tinyxml2\tinyxml2.h"
 #include "tmxparser\tmxparser.h"

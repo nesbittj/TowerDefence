@@ -33,12 +33,11 @@ bool cEnemy::CleanUp()
 
 void cEnemy::Update()
 {
-	//TODO: profiling, when enemy reached end of path, CPU usage goes up!
 	if(!mEnemyPath.empty())
 	{
 		float l_speed = 2*mRen->GetDeltaTime();
 		JVector2 local_v(x,y);
-		if((mTransformProgress < 1))//JVector2::Distance(local_v,mTransformTarget) > mTransformPrecision)
+		if((mTransformProgress < 1))
 		{
 			local_v = JVector2::Lerp(mTransformStart,mTransformTarget,mTransformProgress);
 			mTransformProgress += l_speed;
@@ -51,8 +50,8 @@ void cEnemy::Update()
 			mTransformProgress = l_speed;
 			mTransformStart = local_v;
 			if(!mEnemyPath.empty())
-				mTransformTarget = JVector2((float)mEnemyPath.top().first,(float)mEnemyPath.top().second)
-				* (float)mArena->GetGridSize();
+				mTransformTarget = JVector2(
+				(float)mEnemyPath.top().first,(float)mEnemyPath.top().second) * (float)mArena->GetGridSize();
 		}
 	}
 }

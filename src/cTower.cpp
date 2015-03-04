@@ -108,7 +108,8 @@ void cTower::Update(cEnemy** const _enemies, int size_of_array)
 
 void cTower::Draw()
 {
-	if(mRen->mCamera->GetCursorX() == x && mRen->mCamera->GetCursorY() == y)
+	if(mInput->GetKeyDown(SDLK_SPACE)
+	|| (mRen->mCamera->GetCursorX() == x && mRen->mCamera->GetCursorY() == y))
 	{
 		SDL_Color rang_col = { 0, 255, 100, 50 };
 		mRen->DrawFilledCircle(x,y,mTowerData->mRange,rang_col,0);

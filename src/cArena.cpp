@@ -14,7 +14,7 @@ bool cArena::Init()
 	mRen = cRenderer::Instance();
 	mLog = cLogger::Instance();
 	//if(!LoadArenaData("")) return false;
-	LoadArenaData("assets/arena/arena_01.tmx");
+	LoadArenaData("assets/arena/arena_02.tmx");
 	//TODO: error report
 	
 	mCore = new cCore((Uint32)mEnemyTargetPos.x,(Uint32)mEnemyTargetPos.y);
@@ -82,10 +82,12 @@ int cArena::LoadArenaData(const char* _filename)
 //TODO: consider changing to (int _x, int _y)
 ARENA_TILE_TYPE cArena::GetTileType(JVector2& _pos)
 {
-	//TODO: only siupports one Tiled layer
-	if(_pos.x < 0 || _pos.x > GetArenaWidth()) return TILE_EMPTY;
-	if(_pos.y < 0 || _pos.y > GetArenaHeight()) return TILE_EMPTY;
-	return (ARENA_TILE_TYPE)mArena.layerCollection[0].tiles[(unsigned int)(_pos.y*mArena.width + _pos.x)].tileFlatIndex;
+	//TODO: only supports one Tiled layer
+	if(_pos.x < 0 || _pos.x > (mArena.width - 1))
+		return TILE_EMPTY;
+	if(_pos.y < 0 || _pos.y > (mArena.height - 1))
+		return TILE_EMPTY;
+	return (ARENA_TILE_TYPE)mArena.layerCollection[0].tiles[(unsigned int)(_pos.y*(mArena.width - 1) + _pos.y + _pos.x)].tileFlatIndex;
 }
 
 void cArena::Update()
@@ -118,22 +120,22 @@ stack<pair<int,int>> cArena::BreadthFirst(const pair<int,int> _start, const pair
 {
 	map<pair<int,int>,pair<int,int>> l_parent;
 	l_parent[_start] = make_pair(-1,-1);
-	vector<pair<int,int>> l_openList;
-	l_openList.push_back(_start);
+	queue<pair<int,int>> l_openList;
+	l_openList.push(_start);
 	pair<int,int> l_node;
 
 	while(!l_openList.empty())
 	{
-		l_node = l_openList.back();
+		l_node = l_openList.front();
 		if(l_node == _target) break;
 		GraphNeighbours(l_node);
-		l_openList.pop_back();
+		l_openList.pop();
 		for(int j = 0; j < 4; j++)
 		{			
 			if(CheckBounds(mAdj[j]) && l_parent.find(mAdj[j]) == l_parent.end())
 			{
 				l_parent[mAdj[j]] = l_node;
-				l_openList.push_back(mAdj[j]);
+				l_openList.push(mAdj[j]);
 			}
 		}
 	}
@@ -152,6 +154,7 @@ stack<pair<int,int>> cArena::BreadthFirst(const pair<int,int> _start, const pair
 
 void cArena::GraphNeighbours(pair<int,int> _u)
 {
+	//right
 	int l_tile = GetTileType(JVector2((float)_u.first + 1,(float)_u.second));
 	if(l_tile != TILE_EMPTY)
 	{
@@ -186,8 +189,7 @@ void cArena::GraphNeighbours(pair<int,int> _u)
 		mAdj[3].second =  _u.second - 1;
 	}
 	else
-		mAdj[3] = make_pair(-1,-1);
-	
+		mAdj[3] = make_pair(-1,-1);	
 }
 
 /*
