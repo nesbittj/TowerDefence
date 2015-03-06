@@ -110,8 +110,8 @@ void cArena::Update()
 		if(mInput->GetMouseButtonReleased(LEFT_MOUSE_BUTTON))
 		{
 				BreadthFirst(
-					make_pair(mEnemyExitPos.x,mEnemyExitPos.y),
-					make_pair(mEnemyStartPos.x,mEnemyStartPos.y));
+					make_pair((int)mEnemyExitPos.x,(int)mEnemyExitPos.y),
+					make_pair((int)mEnemyStartPos.x,(int)mEnemyStartPos.y));
 		}
 	}
 
@@ -192,7 +192,7 @@ bool cArena::BreadthFirst(const pair<int,int> _start, const pair<int,int> _targe
 		}
 	}
 	*/
-	return result;
+	return 1 & result;
 }
 
 /*
@@ -287,8 +287,8 @@ divide by GetGridSize() to convert world positions to index values
 ARENA_TILE_TYPE cArena::GetTileType(int _x, int _y)
 {
 	//TODO: only supports one Tiled layer
-	if(_x < 0 || _x > (mArena.width)
-	|| _y < 0 || _y > (mArena.height)) return TILE_EMPTY;
+	if(_x < 0 || _x > (int)mArena.width
+	|| _y < 0 || _y > (int)mArena.height) return TILE_EMPTY;
 	Uint32 l_index = _y*(mArena.width) + _y + _x;
 	return (ARENA_TILE_TYPE)mArena.layerCollection[0].tiles[l_index].tileFlatIndex;
 }
@@ -300,8 +300,8 @@ divide by GetGridSize() to convert world positions to index values
 void cArena::SetTileType(int _x, int _y, int _tile_type)
 {
 	//TODO: only supports one Tiled layer
-	if(_x < 0 || _x > (mArena.width)
-	|| _y < 0 || _y > (mArena.height)) return;
+	if(_x < 0 || _x > (int)mArena.width
+	|| _y < 0 || _y > (int)mArena.height) return;
 	if(_tile_type < 0 || _tile_type >= SIZE_OF_TILE_TYPE) return;
 	Uint32 l_index = (_y) * mArena.width + (_y) + (_x);
 	mArena.layerCollection[0].tiles[l_index].tileFlatIndex = _tile_type;

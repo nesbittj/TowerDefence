@@ -34,9 +34,9 @@ void cEnemy::Update()
 	mTransformMid = JVector2::Lerp(mTransformStart,mTransformTarget,mEnemyData->mSpeed*mTransformProgress);
 	if(mTransformMid == mTransformTarget) // could this target be missed???
 	{
-		if(mTransformTarget == mArena->GetEnemyExitPos() * mArena->GetGridSize()) mLives = 0;
+		if(mTransformTarget == mArena->GetEnemyExitPos() * (float)mArena->GetGridSize()) mLives = 0.f;
 		mTransformStart = mTransformMid;
-		mTransformTarget =  mArena->GetPathParent(mTransformMid) * mArena->GetGridSize();		
+		mTransformTarget =  mArena->GetPathParent(mTransformMid) * (float)mArena->GetGridSize();		
 		mTransformProgress = mRen->GetDeltaTime();
 	}
 	else

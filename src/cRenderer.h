@@ -72,7 +72,7 @@ public:
 	int UpdateEvents();
 	
 	void DrawRect(float _x, float _y, int _w, int _h, SDL_Color _col, SDL_Renderer* _ren, int _space = WORLD_SPACE);
-	void DrawFilledRect(float _x, float _y, int _w, int _h, SDL_Color _col, SDL_Renderer* _ren, int _space = WORLD_SPACE);
+	void DrawFilledRect(Sint16 _x, Sint16 _y, Sint16 _w, Sint16 _h, SDL_Color _col, SDL_Renderer* _ren, Uint32 _space = WORLD_SPACE);
 	void DrawFilledCircle(Sint16 _x, Sint16 _y, Sint16 _radius, SDL_Color _col,	SDL_Renderer* _ren, int _space = WORLD_SPACE);
 	void RenderTexture(SDL_Texture* _tex, float _x, float _y, SDL_Renderer* _ren, int _space = WORLD_SPACE);
 	void RenderTexture(SDL_Texture* _tex, float _x, float _y, SDL_Renderer* _ren, int _w, int _h, int _space = WORLD_SPACE);

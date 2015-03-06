@@ -42,5 +42,5 @@ void cEntity::Draw(int _space)
 {
 	SDL_Color col = { 0,0,0,0 };
 	mRen->RenderTexture(mBitmap,x,y,NULL,_space);
-	mRen->RenderText((int)mLives,x+5,y+8,0,col,NULL,_space);
+	mRen->RenderText(mLives,x+5,y+8,0,col,NULL,_space);
 }

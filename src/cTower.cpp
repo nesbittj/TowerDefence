@@ -112,7 +112,7 @@ void cTower::Draw()
 	|| (mRen->mCamera->GetCursorX() == x && mRen->mCamera->GetCursorY() == y))
 	{
 		SDL_Color rang_col = { 0, 255, 100, 50 };
-		mRen->DrawFilledCircle(x,y,mTowerData->mRange,rang_col,0);
+		mRen->DrawFilledCircle((Sint16)x,(Sint16)y,mTowerData->mRange,rang_col,0);
 		//TODO: position needs to be offset to be at enter of tower sprite
 	}
 
@@ -123,9 +123,6 @@ void cTower::Draw()
 	}
 	
 	//firing timer text
-	SDL_Color col = { 0,0,0 };
-	//mRen->RenderText(mFireFreqTimer.GetTicks(),x+42,y,0,col,NULL);
-	//mRen->RenderText(mFireDurTimer.GetTicks(),x+42,y+15,0,col,NULL);
-	mRen->RenderText(mFireTimer.GetTicks(),x+42,y,0,col,0);
+	mRen->RenderText((float)mFireTimer.GetTicks(),x+42,y,0,mRen->mColourBlack,0);
 	
 }

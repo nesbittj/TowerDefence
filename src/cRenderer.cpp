@@ -235,7 +235,7 @@ void cRenderer::DrawRect(float _x, float _y, int _w, int _h, SDL_Color _col, SDL
 	SetDrawColour(l_prevCol);
 }
 
-void cRenderer::DrawFilledRect(float _x, float _y, int _w, int _h, SDL_Color _col, SDL_Renderer* _ren, int _space)
+void cRenderer::DrawFilledRect(Sint16 _x, Sint16 _y, Sint16 _w, Sint16 _h, SDL_Color _col, SDL_Renderer* _ren, Uint32 _space)
 {
 	if(!_ren) _ren = mRenderer;
 	SDL_Color l_prevCol = GetDrawColour();
@@ -244,8 +244,8 @@ void cRenderer::DrawFilledRect(float _x, float _y, int _w, int _h, SDL_Color _co
 	JVector2 camPos = mCamera->GetPos();
 	if(_space == WORLD_SPACE/* && camPos.w > 0*/)
 	{
-		_x += camPos.x;
-		_y += camPos.y;
+		_x += (Sint16)camPos.x;
+		_y += (Sint16)camPos.y;
 	}
 	if(boxRGBA(_ren,_x,_y,_x+_w,_y+_h,GetDrawColour().r,GetDrawColour().g,GetDrawColour().b,GetDrawColour().a) != 0)
 		mLog->LogSDLError("cRenderer::DrawRect()");
@@ -269,8 +269,8 @@ void cRenderer::DrawFilledCircle(Sint16 _x, Sint16 _y, Sint16 _radius, SDL_Color
 	JVector2 camPos = mCamera->GetPos();
 	if(_space == WORLD_SPACE/* && camPos.w > 0*/)
 	{
-		_x += camPos.x;
-		_y += camPos.y;
+		_x += (Sint16)camPos.x;
+		_y += (Sint16)camPos.y;
 	}
 	
 	if(filledCircleRGBA(_ren,_x,_y,_radius,GetDrawColour().r,GetDrawColour().g,GetDrawColour().b,GetDrawColour().a) != 0)
@@ -607,4 +607,5 @@ int cRenderer::RenderSnapshot(Sint32 _x, Sint32 _y, SDL_Renderer* _ren, Sint32 _
 		return -1;
 	}
 	RenderTexture(mSnapshot,0,0,_ren,_space);
+	return 0;
 }

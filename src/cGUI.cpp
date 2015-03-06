@@ -216,7 +216,7 @@ void panel::Render()
 {
 	if(focus > GUI_FOCUS_NONE)
 	{
-		gRen->DrawFilledRect((float)x1,(float)y1,x2,y2,
+		gRen->DrawFilledRect(x1,y1,x2,y2,
 			gThemeBase,0,SCREEN_SPACE);
 		for(unsigned int i = 0; i < elements.size(); i++)
 			elements[i]->Render();
@@ -309,7 +309,7 @@ template <> void textfield<char*>::Render()
 {
 	if(focus > GUI_FOCUS_NONE)
 	{
-		gRen->DrawFilledRect((float)x1,(float)y1,w,h,
+		gRen->DrawFilledRect(x1,y1,w,h,
 			gThemeBase,0,SCREEN_SPACE);
 		gRen->RenderText((char*)value,(float)x1,(float)y1,0,gFontColour,0,SCREEN_SPACE);
 	}
@@ -323,9 +323,9 @@ template <> void textfield<Sint32*>::Render()
 {
 	if(focus > GUI_FOCUS_NONE)
 	{
-		gRen->DrawFilledRect((float)x1,(float)y1,w,h,
+		gRen->DrawFilledRect(x1,y1,w,h,
 			gThemeBase,0,SCREEN_SPACE);
-		gRen->RenderText((Sint32)*value,(float)x1,(float)y1,0,gFontColour,0,SCREEN_SPACE);
+		gRen->RenderText((float)*value,(float)x1,(float)y1,0,gFontColour,0,SCREEN_SPACE);
 	}
 }
 
@@ -387,15 +387,15 @@ void button::Render()
 	{
 	case GUI_FOCUS_NO_MOUSE:
 		{
-			gRen->DrawFilledRect((float)x1,(float)y1,w,h,gThemeColour,0,SCREEN_SPACE);
+			gRen->DrawFilledRect(x1,y1,w,h,gThemeColour,0,SCREEN_SPACE);
 		 }break;
 	case GUI_FOCUS_MOUSE_OVER:
 		{
-			gRen->DrawFilledRect((float)x1,(float)y1,w,h,gThemeColourMouseOver,0,SCREEN_SPACE);
+			gRen->DrawFilledRect(x1,y1,w,h,gThemeColourMouseOver,0,SCREEN_SPACE);
 		}break;
 	case GUI_FOCUS_MOUSE_DOWN:
 		{
-			gRen->DrawFilledRect((float)x1+2,(float)y1+2,w,h,gThemeColourMouseDown,0,SCREEN_SPACE);
+			gRen->DrawFilledRect(x1+2,y1+2,w,h,gThemeColourMouseDown,0,SCREEN_SPACE);
 		}break;
 	default:
 		return;

@@ -61,7 +61,7 @@ public:
 
 	bool BreadthFirst(const pair<int,int> _start, const pair<int,int> _target);	
 	JVector2 GetPathParent(int _x, int _y);
-	JVector2 GetPathParent(JVector2 _pos) { return GetPathParent(_pos.x,_pos.y); }
+	JVector2 GetPathParent(JVector2 _pos) { return GetPathParent((int)_pos.x,(int)_pos.y); }
 	/*not in use, use GetPathParent() - returns pointer to path data structure*/
 	stack<pair<int,int>> GetPath() { return mPath; }
 
@@ -80,7 +80,7 @@ public:
 	inline JVector2 GetEnemyExitPos() const { return mEnemyExitPos; }
 
 	ARENA_TILE_TYPE GetTileType(int _x, int _y);
-	ARENA_TILE_TYPE GetTileType(JVector2 _pos) { return GetTileType(_pos.x,_pos.y); }
+	ARENA_TILE_TYPE GetTileType(JVector2 _pos) { return GetTileType((int)_pos.x,(int)_pos.y); }
 	void SetTileType(int _x, int _y, int _tile_type);
-	void SetTileType(JVector2 _pos, int _tile_type) { SetTileType(_pos.x,_pos.y,_tile_type); }
+	void SetTileType(JVector2 _pos, int _tile_type) { SetTileType((int)_pos.x,(int)_pos.y,_tile_type); }
 };
