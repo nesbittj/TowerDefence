@@ -1,6 +1,6 @@
 <?xml version="1.0" ?>
 <enemies>
-	<enemy name="enemy 1" bitmap="enemy01.bmp" speed="0.01" lives="200" />
-	<enemy name="enemy 2" bitmap="enemy02.bmp" speed="0.01" lives="100" />
-	<enemy name="enemy 3" bitmap="enemy03.bmp" speed="0.01" lives="50" />
+	<enemy name="enemy 1" bitmap="enemy01.bmp" speed="1" lives="200" />
+	<enemy name="enemy 2" bitmap="enemy02.bmp" speed="1" lives="100" />
+	<enemy name="enemy 3" bitmap="enemy03.bmp" speed="1" lives="50" />
 </enemies>

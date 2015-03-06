@@ -141,4 +141,5 @@ public:
 	static int RoundUp(int num, int multiple);
 	static bool InRange(JVector2 _origin, JVector2 _target, float _range);
 	static float Lerp(float _a, float _b, float _t);
+	static float Clamp(float _value, float _min, float _max);
 };

@@ -1,21 +1,21 @@
 #include "cArena.h"
 
-cArena::cArena()
-{
-	mEnemyTargetPos = mEnemyExitPos = mEnemyStartPos = JVector2();
-}
-
-cArena::~cArena()
-{
-}
-
 bool cArena::Init()
 {
 	mRen = cRenderer::Instance();
 	mLog = cLogger::Instance();
+	mInput = cInput::Instance();
+		
+	mEnemyTargetPos = mEnemyExitPos = mEnemyStartPos = JVector2();
+	mArenaEditMode = 0;
+
 	//if(!LoadArenaData("")) return false;
 	LoadArenaData("assets/arena/arena_02.tmx");
 	//TODO: error report
+
+	BreadthFirst(
+		make_pair((int)mEnemyExitPos.x,(int)mEnemyExitPos.y),
+		make_pair((int)mEnemyStartPos.x,(int)mEnemyStartPos.y));
 	
 	mCore = new cCore((Uint32)mEnemyTargetPos.x,(Uint32)mEnemyTargetPos.y);
 	mCore->Init(0);
@@ -31,12 +31,19 @@ bool cArena::CleanUp()
 	if(mTilesSpriteSheet) mRen->UnloadBitmap(mTilesSpriteSheet);
 	mTilesSpriteSheet = NULL;
 
+	mInput = NULL;
 	mLog = NULL;
 	mRen = NULL;
 
 	return true;
 }
 
+/*
+load arena data from tmx file _filename.
+finds enemy start,exit and target positions.
+loads arena sprite sheet.
+returns zero on success.
+*/
 int cArena::LoadArenaData(const char* _filename)
 {
 	int l_result = 0;
@@ -50,10 +57,12 @@ int cArena::LoadArenaData(const char* _filename)
 			mLog->LogSDLError("LoadArenaData() LoadBitmap()");
 		}
 
+		mArena.height -= 1;
+		mArena.width -= 1;
 		JVector2 l_pos;
-		for(Uint32 i = 0; i < mArena.height; i++)
+		for(Uint32 i = 0; i <= mArena.height; i++)
 		{
-			for(Uint32 j = 0; j < mArena.width; j++)
+			for(Uint32 j = 0; j <= mArena.width; j++)
 			{
 				l_pos.Set((float)j,(float)i);
 				if(GetTileType(l_pos) == TILE_START)
@@ -79,36 +88,61 @@ int cArena::LoadArenaData(const char* _filename)
 	return l_result;
 }
 
-//TODO: consider changing to (int _x, int _y)
-ARENA_TILE_TYPE cArena::GetTileType(JVector2& _pos)
-{
-	//TODO: only supports one Tiled layer
-	if(_pos.x < 0 || _pos.x > (mArena.width - 1))
-		return TILE_EMPTY;
-	if(_pos.y < 0 || _pos.y > (mArena.height - 1))
-		return TILE_EMPTY;
-	return (ARENA_TILE_TYPE)mArena.layerCollection[0].tiles[(unsigned int)(_pos.y*(mArena.width - 1) + _pos.y + _pos.x)].tileFlatIndex;
-}
-
+/*
+updates arena edit mode and core
+*/
 void cArena::Update()
 {
+	if(mInput->GetKeyDownNotRepeat(SDLK_1)) mArenaEditMode = 0;
+	if(mInput->GetKeyDownNotRepeat(SDLK_2)) mArenaEditMode = 0;
+	if(mInput->GetKeyDownNotRepeat(SDLK_3)) mArenaEditMode = 0;
+	if(mInput->GetKeyDownNotRepeat(SDLK_4)) mArenaEditMode = 0;
+	if(mInput->GetKeyDownNotRepeat(SDLK_5)) mArenaEditMode = 0;
+	if(mInput->GetKeyDownNotRepeat(SDLK_6)) mArenaEditMode = 1;
+	if(mInput->GetKeyDownNotRepeat(SDLK_7)) mArenaEditMode = 2;
+
+	if(mArenaEditMode > 0)
+	{
+		if(mInput->GetMouseButtonDown(LEFT_MOUSE_BUTTON))
+		{
+			SetTileType(mRen->mCamera->GetCursorX()/GetGridSize(),mRen->mCamera->GetCursorY()/GetGridSize(),mArenaEditMode - 1);
+		}
+		if(mInput->GetMouseButtonReleased(LEFT_MOUSE_BUTTON))
+		{
+				BreadthFirst(
+					make_pair(mEnemyExitPos.x,mEnemyExitPos.y),
+					make_pair(mEnemyStartPos.x,mEnemyStartPos.y));
+		}
+	}
+
 	mCore->Update();
 }
 
+/*
+draw arena, including all tiles and core.
+also draws currently selected tileif in edit mode.
+*/
 void cArena::Draw()
 {
-	for(Uint32 i = 0; i < mArena.height; i++)
+	for(Uint32 i = 0; i <= mArena.height; i++)
 	{
-		for(Uint32 j = 0; j < mArena.width; j++)
+		for(Uint32 j = 0; j <= mArena.width; j++)
 		{
 			DrawTile(j*mArena.tileWidth,i*mArena.tileHeight,
 				GetTileType(JVector2((float)j,(float)i)),WORLD_SPACE);
 		}
 	}
 
+	if(mArenaEditMode > 0)
+		DrawTile(mRen->mCamera->GetCursorX(),mRen->mCamera->GetCursorY(),mArenaEditMode-1,WORLD_SPACE);
+
 	//mCore->Draw();
 }
 
+/*
+draw single tile.
+x and y are world position values.
+*/
 void cArena::DrawTile(int _x, int _y, int _tile_type, int _space)
 {
 	//TODO: might need a better method of recording tile location
@@ -116,10 +150,17 @@ void cArena::DrawTile(int _x, int _y, int _tile_type, int _space)
 	mRen->RenderTexture(mTilesSpriteSheet,(float)_x,(float)_y,NULL,l_tile,_space);
 }
 
-stack<pair<int,int>> cArena::BreadthFirst(const pair<int,int> _start, const pair<int,int> _target)
+/*
+finds shortest path from _Start to _target.
+does not record path mPath:stack, use GetPathParent() to find path in revers order,
+ie _start and _target are reversed.
+returns true on success.
+*/
+bool cArena::BreadthFirst(const pair<int,int> _start, const pair<int,int> _target)
 {
-	map<pair<int,int>,pair<int,int>> l_parent;
-	l_parent[_start] = make_pair(-1,-1);
+	int result = 0;
+	mParent.clear();
+	mParent[_start] = make_pair(-1,-1);
 	queue<pair<int,int>> l_openList;
 	l_openList.push(_start);
 	pair<int,int> l_node;
@@ -127,31 +168,51 @@ stack<pair<int,int>> cArena::BreadthFirst(const pair<int,int> _start, const pair
 	while(!l_openList.empty())
 	{
 		l_node = l_openList.front();
-		if(l_node == _target) break;
+		if(l_node == _target) result = 1;
 		GraphNeighbours(l_node);
 		l_openList.pop();
 		for(int j = 0; j < 4; j++)
 		{			
-			if(CheckBounds(mAdj[j]) && l_parent.find(mAdj[j]) == l_parent.end())
+			if(CheckIndexBounds(mAdj[j]) && mParent.find(mAdj[j]) == mParent.end())
 			{
-				l_parent[mAdj[j]] = l_node;
+				mParent[mAdj[j]] = l_node;
 				l_openList.push(mAdj[j]);
 			}
 		}
 	}
-	
-	l_node = _target;
-	stack<pair<int,int>> l_path_s;
-	l_path_s.push(l_node);
-	while(l_node != _start)
+	/*
+	if(result > 0)
 	{
-		l_node = l_parent[l_node];
-		l_path_s.push(l_node);
+		l_node = _target;
+		mPath.push(l_node);
+		while(l_node != _start)
+		{
+			l_node = mParent[l_node];
+			mPath.push(l_node);
+		}
 	}
-
-	return l_path_s;
+	*/
+	return result;
 }
 
+/*
+x,y are world positions.
+returns breadth first search parent of current tile.
+*/
+JVector2 cArena::GetPathParent(int _x, int _y)
+{
+	_x = cMaths::Round(_x,GetGridSize())/GetGridSize();
+	_y = cMaths::Round(_y,GetGridSize())/GetGridSize();
+	pair<int,int> t = mParent[make_pair(_x,_y)];
+	return JVector2(t.first,t.second);
+}
+
+/*
+finds four neibours of tile _u,
+records neighbours into mAjd[4].
+tile type TILE_EMPTY recorded as [-1,-1],
+all other tile types accepted as passable.
+*/
 void cArena::GraphNeighbours(pair<int,int> _u)
 {
 	//right
@@ -193,15 +254,16 @@ void cArena::GraphNeighbours(pair<int,int> _u)
 }
 
 /*
-if _pos is out of bounds x and y are set to be in arena bounds.
+if x or y are out of bounds x or y respectively
+are set to be in arena bounds.
 only for world position (tile array index * grid size)
 */
-void cArena::CheckBounds(float* _x, float* _y)
+void cArena::CheckWorldBounds(float* _x, float* _y)
 {
 	if(*_x < 0.f) *_x = 0.f;
 	if(*_y < 0.f) *_y = 0.f;
-	if(*_x > GetArenaWidth()-1) *_x = (float)(GetArenaWidth()-1);
-	if(*_y > GetArenaHeight()-1) *_y = (float)(GetArenaHeight()-1);
+	if(*_x > GetArenaWidth()) *_x = (float)(GetArenaWidth());
+	if(*_y > GetArenaHeight()) *_y = (float)(GetArenaHeight());
 }
 
 /*
@@ -209,11 +271,38 @@ returns true is _u is inside arena bounds.
 returns false if x or y is outdise of arena bounds
 only for tile array index values
 */
-bool cArena::CheckBounds(pair<int,int> _u) const
+bool cArena::CheckIndexBounds(pair<int,int> _u) const
 {
 	if(_u.first  < 0) return false;
 	if(_u.second < 0) return false;
-	if((unsigned int)_u.first  > mArena.width-1) return false;
-	if((unsigned int)_u.second > mArena.height-1) return false;
+	if((unsigned int)_u.first  > mArena.width) return false;
+	if((unsigned int)_u.second > mArena.height) return false;
 	return true;
+}
+
+/*
+x,y are index values (0 to arena.width),
+divide by GetGridSize() to convert world positions to index values
+*/
+ARENA_TILE_TYPE cArena::GetTileType(int _x, int _y)
+{
+	//TODO: only supports one Tiled layer
+	if(_x < 0 || _x > (mArena.width)
+	|| _y < 0 || _y > (mArena.height)) return TILE_EMPTY;
+	Uint32 l_index = _y*(mArena.width) + _y + _x;
+	return (ARENA_TILE_TYPE)mArena.layerCollection[0].tiles[l_index].tileFlatIndex;
+}
+
+/*
+x,y are index values (0 to arena.width),
+divide by GetGridSize() to convert world positions to index values
+*/
+void cArena::SetTileType(int _x, int _y, int _tile_type)
+{
+	//TODO: only supports one Tiled layer
+	if(_x < 0 || _x > (mArena.width)
+	|| _y < 0 || _y > (mArena.height)) return;
+	if(_tile_type < 0 || _tile_type >= SIZE_OF_TILE_TYPE) return;
+	Uint32 l_index = (_y) * mArena.width + (_y) + (_x);
+	mArena.layerCollection[0].tiles[l_index].tileFlatIndex = _tile_type;
 }

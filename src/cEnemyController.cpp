@@ -14,12 +14,11 @@ bool cEnemyController::Init(cArena* _arena)
 	mInput = cInput::Instance();
 	mRen = cRenderer::Instance();
 	mLog = cLogger::Instance();
+
 	mArena = _arena;
 	mEnemyStartPos = mArena->GetEnemyStartPos();
-	mEnemyPath = mArena->BreadthFirst(
-		make_pair((int)mEnemyStartPos.x,(int)mEnemyStartPos.y),
-		make_pair((int)mArena->GetEnemyExitPos().x,(int)mArena->GetEnemyExitPos().y));
 	mEnemyStartPos *= (float)mArena->GetGridSize();
+
 	if(!LoadEnemyData()) return false;
 	for(int i = 0; i < mMaxEnemiesAlive; i++) mEnemiesAlive[i] = NULL;
 	mNumEnemiesAlive = 0;
@@ -56,7 +55,7 @@ bool cEnemyController::CleanUp()
 
 void cEnemyController::Update()
 {
-	if(mEnemySpawnTimer.GetTicks() >= (2500))
+	if(mEnemySpawnTimer.GetTicks() >= (3000))
 	{
 		//if(mEnemiesAlive[0] == NULL) //create only one enemy at one time
 		{
@@ -98,7 +97,7 @@ void cEnemyController::AddEnemy(Uint32 _x, Uint32 _y, Uint32 _enemy_type)
 		if(mEnemiesAlive[i] == NULL)
 		{
 			mEnemiesAlive[i] = new cEnemy(_x,_y);
-			mEnemiesAlive[i]->Init(mEnemiesData[_enemy_type].mBitmap,mArena,&mEnemiesData[_enemy_type],mEnemyPath);
+			mEnemiesAlive[i]->Init(mEnemiesData[_enemy_type].mBitmap,mArena,&mEnemiesData[_enemy_type]);
 			mNumEnemiesAlive++;
 			return;
 		}
@@ -116,7 +115,6 @@ void cEnemyController::RemoveEnemy(Uint32 _enemy)
 
 bool cEnemyController::LoadEnemyData()
 {
-	int l_game_speed = 120;
 	for(int i = 0; i < mMaxEnemyTypes; i++)
 		mEnemiesData[i].mBitmap = NULL;
 
@@ -131,7 +129,6 @@ bool cEnemyController::LoadEnemyData()
 			mEnemiesData[i].mBitmap = mRen->LoadBitmap( std::string(mEnemyFileLocation + l_enemy->Attribute("bitmap")).c_str() );
 			l_enemy->QueryIntAttribute("lives",&mEnemiesData[i].mStartingLives);
 			l_enemy->QueryFloatAttribute("speed",&mEnemiesData[i].mSpeed);
-			mEnemiesData[i].mSpeed *= l_game_speed;
 			i++;
 		}
 	}

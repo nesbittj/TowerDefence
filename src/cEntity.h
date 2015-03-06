@@ -26,7 +26,8 @@ public:
 	int GetLives() const { return (int)mLives; }
 	SDL_Texture* GetBitmap() const { return mBitmap; }
 
-	void SetPos(float _x, float _y);
+	inline void SetPos(float _x, float _y) { x = _x; y = _y; }
+	inline void SetPos(JVector2 _pos) { SetPos(_pos.x,_pos.y); }
 	void SetLevel(Uint32 l) { mLevel = l; }
 	void SetBitmap(SDL_Texture* _bitmap) { mBitmap = _bitmap; }
 	

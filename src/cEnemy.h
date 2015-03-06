@@ -18,7 +18,7 @@ public:
 	cEnemy(Uint32 _x, Uint32 _y);
 	~cEnemy();
 
-	bool Init(SDL_Texture* _bitmap, cArena* _arena, EnemyData* _data, stack<pair<int,int>> _enemy_path);
+	bool Init(SDL_Texture* _bitmap, cArena* _arena, EnemyData* _data);
 	bool CleanUp();
 
 	void Update();
@@ -28,11 +28,10 @@ public:
 private:
 	cArena* mArena;
 	EnemyData* mEnemyData;
-	stack<pair<int,int>> mEnemyPath;
 	
 	JVector2 mTransformStart;
+	JVector2 mTransformMid;
 	JVector2 mTransformTarget;
 	float mTransformProgress;
-	float mTransformPrecision;
 };
 

@@ -31,6 +31,7 @@ private:
 	cArena* mArena;
 
 public:
+	bool mTowerEditMode;
 		
 	Uint32 GetTowerSelected() const { return mTowerSelected; }
 	void SetTowerSelected(Uint32 _tower);

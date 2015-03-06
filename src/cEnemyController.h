@@ -30,7 +30,6 @@ private:
 	cTimer mEnemySpawnTimer;
 	string mEnemyFileLocation;
 	JVector2 mEnemyStartPos;
-	stack<pair<int,int>> mEnemyPath;
 
 	cInput* mInput;
 	cRenderer* mRen;
@@ -38,7 +37,6 @@ private:
 	cArena* mArena;
 
 public:
-
 	cEnemyController();
 	~cEnemyController();
 

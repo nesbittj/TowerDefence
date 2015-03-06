@@ -158,12 +158,15 @@ void cEngine::Render()
 			30,30,mouseColour,0,WORLD_SPACE);
 
 		mTowerController.DrawTowersInUse();
-		mTowerController.DrawTower(
-			(float)mRen->mCamera->GetCursorX(),(float)mRen->mCamera->GetCursorY(),
-			mTowerController.GetTowerSelected(),WORLD_SPACE);
-		mTowerController.DrawTowerText(
-			(float)mRen->mCamera->GetCursorX(),((float)mRen->mCamera->GetCursorY() - 15),
-			mTowerController.GetTowerSelected(),mouseColour,WORLD_SPACE);
+		if(mTowerController.mTowerEditMode)
+		{
+			mTowerController.DrawTower(
+				(float)mRen->mCamera->GetCursorX(),(float)mRen->mCamera->GetCursorY(),
+				mTowerController.GetTowerSelected(),WORLD_SPACE);
+			mTowerController.DrawTowerText(
+				(float)mRen->mCamera->GetCursorX(),((float)mRen->mCamera->GetCursorY() - 15),
+				mTowerController.GetTowerSelected(),mouseColour,WORLD_SPACE);
+		}
 		mEnemyController.DrawEnemies();
 	}
 

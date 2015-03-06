@@ -16,7 +16,7 @@ int cCamera::Init(SDL_Event* _event, cInput* _input,
 {
 	mEvent = _event;
 	mInput = _input;
-	screen_w_bound = _screen_w / 2; screen_h_bound = _screen_h / 2;
+	screen_w_bound = _screen_w; screen_h_bound = _screen_h;
 	mArena_w = _arena_w; mArena_h = _arena_h;
 	return 0;
 }
@@ -97,10 +97,10 @@ restrics camera to level height and width
 */
 void cCamera::CheckCameraBounds(float _oldX, float _oldY)
 {
-	if(x > (float)screen_w_bound) x = (float)screen_w_bound;
-	if(y > (float)screen_h_bound) y = (float)screen_h_bound;
-	if(x < (float)screen_w_bound - (float)mArena_w) x = (float)screen_w_bound - (float)mArena_w;
-	if(y < (float)screen_h_bound - (float)mArena_h) y = (float)screen_h_bound - (float)mArena_h;
+	if(x < 0) x = 0;
+	if(y < 0) y = 0;
+	if(x > (float)screen_w_bound - (float)mArena_w) x = (float)screen_w_bound - (float)mArena_w;
+	if(y > (float)screen_h_bound - (float)mArena_h) y = (float)screen_h_bound - (float)mArena_h;
 }
 
 void cCamera::SetArenaSize(int _arena_w, int _arena_h)

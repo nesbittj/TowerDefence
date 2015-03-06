@@ -378,7 +378,7 @@ int cRenderer::RenderText(const char* _string, float _x, float _y, int _font,
 uses and returns result of
 RenderText(const char*,int,int,int,SDL_Color,SDL_Renderer*,int).
 */
-int cRenderer::RenderText(Sint32 _value, float _x, float _y, int _font,
+int cRenderer::RenderText(float _value, float _x, float _y, int _font,
 						  SDL_Color _col, SDL_Renderer* _ren, int _space)
 {
 	std::stringstream textStream;

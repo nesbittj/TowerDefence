@@ -4,6 +4,7 @@ cTowerController::cTowerController()
 {
 	mTowersFileLocation = "assets/towers/";
 	mTowerSelected = 0;
+	mTowerEditMode = true;
 }
 
 cTowerController::~cTowerController()
@@ -49,28 +50,37 @@ set the currently selected tower from tower inventory.
 */
 void cTowerController::SetTowerSelected(Uint32 _tower)
 {
-	if(_tower < mMaxTowerTypes)
+	if(_tower < mMaxTowerTypes
+	&& mTowersData[_tower].mName != "")
 	{
-		if(mTowersData[_tower].mName != "")
-			mTowerSelected = _tower;
+		mTowerSelected = _tower;
+		mTowerEditMode = true;
+	}
+	else
+	{
+		mTowerEditMode = false;
 	}
 }
 
 void cTowerController::Update(cEnemy** const _enemies, int size_of_array)
 {
-	if(mInput->GetKeyDownRelease(SDLK_1)) SetTowerSelected(0);
-	if(mInput->GetKeyDownRelease(SDLK_2)) SetTowerSelected(1);
-	if(mInput->GetKeyDownRelease(SDLK_3)) SetTowerSelected(2);
-	if(mInput->GetKeyDownRelease(SDLK_4)) SetTowerSelected(3);
-	if(mInput->GetKeyDownRelease(SDLK_5)) SetTowerSelected(4);
-	if(mInput->GetKeyDownRelease(SDLK_6)) SetTowerSelected(5);
+	if(mInput->GetKeyDownNotRepeat(SDLK_1)) SetTowerSelected(0);
+	if(mInput->GetKeyDownNotRepeat(SDLK_2)) SetTowerSelected(1);
+	if(mInput->GetKeyDownNotRepeat(SDLK_3)) SetTowerSelected(2);
+	if(mInput->GetKeyDownNotRepeat(SDLK_4)) SetTowerSelected(3);
+	if(mInput->GetKeyDownNotRepeat(SDLK_5)) SetTowerSelected(4);
+	if(mInput->GetKeyDownNotRepeat(SDLK_6)) SetTowerSelected(5);
+	if(mInput->GetKeyDownNotRepeat(SDLK_7)) SetTowerSelected(6);
 
-	if(mInput->GetMouseButtonDownRelease(LEFT_MOUSE_BUTTON))	
-		AddTower(mRen->mCamera->GetCursorX(),mRen->mCamera->GetCursorY(),GetTowerSelected());
-	else if(mInput->GetMouseButtonDownRelease(RIGHT_MOUSE_BUTTON))
-		RemoveTower(mRen->mCamera->GetCursorX(),mRen->mCamera->GetCursorY());
+	if(mTowerEditMode)
+	{
+		if(mInput->GetMouseButtonDownNotRepeat(LEFT_MOUSE_BUTTON))	
+			AddTower(mRen->mCamera->GetCursorX(),mRen->mCamera->GetCursorY(),GetTowerSelected());
+		else if(mInput->GetMouseButtonDownNotRepeat(RIGHT_MOUSE_BUTTON))
+			RemoveTower(mRen->mCamera->GetCursorX(),mRen->mCamera->GetCursorY());
+	}
 
-	//TODO: consider indexing/sorting to top towers in use
+	//TODO: consider indexing/sorting to top towers in use to avoid looping through all
 	for(int i = 0; i < mMaxTowersInUse; i++)
 	{
 		if(mTowersInUse[i] != NULL) mTowersInUse[i]->Update(_enemies,size_of_array);

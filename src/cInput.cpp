@@ -69,9 +69,9 @@ bool cInput::GetKeyDown(int key)
 }
 
 /*
-returns status of specific key
-returns true if key is down
-sets key to no longer be down
+returns status of specific key.
+returns true if key is down.
+sets key to no longer be down.
 */
 bool cInput::GetKeyDownRelease(int key)
 {
@@ -80,6 +80,17 @@ bool cInput::GetKeyDownRelease(int key)
 		mKeysDown[key] = false;
 		return true;
 	}
+	return false;
+}
+
+/*
+returns true if _key is down and
+is not a key repeat (key was not down last frame).
+*/
+bool cInput::GetKeyDownNotRepeat(int _key)
+{
+	if(mKeysDown[_key] && !mPrevKeysDown[_key])
+		return true;
 	return false;
 }
 
@@ -98,6 +109,17 @@ bool cInput::GetKeyReleased(int key)
 bool cInput::GetJoyButtonDown(int button)
 {
 	return mJoyButtonsDown[button];
+}
+
+/*
+returns true if _button is down and
+is not a button repeat (_button was not down last frame).
+*/
+bool cInput::GetJoyButtonDownNotRepeat(int _button)
+{
+	if(mJoyButtonsDown[_button] && !mPrevJoyButtonsDown[_button])
+		return true;
+	return false;
 }
 
 bool cInput::GetJoyButtonDownRelease(int button)
@@ -121,6 +143,17 @@ bool cInput::GetJoyButtonReleased(int button)
 bool cInput::GetMouseButtonDown(int button)
 {
 	return mMouseButtonDown[button];
+}
+
+/*
+returns true if _button is down and
+is not a button repeat (_button was not down last frame).
+*/
+bool cInput::GetMouseButtonDownNotRepeat(int _button)
+{
+	if(mMouseButtonDown[_button] && !mPrevMouseButtonDown[_button])
+		return true;
+	return false;
 }
 
 bool cInput::GetMouseButtonDownRelease(int button)

@@ -34,8 +34,6 @@ bool cEntity::CleanUp()
 	return true;
 }
 
-void cEntity::SetPos(float _x, float _y) { x = _x; y = _y; }
-
 void cEntity::Update()
 {
 }

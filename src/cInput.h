@@ -51,11 +51,16 @@ public:
 
 	bool GetKeyDown(int key);
 	bool GetKeyDownRelease(int key);
+	bool GetKeyDownNotRepeat(int key);
 	bool GetKeyReleased(int key);
+
 	bool GetJoyButtonDown(int button);
 	bool GetJoyButtonDownRelease(int button);
+	bool GetJoyButtonDownNotRepeat(int _button);
 	bool GetJoyButtonReleased(int button);
+
 	bool GetMouseButtonDown(int button);
+	bool GetMouseButtonDownNotRepeat(int _button);
 	bool GetMouseButtonDownRelease(int button);
 	bool GetMouseButtonReleased(int button);
 
