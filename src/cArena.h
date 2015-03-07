@@ -20,12 +20,10 @@ cArena class
 #include "cMaths.h"
 #include "cLogger.h"
 
-#include "cCore.h"
-
 using namespace tinyxml2;
 using namespace tmxparser;
 	
-typedef enum { TILE_EMPTY, TILE_WALL, TILE_CORE, TILE_START, TILE_EXIT, SIZE_OF_TILE_TYPE } ARENA_TILE_TYPE;
+typedef enum { TILE_EMPTY, TILE_WALL, TILE_TOWER, TILE_START, TILE_EXIT, TILE_TYPE_RESET } ARENA_TILE_TYPE;
 
 class cArena
 {
@@ -33,13 +31,11 @@ private:
 	cRenderer* mRen;
 	cLogger* mLog;
 	cInput* mInput;
-	cCore* mCore;
 
 	TmxMap mArena;
 	SDL_Texture* mTilesSpriteSheet;
 
 	JVector2 mEnemyStartPos;
-	JVector2 mEnemyTargetPos;
 	JVector2 mEnemyExitPos;
 
 	int LoadArenaData(const char* _filename);
@@ -50,6 +46,7 @@ private:
 	void GraphNeighbours(pair<int,int> _u);
 
 	Uint32 mArenaEditMode;
+	bool mUpdateBFS;
 
 public:
 	bool Init();
@@ -59,7 +56,7 @@ public:
 	void Draw();
 	void DrawTile(int _x, int _y, int _tile_type, int _space);
 
-	bool BreadthFirst(const pair<int,int> _start, const pair<int,int> _target);	
+	bool BreadthFirst(const pair<int,int> _start, const pair<int,int> _target);
 	JVector2 GetPathParent(int _x, int _y);
 	JVector2 GetPathParent(JVector2 _pos) { return GetPathParent((int)_pos.x,(int)_pos.y); }
 	/*not in use, use GetPathParent() - returns pointer to path data structure*/
@@ -74,9 +71,7 @@ public:
 	inline int GetArenaWidth() const { return mArena.width*mArena.tileWidth+mArena.tileWidth; }
 	//arena height * grid size
 	inline int GetArenaHeight() const { return mArena.height*mArena.tileHeight+mArena.tileHeight; }
-	cCore* GetCore() { return mCore; }
 	inline JVector2 GetEnemyStartPos() const { return mEnemyStartPos; }
-	inline JVector2 GetEnemyTargetPos() const { return mEnemyTargetPos; }
 	inline JVector2 GetEnemyExitPos() const { return mEnemyExitPos; }
 
 	ARENA_TILE_TYPE GetTileType(int _x, int _y);

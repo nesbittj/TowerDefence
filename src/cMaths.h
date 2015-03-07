@@ -53,7 +53,6 @@ public:
 
 	JVector2();
 	JVector2(float _x, float _y);
-	JVector2(int _x, int _y) { JVector2((float)_x,(float)_y); }
 
 	bool operator==(const JVector2& v) const;
 	bool operator!=(const JVector2& v) const;

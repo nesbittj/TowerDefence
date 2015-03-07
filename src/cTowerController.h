@@ -8,11 +8,12 @@
 #include "cTower.h"
 #include "cLogger.h"
 #include "cEnemy.h"
-#include "cArena.h"
 
 #include "tinyxml2\tinyxml2.h"
 
 using namespace tinyxml2;
+
+class cTower;
 
 class cTowerController
 {
@@ -48,6 +49,8 @@ public:
 	void DrawTowerText(float _x, float _y, Uint32 _tower, SDL_Color _col, Uint32 _space = WORLD_SPACE);
 	void AddTower(Uint32 _x, Uint32 _y, Uint32 _tower);
 	void RemoveTower(Uint32 _x, Uint32 _y);
+	cTower* GetTower(JVector2 _pos);
+	cTower* GetTower(Uint32 _x, Uint32 _y) { return GetTower(JVector2((float)_x,(float)_y)); }
 	bool LoadTowersData();
 	
 	void Pause();

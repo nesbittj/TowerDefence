@@ -29,7 +29,7 @@ void cCamera::CleanUp()
 
 void cCamera::Update()
 {
-	JVector2 new_cam(0,0);
+	JVector2 new_cam(0.f,0.f);
 
 	//calc new cam from wasd key presses
 	if(mInput->GetKeyDown(SDLK_w)) new_cam.y += mMoveSpeed;

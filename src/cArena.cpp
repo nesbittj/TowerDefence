@@ -6,7 +6,7 @@ bool cArena::Init()
 	mLog = cLogger::Instance();
 	mInput = cInput::Instance();
 		
-	mEnemyTargetPos = mEnemyExitPos = mEnemyStartPos = JVector2();
+	mEnemyExitPos = mEnemyStartPos = JVector2();
 	mArenaEditMode = 0;
 
 	//if(!LoadArenaData("")) return false;
@@ -16,18 +16,13 @@ bool cArena::Init()
 	BreadthFirst(
 		make_pair((int)mEnemyExitPos.x,(int)mEnemyExitPos.y),
 		make_pair((int)mEnemyStartPos.x,(int)mEnemyStartPos.y));
-	
-	mCore = new cCore((Uint32)mEnemyTargetPos.x,(Uint32)mEnemyTargetPos.y);
-	mCore->Init(0);
+	mUpdateBFS = false;
 
 	return true;
 }
 
 bool cArena::CleanUp()
 {
-	mCore->CleanUp();
-	delete mCore; mCore = NULL;
-
 	if(mTilesSpriteSheet) mRen->UnloadBitmap(mTilesSpriteSheet);
 	mTilesSpriteSheet = NULL;
 
@@ -73,10 +68,6 @@ int cArena::LoadArenaData(const char* _filename)
 				{
 					mEnemyExitPos = l_pos;
 				}
-				if(GetTileType(l_pos) == TILE_CORE)
-				{
-					mEnemyTargetPos = l_pos * (float)GetGridSize();
-				}
 			}
 		}		
 	}
@@ -107,15 +98,14 @@ void cArena::Update()
 		{
 			SetTileType(mRen->mCamera->GetCursorX()/GetGridSize(),mRen->mCamera->GetCursorY()/GetGridSize(),mArenaEditMode - 1);
 		}
-		if(mInput->GetMouseButtonReleased(LEFT_MOUSE_BUTTON))
-		{
-				BreadthFirst(
-					make_pair((int)mEnemyExitPos.x,(int)mEnemyExitPos.y),
-					make_pair((int)mEnemyStartPos.x,(int)mEnemyStartPos.y));
-		}
 	}
-
-	mCore->Update();
+	if(mUpdateBFS && !mInput->GetMouseButtonDown(LEFT_MOUSE_BUTTON))
+	{
+		mUpdateBFS = false;
+		BreadthFirst(
+			make_pair((int)mEnemyExitPos.x,(int)mEnemyExitPos.y),
+			make_pair((int)mEnemyStartPos.x,(int)mEnemyStartPos.y));
+	}
 }
 
 /*
@@ -135,8 +125,6 @@ void cArena::Draw()
 
 	if(mArenaEditMode > 0)
 		DrawTile(mRen->mCamera->GetCursorX(),mRen->mCamera->GetCursorY(),mArenaEditMode-1,WORLD_SPACE);
-
-	//mCore->Draw();
 }
 
 /*
@@ -204,7 +192,7 @@ JVector2 cArena::GetPathParent(int _x, int _y)
 	_x = cMaths::Round(_x,GetGridSize())/GetGridSize();
 	_y = cMaths::Round(_y,GetGridSize())/GetGridSize();
 	pair<int,int> t = mParent[make_pair(_x,_y)];
-	return JVector2(t.first,t.second);
+	return JVector2((float)t.first,(float)t.second);
 }
 
 /*
@@ -217,7 +205,7 @@ void cArena::GraphNeighbours(pair<int,int> _u)
 {
 	//right
 	int l_tile = GetTileType(JVector2((float)_u.first + 1,(float)_u.second));
-	if(l_tile != TILE_EMPTY)
+	if(l_tile != TILE_EMPTY && l_tile != TILE_TOWER)
 	{
 		mAdj[0].first =  _u.first + 1;
 		mAdj[0].second =  _u.second;
@@ -226,7 +214,7 @@ void cArena::GraphNeighbours(pair<int,int> _u)
 		mAdj[0] = make_pair(-1,-1);
 	//bottom
 	l_tile = GetTileType(JVector2((float)_u.first,(float)_u.second + 1));
-	if(l_tile != TILE_EMPTY)
+	if(l_tile != TILE_EMPTY && l_tile != TILE_TOWER)
 	{
 		mAdj[1].first =  _u.first;
 		mAdj[1].second =  _u.second + 1;
@@ -235,7 +223,7 @@ void cArena::GraphNeighbours(pair<int,int> _u)
 		mAdj[1] = make_pair(-1,-1);
 	//left
 	l_tile = GetTileType(JVector2((float)_u.first - 1,(float)_u.second));
-	if(l_tile != TILE_EMPTY)
+	if(l_tile != TILE_EMPTY && l_tile != TILE_TOWER)
 	{
 		mAdj[2].first =  _u.first - 1;
 		mAdj[2].second =  _u.second;
@@ -244,7 +232,7 @@ void cArena::GraphNeighbours(pair<int,int> _u)
 		mAdj[2] = make_pair(-1,-1);
 	//top
 	l_tile = GetTileType(JVector2((float)_u.first,(float)_u.second - 1));
-	if(l_tile != TILE_EMPTY)
+	if(l_tile != TILE_EMPTY && l_tile != TILE_TOWER)
 	{
 		mAdj[3].first =  _u.first;
 		mAdj[3].second =  _u.second - 1;
@@ -302,7 +290,17 @@ void cArena::SetTileType(int _x, int _y, int _tile_type)
 	//TODO: only supports one Tiled layer
 	if(_x < 0 || _x > (int)mArena.width
 	|| _y < 0 || _y > (int)mArena.height) return;
-	if(_tile_type < 0 || _tile_type >= SIZE_OF_TILE_TYPE) return;
+	if(_tile_type < 0 || _tile_type > TILE_TYPE_RESET) return;
+
 	Uint32 l_index = (_y) * mArena.width + (_y) + (_x);
-	mArena.layerCollection[0].tiles[l_index].tileFlatIndex = _tile_type;
+	TmxLayerTile& l_tile = mArena.layerCollection[0].tiles[l_index];
+
+	if(l_tile.tileFlatIndex != _tile_type)
+	{
+		if(_tile_type == TILE_TYPE_RESET)
+			l_tile.tileFlatIndex = l_tile.gid - 1;
+		else
+			l_tile.tileFlatIndex = _tile_type;
+		mUpdateBFS = true;
+	}
 }

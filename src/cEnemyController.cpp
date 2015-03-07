@@ -57,7 +57,7 @@ void cEnemyController::Update()
 {
 	if(mEnemySpawnTimer.GetTicks() >= (3000))
 	{
-		//if(mEnemiesAlive[0] == NULL) //create only one enemy at one time
+		if(mEnemiesAlive[0] == NULL) //create only one enemy at one time
 		{
 			AddEnemy((Uint32)mEnemyStartPos.x,(Uint32)mEnemyStartPos.y, rand() % 3); //TODO: better rand, needs a seed
 			mEnemySpawnTimer.Start();
@@ -67,10 +67,6 @@ void cEnemyController::Update()
 	{
 		if(mEnemiesAlive[i] !=  NULL)
 		{
-			//damage arena::core //could go after update, would need another != NULL
-			mArena->GetCore()->Damage(mEnemiesAlive[i]->GetPos(),30,0.1f);
-
-			//update enemy
 			mEnemiesAlive[i]->Update();
 			if(mEnemiesAlive[i]->GetLives() <= 0) RemoveEnemy(i);
 		}

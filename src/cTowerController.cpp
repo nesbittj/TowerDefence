@@ -39,6 +39,7 @@ bool cTowerController::CleanUp()
 		Mix_FreeChunk(mTowersData[i].mFireSound);
 		mTowersData[i].mFireSound = NULL;
 	}
+	mArena = NULL;
 	mInput = NULL;
 	mRen = NULL;
 	mLog = NULL;
@@ -105,6 +106,10 @@ void cTowerController::DrawTowerText(float _x, float _y, Uint32 _tower, SDL_Colo
 		mRen->RenderText(mTowersData[_tower].mName.c_str(),_x,_y,0,_col,NULL,_space);
 }
 
+/*
+adds tower at world position _x,_y, of type _tower.
+uses cArena::SetTowerType() with TILE_TOWER.
+*/
 void cTowerController::AddTower(Uint32 _x, Uint32 _y, Uint32 _tower)
 {
 	for(int i = 0; i < mMaxTowersInUse; i++)
@@ -112,7 +117,7 @@ void cTowerController::AddTower(Uint32 _x, Uint32 _y, Uint32 _tower)
 		if(mTowersInUse[i] == NULL)
 		{
 			JVector2 l_world_pos((float)_x,(float)_y);
-			for(int j = 0; j < mMaxTowersInUse; j++)
+			for(int j = 0; j < mMaxTowersInUse; j++)	//TODO: use a more appropriate contriner, to be able to search by key
 			{
 				if(mTowersInUse[j] != NULL
 				&& mTowersInUse[j]->GetX() == l_world_pos.x && mTowersInUse[j]->GetY() == l_world_pos.y) 
@@ -121,13 +126,15 @@ void cTowerController::AddTower(Uint32 _x, Uint32 _y, Uint32 _tower)
 			//TODO: check bounds  of l_world_pos before creatingnew tower
 			mTowersInUse[i] = new cTower((Uint32)l_world_pos.x,(Uint32)l_world_pos.y);
 			mTowersInUse[i]->Init(mTowersData[_tower].mBitmap,&mTowersData[_tower]);
+			mArena->SetTileType(l_world_pos/mArena->GetGridSize(),TILE_TOWER);
 			return;
 		}
 	}
 }
 
 /*
-remove any tower at grid world pos x,y
+remove any tower at grid world pos x,y.
+sets arena tile to TILE_TYPE_RESET to set it back to its origional type
 */
 void cTowerController::RemoveTower(Uint32 _x, Uint32 _y)
 {
@@ -140,8 +147,25 @@ void cTowerController::RemoveTower(Uint32 _x, Uint32 _y)
 			mTowersInUse[i]->CleanUp();
 			delete mTowersInUse[i];
 			mTowersInUse[i] = NULL;
+			mArena->SetTileType(l_world_pos/mArena->GetGridSize(),TILE_TYPE_RESET);
 		}
 	}
+}
+
+/*
+return tower at world position _pos.
+retunrs NULL if no tower.
+*/
+cTower* cTowerController::GetTower(JVector2 _pos)
+{
+	for(unsigned int i = 0; i < mMaxTowersInUse; i++)
+	{
+		if(mTowersInUse[i] != NULL)
+		{
+			if(mTowersInUse[i]->GetPos() == _pos) return mTowersInUse[i];
+		}
+	}
+	return NULL;
 }
 
 bool cTowerController::LoadTowersData()

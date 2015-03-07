@@ -1,7 +1,6 @@
 #pragma once
 #include "cEntity.h"
 #include "cArena.h"
-#include "stack"
 
 struct EnemyData
 {
