@@ -43,7 +43,7 @@ private:
 	map<pair<int,int>,pair<int,int>> mParent;
 	stack<pair<int,int>> mPath;
 	pair<int,int> mAdj[4];
-	void GraphNeighbours(pair<int,int> _u);
+	void GraphNeighbours(pair<int,int> _u, int _vanila = 0);
 
 	Uint32 mArenaEditMode;
 	bool mUpdateBFS;
@@ -74,8 +74,8 @@ public:
 	inline JVector2 GetEnemyStartPos() const { return mEnemyStartPos; }
 	inline JVector2 GetEnemyExitPos() const { return mEnemyExitPos; }
 
-	ARENA_TILE_TYPE GetTileType(int _x, int _y);
-	ARENA_TILE_TYPE GetTileType(JVector2 _pos) { return GetTileType((int)_pos.x,(int)_pos.y); }
+	ARENA_TILE_TYPE GetTileType(int _x, int _y, int _vanila = 0);
+	ARENA_TILE_TYPE GetTileType(JVector2 _pos, int _vanila = 0) { return GetTileType((int)_pos.x,(int)_pos.y,_vanila); }
 	void SetTileType(int _x, int _y, int _tile_type);
 	void SetTileType(JVector2 _pos, int _tile_type) { SetTileType((int)_pos.x,(int)_pos.y,_tile_type); }
 };

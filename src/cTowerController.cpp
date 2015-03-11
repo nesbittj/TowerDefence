@@ -126,7 +126,7 @@ void cTowerController::AddTower(Uint32 _x, Uint32 _y, Uint32 _tower)
 			//TODO: check bounds  of l_world_pos before creatingnew tower
 			mTowersInUse[i] = new cTower((Uint32)l_world_pos.x,(Uint32)l_world_pos.y);
 			mTowersInUse[i]->Init(mTowersData[_tower].mBitmap,&mTowersData[_tower]);
-			mArena->SetTileType(l_world_pos/mArena->GetGridSize(),TILE_TOWER);
+			mArena->SetTileType(l_world_pos/(float)mArena->GetGridSize(),TILE_TOWER);
 			return;
 		}
 	}
@@ -147,7 +147,7 @@ void cTowerController::RemoveTower(Uint32 _x, Uint32 _y)
 			mTowersInUse[i]->CleanUp();
 			delete mTowersInUse[i];
 			mTowersInUse[i] = NULL;
-			mArena->SetTileType(l_world_pos/mArena->GetGridSize(),TILE_TYPE_RESET);
+			mArena->SetTileType(l_world_pos/(float)mArena->GetGridSize(),TILE_TYPE_RESET);
 		}
 	}
 }

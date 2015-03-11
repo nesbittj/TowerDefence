@@ -168,6 +168,31 @@ bool cArena::BreadthFirst(const pair<int,int> _start, const pair<int,int> _targe
 			}
 		}
 	}
+
+	if(result == 0) // path to _target not found probably because of user edit, try again with vanila map
+	{
+		mParent.clear();
+		mParent[_start] = make_pair(-1,-1);
+		queue<pair<int,int>>().swap(l_openList);
+		l_openList.push(_start);
+
+		while(!l_openList.empty())
+		{
+			l_node = l_openList.front();
+			if(l_node == _target) result = 2;
+			GraphNeighbours(l_node,1);
+			l_openList.pop();
+			for(int j = 0; j < 4; j++)
+			{			
+				if(CheckIndexBounds(mAdj[j]) && mParent.find(mAdj[j]) == mParent.end())
+				{
+					mParent[mAdj[j]] = l_node;
+					l_openList.push(mAdj[j]);
+				}
+			}
+		}
+	}
+
 	/*
 	if(result > 0)
 	{
@@ -200,11 +225,12 @@ finds four neibours of tile _u,
 records neighbours into mAjd[4].
 tile type TILE_EMPTY recorded as [-1,-1],
 all other tile types accepted as passable.
+default _vanila = 0, set to 1 to get vanula map data.
 */
-void cArena::GraphNeighbours(pair<int,int> _u)
+void cArena::GraphNeighbours(pair<int,int> _u, int _vanila)
 {
 	//right
-	int l_tile = GetTileType(JVector2((float)_u.first + 1,(float)_u.second));
+	int l_tile = GetTileType(JVector2((float)_u.first + 1,(float)_u.second),_vanila);
 	if(l_tile != TILE_EMPTY && l_tile != TILE_TOWER)
 	{
 		mAdj[0].first =  _u.first + 1;
@@ -213,7 +239,7 @@ void cArena::GraphNeighbours(pair<int,int> _u)
 	else
 		mAdj[0] = make_pair(-1,-1);
 	//bottom
-	l_tile = GetTileType(JVector2((float)_u.first,(float)_u.second + 1));
+	l_tile = GetTileType(JVector2((float)_u.first,(float)_u.second + 1),_vanila);
 	if(l_tile != TILE_EMPTY && l_tile != TILE_TOWER)
 	{
 		mAdj[1].first =  _u.first;
@@ -222,7 +248,7 @@ void cArena::GraphNeighbours(pair<int,int> _u)
 	else
 		mAdj[1] = make_pair(-1,-1);
 	//left
-	l_tile = GetTileType(JVector2((float)_u.first - 1,(float)_u.second));
+	l_tile = GetTileType(JVector2((float)_u.first - 1,(float)_u.second),_vanila);
 	if(l_tile != TILE_EMPTY && l_tile != TILE_TOWER)
 	{
 		mAdj[2].first =  _u.first - 1;
@@ -231,7 +257,7 @@ void cArena::GraphNeighbours(pair<int,int> _u)
 	else
 		mAdj[2] = make_pair(-1,-1);
 	//top
-	l_tile = GetTileType(JVector2((float)_u.first,(float)_u.second - 1));
+	l_tile = GetTileType(JVector2((float)_u.first,(float)_u.second - 1),_vanila);
 	if(l_tile != TILE_EMPTY && l_tile != TILE_TOWER)
 	{
 		mAdj[3].first =  _u.first;
@@ -271,13 +297,15 @@ bool cArena::CheckIndexBounds(pair<int,int> _u) const
 /*
 x,y are index values (0 to arena.width),
 divide by GetGridSize() to convert world positions to index values
+default _vanila = 0, set to 1 to get vanula map data.
 */
-ARENA_TILE_TYPE cArena::GetTileType(int _x, int _y)
+ARENA_TILE_TYPE cArena::GetTileType(int _x, int _y, int _vanila)
 {
 	//TODO: only supports one Tiled layer
 	if(_x < 0 || _x > (int)mArena.width
 	|| _y < 0 || _y > (int)mArena.height) return TILE_EMPTY;
 	Uint32 l_index = _y*(mArena.width) + _y + _x;
+	if(_vanila) return (ARENA_TILE_TYPE)(mArena.layerCollection[0].tiles[l_index].gid - 1);
 	return (ARENA_TILE_TYPE)mArena.layerCollection[0].tiles[l_index].tileFlatIndex;
 }
 
