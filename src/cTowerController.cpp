@@ -11,12 +11,13 @@ cTowerController::~cTowerController()
 {	
 }
 
-bool cTowerController::Init(cArena* _arena)
+bool cTowerController::Init(cArena* _arena, cPlayer* _player)
 {
 	mInput = cInput::Instance();
 	mRen = cRenderer::Instance();
 	mLog = cLogger::Instance();
 	mArena = _arena;
+	mPlayer = _player;
 	if(!LoadTowersData()) return false;
 	for(int i = 0; i < mMaxTowersInUse; i++) mTowersInUse[i] = NULL;
 	return true;
@@ -39,6 +40,7 @@ bool cTowerController::CleanUp()
 		Mix_FreeChunk(mTowersData[i].mFireSound);
 		mTowersData[i].mFireSound = NULL;
 	}
+	mPlayer = NULL;
 	mArena = NULL;
 	mInput = NULL;
 	mRen = NULL;
@@ -75,13 +77,20 @@ void cTowerController::Update(cEnemy** const _enemies, int size_of_array)
 
 	if(mTowerEditMode)
 	{
-		if(mInput->GetMouseButtonDownNotRepeat(LEFT_MOUSE_BUTTON))	
-			AddTower(mRen->mCamera->GetCursorX(),mRen->mCamera->GetCursorY(),GetTowerSelected());
+		if(mInput->GetMouseButtonDownNotRepeat(LEFT_MOUSE_BUTTON))
+		{
+			if(*mPlayer->GetMoney() >= mTowersData[GetTowerSelected()].mCost)
+			{
+				if(AddTower(mRen->mCamera->GetCursorX(),mRen->mCamera->GetCursorY(),GetTowerSelected()))
+					mPlayer->SpendMoney(mTowersData[GetTowerSelected()].mCost);
+			}
+		}
 		else if(mInput->GetMouseButtonDownNotRepeat(RIGHT_MOUSE_BUTTON))
 			RemoveTower(mRen->mCamera->GetCursorX(),mRen->mCamera->GetCursorY());
 	}
 
 	//TODO: consider indexing/sorting to top towers in use to avoid looping through all
+	//TODO: also consider binary search / bsp
 	for(int i = 0; i < mMaxTowersInUse; i++)
 	{
 		if(mTowersInUse[i] != NULL) mTowersInUse[i]->Update(_enemies,size_of_array);
@@ -109,8 +118,9 @@ void cTowerController::DrawTowerText(float _x, float _y, Uint32 _tower, SDL_Colo
 /*
 adds tower at world position _x,_y, of type _tower.
 uses cArena::SetTowerType() with TILE_TOWER.
+return true on success.
 */
-void cTowerController::AddTower(Uint32 _x, Uint32 _y, Uint32 _tower)
+bool cTowerController::AddTower(Uint32 _x, Uint32 _y, Uint32 _tower)
 {
 	for(int i = 0; i < mMaxTowersInUse; i++)
 	{
@@ -121,13 +131,13 @@ void cTowerController::AddTower(Uint32 _x, Uint32 _y, Uint32 _tower)
 			{
 				if(mTowersInUse[j] != NULL
 				&& mTowersInUse[j]->GetX() == l_world_pos.x && mTowersInUse[j]->GetY() == l_world_pos.y) 
-					return;
+					return false;
 			}
 			//TODO: check bounds  of l_world_pos before creatingnew tower
 			mTowersInUse[i] = new cTower((Uint32)l_world_pos.x,(Uint32)l_world_pos.y);
 			mTowersInUse[i]->Init(mTowersData[_tower].mBitmap,&mTowersData[_tower]);
 			mArena->SetTileType(l_world_pos/(float)mArena->GetGridSize(),TILE_TOWER);
-			return;
+			return true;
 		}
 	}
 }
@@ -135,8 +145,9 @@ void cTowerController::AddTower(Uint32 _x, Uint32 _y, Uint32 _tower)
 /*
 remove any tower at grid world pos x,y.
 sets arena tile to TILE_TYPE_RESET to set it back to its origional type
+returns true on success.
 */
-void cTowerController::RemoveTower(Uint32 _x, Uint32 _y)
+bool cTowerController::RemoveTower(Uint32 _x, Uint32 _y)
 {
 	JVector2 l_world_pos((float)_x,(float)_y);
 	for(int i = 0; i < mMaxTowersInUse; i++)
@@ -148,8 +159,10 @@ void cTowerController::RemoveTower(Uint32 _x, Uint32 _y)
 			delete mTowersInUse[i];
 			mTowersInUse[i] = NULL;
 			mArena->SetTileType(l_world_pos/(float)mArena->GetGridSize(),TILE_TYPE_RESET);
+			return true;
 		}
 	}
+	return false;
 }
 
 /*
@@ -192,6 +205,7 @@ bool cTowerController::LoadTowersData()
 			l_tower->QueryUnsignedAttribute("range",&mTowersData[i].mRange);
 			l_tower->QueryUnsignedAttribute("firefreq",&mTowersData[i].mFireFreq);
 			l_tower->QueryUnsignedAttribute("firedur",&mTowersData[i].mFireDuration);
+			l_tower->QueryUnsignedAttribute("cost",&mTowersData[i].mCost);
 
 			string l_sound_location(mTowersFileLocation + l_tower->Attribute("sound"));
 			if(l_sound_location != mTowersFileLocation)

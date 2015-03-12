@@ -60,7 +60,7 @@ int cRenderer::Init(SDL_Event* _event)
 		return -2;
 	}
 
-	mFont = TTF_OpenFont("assets/DejaVuSans.ttf",12);
+	mFont = TTF_OpenFont("assets/DejaVuSans.ttf",14);
 	if(!mFont)
 	{
 		mLog->LogSDLError("TTF_Font_OpenFont");

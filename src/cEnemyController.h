@@ -1,20 +1,18 @@
 #pragma once
 
 #include <SDL.h>
+#include "tinyxml2\tinyxml2.h"
 
 #include "cRenderer.h"
 #include "cPlayer.h"
+#include "cEntity.h"
+#include "cEnemy.h"
+#include "cArena.h"
 
 #include "cInput.h"
 #include "cLogger.h"
 #include "cTimer.h"
 #include "cMaths.h"
-
-#include "cEntity.h"
-#include "cEnemy.h"
-#include "cArena.h"
-
-#include "tinyxml2\tinyxml2.h"
 
 using namespace tinyxml2;
 
@@ -35,12 +33,13 @@ private:
 	cRenderer* mRen;
 	cLogger* mLog;
 	cArena* mArena;
+	cPlayer* mPlayer;
 
 public:
 	cEnemyController();
 	~cEnemyController();
 
-	bool Init(cArena* _arena);
+	bool Init(cArena* _arena, cPlayer* _player);
 	bool CleanUp();
 
 	void Update();

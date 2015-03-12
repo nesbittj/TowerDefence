@@ -46,25 +46,36 @@ int cEngine::Init()
 	
 	mRen->InitCamera(&mEvent,mInput,mArena->GetArenaWidth(),mArena->GetArenaHeight());
 
-	mPlayer = cPlayer(10,0);
+	mPlayer = cPlayer(10,0,1000);
 	mTowerController = cTowerController();
-	mTowerController.Init(mArena);
+	mTowerController.Init(mArena,&mPlayer);
 
 	mEnemyController = cEnemyController();
-	mEnemyController.Init(mArena);
+	mEnemyController.Init(mArena,&mPlayer);
 
+	SetGUILayout();
+
+	return 0;
+}
+
+void cEngine::SetGUILayout()
+{
 	mGUI = cGUInamepsace::cGUI::Instance();
 	SDL_Color theme_colour = { 255, 255, 0, 255 };
 	mGUI->Init(theme_colour);
+
 	mPausePanel = mGUI->AddElementPanel(200,200,200,200);	
 	gQuit = &mQuit;
 	mPausePanel->AddElementButton(10,30,160,20,"Quit Game To Desktop",RunQuit);
-	mHUD = mGUI->AddElementPanel(0,0,150,50);
+
+	mHUD = mGUI->AddElementPanel(0,0,150,100);
 	mHUD->AddElementTextfield(15,15,96,15,"Enemies Alive: ");
 	mHUD->AddElementTextfield(115,15,15,15,(Sint32*)mEnemyController.GetNumEnemiesAlive());
+	mHUD->AddElementTextfield(15,32,96,15,"Money: £");
+	mHUD->AddElementTextfield(115,32,15,15,(Sint32*)mPlayer.GetMoney());
+	mHUD->AddElementTextfield(15,49,96,15,"Score: ");
+	mHUD->AddElementTextfield(115,49,15,15,(Sint32*)mPlayer.GetScore());
 	mHUD->SetFocus(cGUInamepsace::GUI_FOCUS_NO_MOUSE);
-
-	return 0;
 }
 
 int cEngine::CleanUp()
@@ -123,7 +134,7 @@ void cEngine::Update()
 		}
 
 		mRen->mCamera->Update();
-		//mPlayer.Update();
+		mPlayer.Update();
 		mTowerController.Update(mEnemyController.GetEnemies(),mEnemyController.GetMaxEnemies());
 		mEnemyController.Update();
 		mArena->Update();

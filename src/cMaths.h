@@ -135,8 +135,8 @@ public:
 	static int Sign(float number);
 	static float PythagorasSqrd(float a, float b);
 	static float Pythagoras(float a, float b);
-	static void Truncatef(float& value);
-	static void Truncatef(float& value, const float threshold);
+	static int Truncatef(float& value);
+	static int Truncatef(float& value, const float threshold);
 	static int Round(int num, int multiple);
 	static int RoundUp(int num, int multiple);
 	static bool InRange(JVector2 _origin, JVector2 _target, float _range);

@@ -10,7 +10,7 @@ bool cArena::Init()
 	mArenaEditMode = 0;
 
 	//if(!LoadArenaData("")) return false;
-	LoadArenaData("assets/arena/arena_02.tmx");
+	LoadArenaData("assets/arena/arena_03.tmx");
 	//TODO: error report
 
 	BreadthFirst(

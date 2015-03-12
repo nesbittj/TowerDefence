@@ -1,10 +1,10 @@
 <?xml version="1.0" ?>
 <towers>
-	<tower name="tower 1" bitmap="tower01.bmp" sound="tower02.wav"	damage="40"	range="150" 	firefreq="1000" 	firedur="600" />
-	<tower name="tower 2" bitmap="tower02.bmp" sound="" 						damage="10" 	range="150" 	firefreq="200" 	firedur="100" />
-	<tower name="tower 3" bitmap="tower03.bmp" sound="" 						damage="96" 	range="150" 	firefreq="3000" 	firedur="100" />
-	<tower name="tower 4" bitmap="tower04.bmp" sound=""						damage="50" 	range="150" 	firefreq="1000" 	firedur="1000" />
-	<tower name="tower 5" bitmap="tower01.bmp" sound=""						damage="40" 	range="150" 	firefreq="0" 		firedur="0" />
+	<tower name="tower 1" bitmap="tower01.bmp" sound="tower02.wav"	damage="40"	range="150" 	firefreq="1000" 	firedur="600"		cost="100"/>
+	<tower name="tower 2" bitmap="tower02.bmp" sound="" 						damage="10" 	range="150" 	firefreq="200" 	firedur="100"		cost="100"/>
+	<tower name="tower 3" bitmap="tower03.bmp" sound="" 						damage="96" 	range="150" 	firefreq="3000" 	firedur="100"		cost="100"/>
+	<tower name="tower 4" bitmap="tower04.bmp" sound=""						damage="50" 	range="150" 	firefreq="1000" 	firedur="1000"	cost="100"/>
+	<tower name="tower 5" bitmap="tower01.bmp" sound=""						damage="40" 	range="150" 	firefreq="0" 		firedur="0"			cost="100"/>
 </towers>
 
 <!--

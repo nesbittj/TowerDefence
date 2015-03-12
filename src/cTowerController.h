@@ -8,6 +8,7 @@
 #include "cTower.h"
 #include "cLogger.h"
 #include "cEnemy.h"
+#include "cPlayer.h"
 
 #include "tinyxml2\tinyxml2.h"
 
@@ -30,6 +31,7 @@ private:
 	cRenderer* mRen;
 	cLogger* mLog;
 	cArena* mArena;
+	cPlayer* mPlayer;
 
 public:
 	bool mTowerEditMode;
@@ -40,15 +42,15 @@ public:
 	cTowerController();
 	~cTowerController();
 
-	bool Init(cArena* _arena);
+	bool Init(cArena* _arena, cPlayer* _player);
 	bool CleanUp();
 
 	void Update(cEnemy** const _enemies, int size_of_array);
 	void DrawTowersInUse();
 	void DrawTower(float _x, float _y, Uint32 _tower, Uint32 _space = WORLD_SPACE);
 	void DrawTowerText(float _x, float _y, Uint32 _tower, SDL_Color _col, Uint32 _space = WORLD_SPACE);
-	void AddTower(Uint32 _x, Uint32 _y, Uint32 _tower);
-	void RemoveTower(Uint32 _x, Uint32 _y);
+	bool AddTower(Uint32 _x, Uint32 _y, Uint32 _tower);
+	bool RemoveTower(Uint32 _x, Uint32 _y);
 	cTower* GetTower(JVector2 _pos);
 	cTower* GetTower(Uint32 _x, Uint32 _y) { return GetTower(JVector2((float)_x,(float)_y)); }
 	bool LoadTowersData();

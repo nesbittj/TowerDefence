@@ -13,6 +13,7 @@ struct TowerData
 	Uint32 mRange;
 	Uint32 mFireFreq;
 	Uint32 mFireDuration;
+	Uint32 mCost;
 };
 
 class cTower : public cEntity

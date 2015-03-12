@@ -34,7 +34,7 @@ void cEnemy::Update()
 	mTransformMid = JVector2::Lerp(mTransformStart,mTransformTarget,mEnemyData->mSpeed*mTransformProgress);
 	if(mTransformMid == mTransformTarget) // could this target be missed???
 	{
-		if(mTransformTarget == mArena->GetEnemyExitPos() * (float)mArena->GetGridSize()) mLives = 0.f;
+		if(mTransformTarget == mArena->GetEnemyExitPos() * (float)mArena->GetGridSize()) mLives = -1.f;
 		mTransformStart = mTransformMid;
 		mTransformTarget =  mArena->GetPathParent(mTransformMid) * (float)mArena->GetGridSize();		
 		mTransformProgress = mRen->GetDeltaTime();
@@ -48,11 +48,9 @@ void cEnemy::Update()
 
 void cEnemy::Draw()
 {
-	cEntity::Draw();
-	
 	SDL_Color col = { 0,0,0 };
-	mRen->RenderText(x,x+34,y,0,col,0);
-	mRen->RenderText(y,x+34,y+10,0,col,0);
+	mRen->RenderTexture(mBitmap,x,y,NULL,WORLD_SPACE);
+	mRen->RenderText((float)cMaths::Truncatef(mLives),x+5,y+8,0,col,NULL,WORLD_SPACE);
 }
 
 void cEnemy::Damage(float _value)

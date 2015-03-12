@@ -50,7 +50,7 @@ damage is done to enemy once every frame
 void cTower::Update(cEnemy** const _enemies, int size_of_array)
 {
 	//TODO: if statements could be more robust
-	//TODO: ned exeption for constant fire
+	//TODO: need exeption for constant fire
 	if((mFiring && mCurrentTargetIndex < 0) || (!mFiring && mFireTimer.GetTicks() > mTowerData->mFireFreq))
 	{
 		if(mCurrentTargetIndex < 0)
@@ -66,8 +66,7 @@ void cTower::Update(cEnemy** const _enemies, int size_of_array)
 							_enemies[mCurrentTargetIndex]->GetX(),
 							_enemies[mCurrentTargetIndex]->GetY(),WORLD_SPACE);
 						mFiring = true;
-						mFireTimer.Start(); //maybe if firing only
-						printf("search\n");
+						mFireTimer.Start(); //TODO: maybe if firing only
 						break;
 					}
 				}

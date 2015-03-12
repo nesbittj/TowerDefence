@@ -36,9 +36,11 @@ private:
 	cRenderer* mRen;
 	cLogger* mLog;
 	cInput* mInput;
+
 	cGUInamepsace::cGUI* mGUI;
 	cGUInamepsace::panel* mPausePanel;
 	cGUInamepsace::panel* mHUD;
+	void SetGUILayout();
 
 	SDL_Event mEvent;
 	bool mPaused;

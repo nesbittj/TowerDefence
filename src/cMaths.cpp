@@ -388,14 +388,15 @@ int cMaths::Sign(float number) { return (number < 0.0f ? -1 : (number > 0.0f ? 1
 float cMaths::PythagorasSqrd(float a, float b) { return a*a + b*b; }
 float cMaths::Pythagoras(float a, float b) { return sqrt(PythagorasSqrd(a,b)); }
 
-/* truncate float to nearest integer, up or down */
-void cMaths::Truncatef(float& value) { floor(value + 0.5); }
+/* truncate float to nearest integer, up or down  and returns result*/
+int cMaths::Truncatef(float& value) { return (int)floor(value + 0.5); }
 
 /*
 if the value is within the threshold of an integer
-the value will be truncated to that integer
+the value will be truncated to that integer.
+returns result.
 */
-void cMaths::Truncatef(float& value, const float threshold)
+int cMaths::Truncatef(float& value, const float threshold)
 {
 	bool neg = false;
 	if(value < 0)
@@ -411,6 +412,7 @@ void cMaths::Truncatef(float& value, const float threshold)
 	if(l_int - value > 1 - threshold) value = (float)(l_int - 1);
 
 	if(neg) value = -value;
+	return (int)value;
 }
 
 int cMaths::Round(int num, int multiple)

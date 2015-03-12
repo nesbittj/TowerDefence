@@ -9,13 +9,14 @@ cEnemyController::~cEnemyController()
 {	
 }
 
-bool cEnemyController::Init(cArena* _arena)
+bool cEnemyController::Init(cArena* _arena, cPlayer* _player)
 {
 	mInput = cInput::Instance();
 	mRen = cRenderer::Instance();
 	mLog = cLogger::Instance();
 
 	mArena = _arena;
+	mPlayer = _player;
 	mEnemyStartPos = mArena->GetEnemyStartPos();
 	mEnemyStartPos *= (float)mArena->GetGridSize();
 
@@ -46,6 +47,7 @@ bool cEnemyController::CleanUp()
 	{
 		mRen->UnloadBitmap(mEnemiesData[i].mBitmap);
 	}
+	mPlayer = NULL;
 	mArena = NULL;
 	mInput = NULL;
 	mRen = NULL;
@@ -57,7 +59,7 @@ void cEnemyController::Update()
 {
 	if(mEnemySpawnTimer.GetTicks() >= (3000))
 	{
-		if(mEnemiesAlive[0] == NULL) //create only one enemy at one time
+		//if(mEnemiesAlive[0] == NULL) //create only one enemy at one time
 		{
 			AddEnemy((Uint32)mEnemyStartPos.x,(Uint32)mEnemyStartPos.y, rand() % 3); //TODO: better rand, needs a seed
 			mEnemySpawnTimer.Start();
@@ -68,7 +70,14 @@ void cEnemyController::Update()
 		if(mEnemiesAlive[i] !=  NULL)
 		{
 			mEnemiesAlive[i]->Update();
-			if(mEnemiesAlive[i]->GetLives() <= 0) RemoveEnemy(i);
+			if(mEnemiesAlive[i]->GetLives() <= 0)
+			{
+				if(mEnemiesAlive[i]->GetLives() < 0)
+					mPlayer->IncScore(-1);
+				else
+					mPlayer->IncScore(1);
+				RemoveEnemy(i);
+			}
 		}
 	}
 }
