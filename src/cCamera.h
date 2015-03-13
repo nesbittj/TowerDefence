@@ -8,7 +8,7 @@ class cCamera
 {
 private:
 	float x, y;
-	int screen_w_bound, screen_h_bound, mArena_w, mArena_h;
+	Uint32 screen_w_bound, screen_h_bound, mArena_w, mArena_h;
 	float mMoveSpeed;
 	SDL_Event* mEvent;
 	cInput* mInput;

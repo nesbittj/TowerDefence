@@ -68,7 +68,7 @@ int cRenderer::Init(SDL_Event* _event)
 	}
 
 	//set defalt render colours
-	mColourDef.r = mColourDef.g = mColourDef.b = 102; mColourDef.a = 255;
+	mColourDef.r = 100;	mColourDef.g = 160;	mColourDef.b = 100;	mColourDef.a = 255;
 	mColourBlack.r = mColourBlack.g = mColourBlack.b = 0; mColourBlack.a = 255;
 	SetDrawColour(mColourDef,mRenderer);
 

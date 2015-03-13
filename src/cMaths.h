@@ -127,19 +127,24 @@ public:
 	static JVector3 PlaneNormal(JVector3* u, JVector3* v, JVector3* w);
 };
 
-class cMaths
+
+namespace cMaths
 {
-public:
-	static bool InTriangle(const JVector3* t0, const JVector3* t1, const JVector3* t2, const JVector3* p);
-	static bool InRect(int _x, int _y, int _x1, int _y1, int _x2, int _y2);
-	static int Sign(float number);
-	static float PythagorasSqrd(float a, float b);
-	static float Pythagoras(float a, float b);
-	static int Truncatef(float& value);
-	static int Truncatef(float& value, const float threshold);
-	static int Round(int num, int multiple);
-	static int RoundUp(int num, int multiple);
-	static bool InRange(JVector2 _origin, JVector2 _target, float _range);
-	static float Lerp(float _a, float _b, float _t);
-	static float Clamp(float _value, float _min, float _max);
-};
+	bool InTriangle(const JVector3* t0, const JVector3* t1, const JVector3* t2, const JVector3* p);
+	bool InRect(int _x, int _y, int _x1, int _y1, int _x2, int _y2);
+	int Sign(float number);
+	float PythagorasSqrd(float a, float b);
+	float Pythagoras(float a, float b);
+	int Truncatef(float& value);
+	int Truncatef(float& value, const float threshold);
+	int Round(int num, int multiple);
+	int RoundUp(int num, int multiple);
+	bool InRange(JVector2 _origin, JVector2 _target, float _range);
+	float Lerp(float _a, float _b, float _t);
+	template<typename T> T Clamp(T _value, T _min, T _max) //TODO: find more elegant solution
+	{
+		if(_value < _min) _value = _min;
+		if(_value > _max) _value = _max;
+		return _value;
+	}
+};// namespace cMaths

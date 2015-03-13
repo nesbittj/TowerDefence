@@ -65,8 +65,8 @@ void cCamera::Update()
 	if(new_cam.x != 0 || new_cam.y != 0)
 		UpdateRelative(new_cam.x,new_cam.y);
 	
-	mCursorX = cMaths::Round(mInput->GetMouseX() - (Uint32)x,32);
-	mCursorY = cMaths::Round(mInput->GetMouseY() - (Uint32)y,32);
+	mCursorX = cMaths::Clamp(cMaths::Round(mInput->GetMouseX() - (Sint32)x,32),0,(Sint32)(mArena_w - 32));
+	mCursorY = cMaths::Clamp(cMaths::Round(mInput->GetMouseY() - (Sint32)y,32),0,(Sint32)(mArena_h - 32));
 }
 
 /*

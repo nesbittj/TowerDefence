@@ -447,10 +447,3 @@ float cMaths::Lerp(float _a, float _b, float _t)
 {	
 	return (_a + (_b - _a) * _t);
 }
-
-float cMaths::Clamp(float _value, float _min, float _max)
-{
-	if(_value < _min) _min = _min;
-	if(_value > _max) _value = _max;
-	return _value;
-}

@@ -140,6 +140,7 @@ bool cTowerController::AddTower(Uint32 _x, Uint32 _y, Uint32 _tower)
 			return true;
 		}
 	}
+	return false;
 }
 
 /*
