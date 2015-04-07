@@ -1,19 +1,11 @@
 #include "cGUI.h"
 
+#pragma once
+
 namespace cGUInamepsace
 {
 
-///////////////////////////////////////////////////////////////////////
-//Global Variables
-///////////////////////////////////////////////////////////////////////
-static SDL_Color gThemeBase;	//background colour to panels and textboxes
-static SDL_Color gThemeColour;	//colour of GUI buttons and accents
-static SDL_Color gThemeColourMouseOver;	//if element has interaction,
-static SDL_Color gThemeColourMouseDown;	//colour of element when mouse is over it.
-static SDL_Color gFontColour;	//colour of font used for all GUI elements
 
-static cRenderer* gRen;	//pointer to cRenderer singleton
-static cInput* gInput;	//pointer to cInput singleton
 
 ///////////////////////////////////////////////////////////////////////
 //cGUI
@@ -29,7 +21,7 @@ cGUI* cGUI::Instance()
 initialise GUI object.
 remember to call CleanUp when finished
 */
-void cGUI::Init(SDL_Color _theme_colour)
+void cGUI::Init(SDL_Color _theme_colour) //TODO:logging!!
 {
 	SetThemeColour(_theme_colour);
 	gRen = cRenderer::Instance();
@@ -133,25 +125,11 @@ should not be called explicitly.
 */
 element::element(Sint32 _x, Sint32 _y, Sint32 _w, Sint32 _h, element* _parent)
 {
+	mGUI = cGUI::Instance();
 	parent = _parent;
-	if(parent)
-	{
-		x1 = parent->x1 + _x;
-		y1 = parent->y1 + _y;
-		x2 = x1 + _w;
-		y2 = y1 + _h;
-		focus = parent->GetFocus();
-	}
-	else
-	{		
-		x1 = _x;
-		y1 = _y;
-		x2 = x1 + _w;
-		y2 = y1 + _h;
-		focus = GUI_FOCUS_NONE;
-	}
-	w = _w;
-	h = _h;
+	if(parent) focus = parent->GetFocus();
+	else focus = GUI_FOCUS_NONE;
+	SetPos(_x,_y,_w,_h);
 }
 
 /*
@@ -167,6 +145,39 @@ bool element::SetFocus(Uint8 _focus)
 	return true;
 }
 
+/*
+sets new position of element.
+is element has a parent, position is relative to parent.
+*/
+void element::SetPos(Sint32 _x, Sint32 _y)
+{
+	if(parent)
+	{
+		x1 = parent->x1 + _x;
+		y1 = parent->y1 + _y;
+		x2 = x1 + w;
+		y2 = y1 + h;
+	}
+	else
+	{		
+		x1 = _x;
+		y1 = _y;
+		x2 = x1 + w;
+		y2 = y1 + h;
+	}
+}
+
+/*
+sets new position and width of element.
+is element has a parent, position is relative to parent.
+uses SetPos(Sint32,Sint32).
+*/
+void element::SetPos(Sint32 _x, Sint32 _y, Sint32 _w, Sint32 _h)
+{
+	w = _w;
+	h = _h;
+	SetPos(_x,_y);
+}
 
 ///////////////////////////////////////////////////////////////////////
 //panel
@@ -201,7 +212,7 @@ void panel::Update()
 	if(focus <= GUI_FOCUS_NONE) return;
 
 	//TODO: account for parent pos
-	if(cMaths::InRect(gInput->GetMouseX(),gInput->GetMouseY(),x1,y1,x2,y2))
+	if(cMaths::InRect(mGUI->gInput->GetMouseX(),mGUI->gInput->GetMouseY(),x1,y1,x2,y2))
 	{
 		for(unsigned int i = 0; i < elements.size(); i++)
 			elements[i]->Update();
@@ -216,8 +227,8 @@ void panel::Render()
 {
 	if(focus > GUI_FOCUS_NONE)
 	{
-		gRen->DrawFilledRect(x1,y1,x2,y2,
-			gThemeBase,0,SCREEN_SPACE);
+		mGUI->gRen->DrawFilledRect(x1,y1,w,h,
+			mGUI->gThemeBase,0,SCREEN_SPACE);
 		for(unsigned int i = 0; i < elements.size(); i++)
 			elements[i]->Render();
 	}
@@ -238,6 +249,20 @@ bool panel::SetFocus(Uint8 _focus)
 		return true;
 	}
 	return false;
+}
+
+/*
+sets new position of panel.
+is panel has a parent, position is relative to parent.
+if panel has child elements, each child is updated to position reletive to this panel. 
+*/
+void panel::SetPos(Sint32 _x, Sint32 _y)
+{
+	Sint32 _old_x1 = x1;
+	Sint32 _old_y1 = y1;
+	element::SetPos(_x,_y);
+	for(unsigned int i = 0; i < elements.size(); i++)
+		elements[i]->SetPos(elements[i]->x1 - _old_x1, elements[i]->y1 - _old_y1);
 }
 
 /*
@@ -278,11 +303,14 @@ add a new button to this panel.
 button will have this panel as parent.
 position is reletive to parent.
 uses button class
-*/
-void panel::AddElementButton(Sint32 _x, Sint32 _y, Sint32 _w, Sint32 _h, char* _text, void (*_function)(void))
+*//*
+template <class cInstance>
+void panel::AddElementButton(Sint32 _x, Sint32 _y, Sint32 _w, Sint32 _h,
+		char* _text, cInstance* _pInst, bool (cInstance::*_pFunction)(int), Sint32 _pParam)
 {
-	elements.push_back(new button(_x,_y,_w,_h,_text,_function,this));
+	elements.push_back(new button<cInstance>(_x,_y,_w,_h,this,_text,_pInst,_pFunction,_pParam));
 }
+*/
 
 
 ///////////////////////////////////////////////////////////////////////
@@ -309,9 +337,9 @@ template <> void textfield<char*>::Render()
 {
 	if(focus > GUI_FOCUS_NONE)
 	{
-		gRen->DrawFilledRect(x1,y1,w,h,
-			gThemeBase,0,SCREEN_SPACE);
-		gRen->RenderText((char*)value,(float)x1,(float)y1,0,gFontColour,0,SCREEN_SPACE);
+		mGUI->gRen->DrawFilledRect(x1,y1,w,h,
+			mGUI->gThemeBase,0,SCREEN_SPACE);
+		mGUI->gRen->RenderText((char*)value,(float)x1,(float)y1,0,mGUI->gFontColour,0,SCREEN_SPACE);
 	}
 }
 
@@ -323,9 +351,9 @@ template <> void textfield<Sint32*>::Render()
 {
 	if(focus > GUI_FOCUS_NONE)
 	{
-		gRen->DrawFilledRect(x1,y1,w,h,
-			gThemeBase,0,SCREEN_SPACE);
-		gRen->RenderText((float)*value,(float)x1,(float)y1,0,gFontColour,0,SCREEN_SPACE);
+		mGUI->gRen->DrawFilledRect(x1,y1,w,h,
+			mGUI->gThemeBase,0,SCREEN_SPACE);
+		mGUI->gRen->RenderText((float)*value,(float)x1,(float)y1,0,mGUI->gFontColour,0,SCREEN_SPACE);
 	}
 }
 
@@ -334,73 +362,5 @@ template <> void textfield<Sint32*>::Render()
 //button
 ///////////////////////////////////////////////////////////////////////
 
-
-/*
-constructor of button element,
-should not be called explicitly.
-use panel::AddElementButton
-*/
-button::button(Sint32 _x, Sint32 _y, Sint32 _w, Sint32 _h, char* _text, void (*_function)(void), element* _parent)
-	: element(_x,_y,_w,_h,_parent)
-{
-	operation = _function;
-	text = _text;
-}
-
-/*
-updates button element.
-funtion pointer member is run if mouse is
-over button and mouse button is released.
-should not be called explicitly, use cGUI::Update().
-uses SetFocus().
-*/
-void button::Update()
-{
-	if(focus <= GUI_FOCUS_NONE) return;
-
-	if(cMaths::InRect(gInput->GetMouseX(),gInput->GetMouseY(),x1,y1,x2,y2))
-	{
-		if(gInput->GetMouseButtonDown(LEFT_MOUSE_BUTTON))
-		{
-			SetFocus(GUI_FOCUS_MOUSE_DOWN);
-		}
-		else if(gInput->GetMouseButtonReleased(LEFT_MOUSE_BUTTON))
-		{
-			SetFocus(GUI_FOCUS_MOUSE_OVER);
-			operation();
-		}
-		else
-			SetFocus(GUI_FOCUS_MOUSE_OVER);
-	}
-	else
-		SetFocus(GUI_FOCUS_NO_MOUSE);
-}
-
-/*
-render button element.
-should not be called explicitly, use cGUI::Render().
-render type depends on current focus type, see element::SetFocus()
-*/
-void button::Render()
-{	
-	switch(focus)
-	{
-	case GUI_FOCUS_NO_MOUSE:
-		{
-			gRen->DrawFilledRect(x1,y1,w,h,gThemeColour,0,SCREEN_SPACE);
-		 }break;
-	case GUI_FOCUS_MOUSE_OVER:
-		{
-			gRen->DrawFilledRect(x1,y1,w,h,gThemeColourMouseOver,0,SCREEN_SPACE);
-		}break;
-	case GUI_FOCUS_MOUSE_DOWN:
-		{
-			gRen->DrawFilledRect(x1+2,y1+2,w,h,gThemeColourMouseDown,0,SCREEN_SPACE);
-		}break;
-	default:
-		return;
-	}
-	gRen->RenderText(text,(float)x1,(float)y1,0,gFontColour,0,SCREEN_SPACE);
-}
 
 } //cGUInamespace

@@ -39,6 +39,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\cArena.h" />
+    <ClInclude Include="src\cCallback.h" />
     <ClInclude Include="src\cCamera.h" />
     <ClInclude Include="src\cCore.h" />
     <ClInclude Include="src\cEnemy.h" />
@@ -99,8 +100,8 @@
     <LibraryPath>..\SDL2-2.0.3\lib\x86;..\SDL2_mixer-devel-2.0.0-VC\lib\x86;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <IncludePath>..\SDL2-2.0.3\include;..\SDL2_mixer-devel-2.0.0-VC\include;$(IncludePath)</IncludePath>
-    <LibraryPath>..\SDL2-2.0.3\lib\x86;..\SDL2_mixer-devel-2.0.0-VC\lib\x86;$(LibraryPath)</LibraryPath>
+    <IncludePath>C:\Users\Jonny\Documents\Code\SDL2-2.0.3\include;C:\Users\Jonny\Documents\Code\SDL2_mixer-devel-2.0.0-VC\include;$(IncludePath)</IncludePath>
+    <LibraryPath>C:\Users\Jonny\Documents\Code\SDL2-2.0.3\lib\x86;C:\Users\Jonny\Documents\Code\SDL2_mixer-devel-2.0.0-VC\lib\x86;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -126,6 +127,7 @@
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
+      <AdditionalIncludeDirectories>C:\Users\Jonny\Documents\Code\SDL2-2.0.3\include;C:\Users\Jonny\Documents\Code\SDL2_mixer-devel-2.0.0-VC\include</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -136,6 +138,7 @@
       <IgnoreAllDefaultLibraries>
       </IgnoreAllDefaultLibraries>
       <IgnoreSpecificDefaultLibraries>msvcrt.lib</IgnoreSpecificDefaultLibraries>
+      <AdditionalLibraryDirectories>C:\Users\Jonny\Documents\Code\SDL2-2.0.3\lib;C:\Users\Jonny\Documents\Code\SDL2_mixer-devel-2.0.0-VC\lib;</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

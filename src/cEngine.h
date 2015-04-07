@@ -61,5 +61,6 @@ public:
 	void Render();
 
 	bool GetQuit();
+	bool RunQuit(int _ignore) { printf("cEngine:: RUN QUit!\n"); mQuit = true; return true; }
 };
 

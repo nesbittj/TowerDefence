@@ -8,10 +8,6 @@ cEngine* cEngine::Instance()
 	return mInstance;
 }
 
-//TODO: consider more secure approach
-bool* gQuit;
-void RunQuit(void) { printf("cEngine:: RUN QUit!\n"); *gQuit = true; }
-
 int cEngine::Init()
 {
 	mRen = NULL;
@@ -64,10 +60,10 @@ void cEngine::SetGUILayout()
 	SDL_Color theme_colour = { 255, 255, 0, 255 };
 	mGUI->Init(theme_colour);
 
-	mPausePanel = mGUI->AddElementPanel(200,200,200,200);	
-	gQuit = &mQuit;
-	mPausePanel->AddElementButton(10,30,160,20,"Quit Game To Desktop",RunQuit);
-
+	mPausePanel = mGUI->AddElementPanel(200,200,200,200);
+	//mPausePanel->AddElementButton<cEngine>(10,30,160,20,"Quit Game To Desktop",this,&cEngine::RunQuit,0);
+	cGUInamepsace::button<cEngine>::AddButtonToPanel<cEngine>(
+		mPausePanel,2,2 ,100,10,"Quit Game To Desktop",  this,&cEngine::RunQuit,0);
 	mHUD = mGUI->AddElementPanel(0,0,150,100);
 	mHUD->AddElementTextfield(15,15,96,15,"Enemies Alive: ");
 	mHUD->AddElementTextfield(115,15,15,15,(Sint32*)mEnemyController.GetNumEnemiesAlive());
@@ -111,7 +107,6 @@ void cEngine::Update()
 
 	if(mPaused)
 	{
-		//update menu events
 		if(mInput->GetKeyDownRelease(SDLK_p))
 		{
 			mPaused = false;
@@ -157,7 +152,7 @@ void cEngine::Render()
 
 	if(mPaused)
 	{
-		mRen->RenderSnapshot(0,0,0);
+		mRen->RenderSnapshot(0,0,NULL,SCREEN_SPACE);
 	}
 	else
 	{
@@ -169,6 +164,7 @@ void cEngine::Render()
 			30,30,mouseColour,0,WORLD_SPACE);
 
 		mTowerController.DrawTowersInUse();
+		/*
 		if(mTowerController.mTowerEditMode)
 		{
 			mTowerController.DrawTower(
@@ -178,6 +174,7 @@ void cEngine::Render()
 				(float)mRen->mCamera->GetCursorX(),((float)mRen->mCamera->GetCursorY() - 15),
 				mTowerController.GetTowerSelected(),mouseColour,WORLD_SPACE);
 		}
+		*/
 		mEnemyController.DrawEnemies();
 	}
 

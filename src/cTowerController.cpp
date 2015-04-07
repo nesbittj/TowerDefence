@@ -3,7 +3,7 @@
 cTowerController::cTowerController()
 {
 	mTowersFileLocation = "assets/towers/";
-	mTowerSelected = 0;
+	//mTowerSelected = 0;
 	mTowerEditMode = true;
 }
 
@@ -20,6 +20,18 @@ bool cTowerController::Init(cArena* _arena, cPlayer* _player)
 	mPlayer = _player;
 	if(!LoadTowersData()) return false;
 	for(int i = 0; i < mMaxTowersInUse; i++) mTowersInUse[i] = NULL;
+
+	mGUI = cGUInamepsace::cGUI::Instance();
+	mEditTowerPanel = mGUI->AddElementPanel(0,0,100,100);
+	//cGUInamepsace::button<cTowerController>::AddButtonToPanel<cTowerController>(mEditTowerPanel,2,2 ,100,10,"Tower Upgrade 1",  this,&cTowerController::AddTowerCallback,0);
+	//cGUInamepsace::button<cTowerController>::AddButtonToPanel<cTowerController>(mEditTowerPanel,2,14 ,100,10,"Tower Upgrade 2",  this,&cTowerController::AddTowerCallback,1);
+	mAddTowerPanel = mGUI->AddElementPanel(0,0,100,100);
+	cGUInamepsace::button<cTowerController>::AddButtonToPanel<cTowerController>(mAddTowerPanel,2,5	,100,20,"Tower 1",  this,&cTowerController::AddTowerCallback,0);
+	cGUInamepsace::button<cTowerController>::AddButtonToPanel<cTowerController>(mAddTowerPanel,2,30	,100,20,"Tower 2",  this,&cTowerController::AddTowerCallback,1);
+
+	mAddTowerX = 0;
+	mAddTowerY = 0;
+
 	return true;
 }
 
@@ -42,6 +54,7 @@ bool cTowerController::CleanUp()
 	}
 	mPlayer = NULL;
 	mArena = NULL;
+	mGUI = NULL;
 	mInput = NULL;
 	mRen = NULL;
 	mLog = NULL;
@@ -50,7 +63,7 @@ bool cTowerController::CleanUp()
 
 /*
 set the currently selected tower from tower inventory.
-*/
+*//*
 void cTowerController::SetTowerSelected(Uint32 _tower)
 {
 	if(_tower < mMaxTowerTypes
@@ -64,30 +77,42 @@ void cTowerController::SetTowerSelected(Uint32 _tower)
 		mTowerEditMode = false;
 	}
 }
+*/
 
 void cTowerController::Update(cEnemy** const _enemies, int size_of_array)
 {
-	if(mInput->GetKeyDownNotRepeat(SDLK_1)) SetTowerSelected(0);
-	if(mInput->GetKeyDownNotRepeat(SDLK_2)) SetTowerSelected(1);
-	if(mInput->GetKeyDownNotRepeat(SDLK_3)) SetTowerSelected(2);
-	if(mInput->GetKeyDownNotRepeat(SDLK_4)) SetTowerSelected(3);
-	if(mInput->GetKeyDownNotRepeat(SDLK_5)) SetTowerSelected(4);
-	if(mInput->GetKeyDownNotRepeat(SDLK_6)) SetTowerSelected(5);
-	if(mInput->GetKeyDownNotRepeat(SDLK_7)) SetTowerSelected(6);
 
-	if(mTowerEditMode)
+	Sint32 _x = mRen->mCamera->GetCursorX();
+	Sint32 _y = mRen->mCamera->GetCursorY();
+	if(mInput->GetMouseButtonDownNotRepeat(LEFT_MOUSE_BUTTON))
 	{
-		if(mInput->GetMouseButtonDownNotRepeat(LEFT_MOUSE_BUTTON))
+		cTower* _get_tower = GetTower(_x,_y);
+		if(mAddTowerPanel->GetFocus() == cGUInamepsace::GUI_FOCUS_NONE && mEditTowerPanel->GetFocus() == cGUInamepsace::GUI_FOCUS_NONE)
 		{
-			if(*mPlayer->GetMoney() >= mTowersData[GetTowerSelected()].mCost)
+			if(_get_tower)
 			{
-				if(AddTower(mRen->mCamera->GetCursorX(),mRen->mCamera->GetCursorY(),GetTowerSelected()))
-					mPlayer->SpendMoney(mTowersData[GetTowerSelected()].mCost);
+				//upgrade tower
+				mEditTowerPanel->SetPos(_x,_y);
+				mEditTowerPanel->SetFocus(cGUInamepsace::GUI_FOCUS_NO_MOUSE);
+			}
+			else //if(IsTileClear(_x,_y)) //only need to check bounds because we already know _get_tower == NULL
+			{
+				//add new tower
+				mAddTowerX = mRen->mCamera->GetCursorX();
+				mAddTowerY = mRen->mCamera->GetCursorY();
+				mAddTowerPanel->SetPos(mAddTowerX,mAddTowerY);
+				mAddTowerPanel->SetFocus(cGUInamepsace::GUI_FOCUS_NO_MOUSE);
+				/*
+				//use get money to set avaliability of new towers
+				*mPlayer->GetMoney() >= mTowersData[GetTowerSelected()].mCost
+				*/
+				//if(AddTower(_x,_y,GetTowerSelected()))
+				//	mPlayer->SpendMoney(mTowersData[GetTowerSelected()].mCost);
 			}
 		}
-		else if(mInput->GetMouseButtonDownNotRepeat(RIGHT_MOUSE_BUTTON))
-			RemoveTower(mRen->mCamera->GetCursorX(),mRen->mCamera->GetCursorY());
 	}
+	else if(mInput->GetMouseButtonDownNotRepeat(RIGHT_MOUSE_BUTTON))
+		RemoveTower(_x,_y);
 
 	//TODO: consider indexing/sorting to top towers in use to avoid looping through all
 	//TODO: also consider binary search / bsp
@@ -117,6 +142,7 @@ void cTowerController::DrawTowerText(float _x, float _y, Uint32 _tower, SDL_Colo
 
 /*
 adds tower at world position _x,_y, of type _tower.
+does NOT check position validity, use IsTileClear() first.
 uses cArena::SetTowerType() with TILE_TOWER.
 return true on success.
 */
@@ -126,14 +152,7 @@ bool cTowerController::AddTower(Uint32 _x, Uint32 _y, Uint32 _tower)
 	{
 		if(mTowersInUse[i] == NULL)
 		{
-			JVector2 l_world_pos((float)_x,(float)_y);
-			for(int j = 0; j < mMaxTowersInUse; j++)	//TODO: use a more appropriate contriner, to be able to search by key
-			{
-				if(mTowersInUse[j] != NULL
-				&& mTowersInUse[j]->GetX() == l_world_pos.x && mTowersInUse[j]->GetY() == l_world_pos.y) 
-					return false;
-			}
-			//TODO: check bounds  of l_world_pos before creatingnew tower
+			JVector2 l_world_pos((float)_x,(float)_y);			
 			mTowersInUse[i] = new cTower((Uint32)l_world_pos.x,(Uint32)l_world_pos.y);
 			mTowersInUse[i]->Init(mTowersData[_tower].mBitmap,&mTowersData[_tower]);
 			mArena->SetTileType(l_world_pos/(float)mArena->GetGridSize(),TILE_TOWER);
@@ -141,6 +160,26 @@ bool cTowerController::AddTower(Uint32 _x, Uint32 _y, Uint32 _tower)
 		}
 	}
 	return false;
+}
+
+bool cTowerController::AddTowerCallback(int _tower)
+{
+	AddTower(mAddTowerX,mAddTowerY,_tower);
+	mAddTowerPanel->SetFocus(cGUInamepsace::GUI_FOCUS_NONE);
+	return true;
+}
+
+/*
+check validity of tile for tower placement.
+checks for existing tower at position _x,_y,
+checks position is in bounds.
+returns true it tile is clear, false if tile not clear.
+*/
+bool cTowerController::IsTileClear(Uint32 _x, Uint32 _y)
+{
+	if(GetTower(_x,_y)) return false;
+	//TODO: check bounds
+	return true;
 }
 
 /*
@@ -168,7 +207,7 @@ bool cTowerController::RemoveTower(Uint32 _x, Uint32 _y)
 
 /*
 return tower at world position _pos.
-retunrs NULL if no tower.
+returns NULL if no tower.
 */
 cTower* cTowerController::GetTower(JVector2 _pos)
 {
@@ -218,7 +257,7 @@ bool cTowerController::LoadTowersData()
 			else
 			{
 				//TODO: this could become NULL / silence if no sound file is loaded,
-				//rather than sharing sound file
+				//rather than sharing single sound file
 				if(mTowersData[0].mFireSound) mTowersData[i].mFireSound = mTowersData[0].mFireSound;
 			}
 
