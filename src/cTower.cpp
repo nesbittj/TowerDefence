@@ -8,6 +8,7 @@ cTower::cTower(Uint32 _x, Uint32 _y) : cEntity(_x,_y)
 	mFiringVerts.push_back(JVector3());
 	mFiringVerts.push_back(JVector3());
 	mFiringVerts[0] = JVector3(0,0,1);
+	mLevel = 0;
 }
 
 cTower::~cTower()
@@ -123,5 +124,7 @@ void cTower::Draw()
 	
 	//firing timer text
 	mRen->RenderText((float)mFireTimer.GetTicks(),x+42,y,0,mRen->mColourBlack,0);
+	//upgrade / level text
+	mRen->RenderText((float)mLevel,x,y+30,0,mRen->mColourBlack,0);
 	
 }

@@ -23,14 +23,17 @@ bool cTowerController::Init(cArena* _arena, cPlayer* _player)
 
 	mGUI = cGUInamepsace::cGUI::Instance();
 	mEditTowerPanel = mGUI->AddElementPanel(0,0,100,100);
-	//cGUInamepsace::button<cTowerController>::AddButtonToPanel<cTowerController>(mEditTowerPanel,2,2 ,100,10,"Tower Upgrade 1",  this,&cTowerController::AddTowerCallback,0);
-	//cGUInamepsace::button<cTowerController>::AddButtonToPanel<cTowerController>(mEditTowerPanel,2,14 ,100,10,"Tower Upgrade 2",  this,&cTowerController::AddTowerCallback,1);
+	cGUInamepsace::button<cTowerController>::AddButtonToPanel<cTowerController>(mEditTowerPanel,2,5	,100,20,"Tower Upgrade 1",  this,&cTowerController::UpgradeTower,1);
+	cGUInamepsace::button<cTowerController>::AddButtonToPanel<cTowerController>(mEditTowerPanel,2,30,100,20,"Tower Upgrade 2",  this,&cTowerController::UpgradeTower,2);
+	cGUInamepsace::button<cTowerController>::AddButtonToPanel<cTowerController>(mEditTowerPanel,2,55,100,20,"Cancel", NULL,NULL,0);
 	mAddTowerPanel = mGUI->AddElementPanel(0,0,100,100);
 	cGUInamepsace::button<cTowerController>::AddButtonToPanel<cTowerController>(mAddTowerPanel,2,5	,100,20,"Tower 1",  this,&cTowerController::AddTowerCallback,0);
 	cGUInamepsace::button<cTowerController>::AddButtonToPanel<cTowerController>(mAddTowerPanel,2,30	,100,20,"Tower 2",  this,&cTowerController::AddTowerCallback,1);
+	cGUInamepsace::button<cTowerController>::AddButtonToPanel<cTowerController>(mAddTowerPanel,2,55	,100,20,"Cancel", NULL,NULL,0);
 
 	mAddTowerX = 0;
 	mAddTowerY = 0;
+	mSelectedTower = NULL;
 
 	return true;
 }
@@ -52,6 +55,7 @@ bool cTowerController::CleanUp()
 		Mix_FreeChunk(mTowersData[i].mFireSound);
 		mTowersData[i].mFireSound = NULL;
 	}
+	mSelectedTower = NULL;
 	mPlayer = NULL;
 	mArena = NULL;
 	mGUI = NULL;
@@ -84,24 +88,26 @@ void cTowerController::Update(cEnemy** const _enemies, int size_of_array)
 
 	Sint32 _x = mRen->mCamera->GetCursorX();
 	Sint32 _y = mRen->mCamera->GetCursorY();
-	if(mInput->GetMouseButtonDownNotRepeat(LEFT_MOUSE_BUTTON))
+	if(mInput->GetMouseButtonReleased(LEFT_MOUSE_BUTTON))
 	{
-		cTower* _get_tower = GetTower(_x,_y);
-		if(mAddTowerPanel->GetFocus() == cGUInamepsace::GUI_FOCUS_NONE && mEditTowerPanel->GetFocus() == cGUInamepsace::GUI_FOCUS_NONE)
+		mSelectedTower = GetTower(_x,_y);
+		//if(mAddTowerPanel->GetFocus() == cGUInamepsace::GUI_FOCUS_NONE && mEditTowerPanel->GetFocus() == cGUInamepsace::GUI_FOCUS_NONE)
 		{
-			if(_get_tower)
+			if(mSelectedTower)
 			{
 				//upgrade tower
 				mEditTowerPanel->SetPos(_x,_y);
 				mEditTowerPanel->SetFocus(cGUInamepsace::GUI_FOCUS_NO_MOUSE);
+				mAddTowerPanel->SetFocus(cGUInamepsace::GUI_FOCUS_NONE);
 			}
 			else //if(IsTileClear(_x,_y)) //only need to check bounds because we already know _get_tower == NULL
 			{
 				//add new tower
-				mAddTowerX = mRen->mCamera->GetCursorX();
-				mAddTowerY = mRen->mCamera->GetCursorY();
+				mAddTowerX = _x;
+				mAddTowerY = _y;
 				mAddTowerPanel->SetPos(mAddTowerX,mAddTowerY);
 				mAddTowerPanel->SetFocus(cGUInamepsace::GUI_FOCUS_NO_MOUSE);
+				mEditTowerPanel->SetFocus(cGUInamepsace::GUI_FOCUS_NONE);
 				/*
 				//use get money to set avaliability of new towers
 				*mPlayer->GetMoney() >= mTowersData[GetTowerSelected()].mCost
@@ -138,6 +144,13 @@ void cTowerController::DrawTowerText(float _x, float _y, Uint32 _tower, SDL_Colo
 {
 	if(_tower < mMaxTowerTypes)
 		mRen->RenderText(mTowersData[_tower].mName.c_str(),_x,_y,0,_col,NULL,_space);
+}
+
+bool cTowerController::UpgradeTower(int _upgrade)
+{
+	mSelectedTower->UpgradeTower(_upgrade);
+	mEditTowerPanel->SetFocus(cGUInamepsace::GUI_FOCUS_NONE);
+	return true;
 }
 
 /*

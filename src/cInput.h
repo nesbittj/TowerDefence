@@ -63,6 +63,7 @@ public:
 	bool GetMouseButtonDownNotRepeat(int _button);
 	bool GetMouseButtonDownRelease(int button);
 	bool GetMouseButtonReleased(int button);
+	bool GetMouseButtonReleasedRelease(int button);
 
 	inline int GetMouseX() { return mMouseX; }
 	inline int GetMouseY() { return mMouseY; }

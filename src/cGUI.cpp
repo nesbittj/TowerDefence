@@ -100,8 +100,13 @@ use element::SetFocus() to set individual element focus
 */
 void cGUI::Update()
 {
+	bool l_close = false;
+	if(gInput->GetKeyDownNotRepeat(SDLK_ESCAPE)) l_close = true;
 	for(unsigned int i = 0; i < elements.size(); i++)
+	{
+		if(l_close) elements[i]->SetFocus(GUI_FOCUS_NONE);
 		elements[i]->Update();
+	}
 }
 
 /*

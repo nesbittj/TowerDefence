@@ -116,6 +116,7 @@ private:
 	tFunction mFunction;
 	int mParam;
 	bool mReturnValue;
+	element* mCloseOnClick;
 
 public:
 	button(Sint32 _x, Sint32 _y, Sint32 _w, Sint32 _h, element* _parent,
@@ -139,7 +140,8 @@ public:
 	void virtual Execute()
 	{	
 		if(mInst && mFunction) mReturnValue = (mInst->*mFunction)(mParam);
-		else printf("\ninstance, function or parameter not defined\n");
+		else parent->SetFocus(GUI_FOCUS_NONE);
+		//else printf("\ninstance, function or parameter not defined\n");
 	}
 
 	void virtual Update()
@@ -152,7 +154,7 @@ public:
 			{
 				SetFocus(GUI_FOCUS_MOUSE_DOWN);
 			}
-			else if(mGUI->gInput->GetMouseButtonReleased(LEFT_MOUSE_BUTTON))
+			else if(mGUI->gInput->GetMouseButtonReleasedRelease(LEFT_MOUSE_BUTTON))
 			{
 				SetFocus(GUI_FOCUS_MOUSE_OVER);
 				Execute();
@@ -195,7 +197,6 @@ public:
 		_pPanel->AddElementButton(new button<cInstance>
 			(_x,_y,_w,_h,_pPanel,_text,_pInst,static_cast<tFunction>(_pFunction),_pParam));
 	}
-
 };
 
 } // cGUInamespace

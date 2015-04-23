@@ -38,6 +38,7 @@ public:
 
 	void Update(cEnemy** const _enemies, int size_of_array);
 	void Draw();
+	void UpgradeTower(Uint8 _upgrade) { mLevel = _upgrade; }
 	
 	void Pause() { mFireTimer.Pause(); }
 	void UnPause() { mFireTimer.Unpause(); }

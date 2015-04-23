@@ -85,7 +85,6 @@
     <ClInclude Include="src\SDL2_gfx\SDL2_rotozoom.h">
       <Filter>SDL2_gfx</Filter>
     </ClInclude>
-    <ClInclude Include="src\cCallback.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="tinyxml2">

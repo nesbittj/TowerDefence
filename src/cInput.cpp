@@ -173,6 +173,16 @@ bool cInput::GetMouseButtonReleased(int button)
 	return false;
 }
 
+bool cInput::GetMouseButtonReleasedRelease(int button)
+{
+	if(!mMouseButtonDown[button] && mPrevMouseButtonDown[button])
+	{
+		mPrevMouseButtonDown[button] = false;
+		return true;
+	}
+	return false;
+}
+
 /*
 updates current key and button presses,
 also updates old key presses.
@@ -182,8 +192,8 @@ returns -1 is exit key is pressed.
 int cInput::UpdateInputEvents()
 {
 	if(ProcessInputEvents() == -1) return -1;
-	if(GetKeyDownRelease(SDLK_ESCAPE)) return -1;
-	if(GetJoyButtonDownRelease(JOY_START)) return -1;
+	//if(GetKeyDownRelease(SDLK_ESCAPE)) return -1;
+	//if(GetJoyButtonDownRelease(JOY_START)) return -1;
 	return 0;
 }
 
