@@ -79,13 +79,15 @@ public:
 
 class panel : public element
 {
-private:
+protected:
 	vector<element*> elements;
+	bool mCloseWithEsc;
 public:
 	panel(Sint32 _x, Sint32 _y, Sint32 _w, Sint32 _h, element* _parent);
 	~panel();
 	bool virtual SetFocus(Uint8 _focus);
 	void virtual SetPos(Sint32 _x, Sint32 _y);
+	void virtual SetCloseWithEsc(bool _value) { mCloseWithEsc = _value; }
 	void virtual Update();
 	void virtual Render();
 	void AddElementPanel(Sint32 _x, Sint32 _y, Sint32 _w, Sint32 _h);
@@ -98,7 +100,7 @@ public:
 template <class T>
 class textfield : public element
 {
-private:
+protected:
 	T value;
 public:
 	textfield(Sint32 _x, Sint32 _y, Sint32 _w, Sint32 _h, T _value, element* _parent);
@@ -108,7 +110,7 @@ public:
 template <class cInstance>
 class button : public element
 {
-private:
+protected:
 	typedef bool (cInstance::*tFunction)(int);
 
 	char* text;
@@ -140,7 +142,7 @@ public:
 	void virtual Execute()
 	{	
 		if(mInst && mFunction) mReturnValue = (mInst->*mFunction)(mParam);
-		else parent->SetFocus(GUI_FOCUS_NONE);
+		else parent->SetFocus(GUI_FOCUS_NONE); //close parent (assumed panel) if button has no function
 		//else printf("\ninstance, function or parameter not defined\n");
 	}
 
@@ -190,6 +192,10 @@ public:
 
 	bool GetReturnValue() { return mReturnValue; }
 
+	/*
+	pass NULL as function to use as cancel button
+	TODO: find better solution to cancel button
+	*/
 	template <class cInstance>
 	static void AddButtonToPanel(panel* _pPanel, Sint32 _x, Sint32 _y, Sint32 _w, Sint32 _h,
 		char* _text, cInstance* _pInst, bool (cInstance::*_pFunction)(int), Sint32 _pParam)

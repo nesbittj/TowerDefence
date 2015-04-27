@@ -62,5 +62,7 @@ public:
 
 	bool GetQuit();
 	bool RunQuit(int _ignore) { printf("cEngine:: RUN QUit!\n"); mQuit = true; return true; }
+	bool PausePanelOnOpen(int _ignore);
+	bool PausePanelOnClose(int _ignore);
 };
 

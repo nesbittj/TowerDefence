@@ -61,9 +61,9 @@ void cEngine::SetGUILayout()
 	mGUI->Init(theme_colour);
 
 	mPausePanel = mGUI->AddElementPanel(200,200,200,200);
-	//mPausePanel->AddElementButton<cEngine>(10,30,160,20,"Quit Game To Desktop",this,&cEngine::RunQuit,0);
+	mPausePanel->SetCloseWithEsc(true);
 	cGUInamepsace::button<cEngine>::AddButtonToPanel<cEngine>(
-		mPausePanel,2,2 ,100,10,"Quit Game To Desktop",  this,&cEngine::RunQuit,0);
+		mPausePanel,2,2,180,20,"Quit Game To Desktop",this,&cEngine::RunQuit,0);
 	mHUD = mGUI->AddElementPanel(0,0,150,100);
 	mHUD->AddElementTextfield(15,15,96,15,"Enemies Alive: ");
 	mHUD->AddElementTextfield(115,15,15,15,(Sint32*)mEnemyController.GetNumEnemiesAlive());
@@ -144,6 +144,16 @@ void cEngine::UpdateEvents()
 		if(mInput->UpdateInputEvents() == -1) mQuit = true;
 		if(mRen->UpdateEvents() == -1) mQuit = true;
 	}
+}
+
+bool cEngine::PausePanelOnOpen(int _ignore)
+{
+	return true;
+}
+
+bool cEngine::PausePanelOnClose(int _ignore)
+{
+	return true;
 }
 
 void cEngine::Render()

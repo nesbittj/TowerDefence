@@ -101,10 +101,8 @@ use element::SetFocus() to set individual element focus
 void cGUI::Update()
 {
 	bool l_close = false;
-	if(gInput->GetKeyDownNotRepeat(SDLK_ESCAPE)) l_close = true;
 	for(unsigned int i = 0; i < elements.size(); i++)
 	{
-		if(l_close) elements[i]->SetFocus(GUI_FOCUS_NONE);
 		elements[i]->Update();
 	}
 }
@@ -197,6 +195,7 @@ use cGUI::AddElementPanel or cPanel::AddPanel.
 panel::panel(Sint32 _x, Sint32 _y, Sint32 _w, Sint32 _h, element* _parent)
 	: element(_x,_y,_w,_h,_parent)
 {
+	mCloseWithEsc = false;
 }
 
 panel::~panel()
@@ -215,6 +214,9 @@ should not be called explicitly, use cGUI::Update.
 void panel::Update()
 {
 	if(focus <= GUI_FOCUS_NONE) return;
+
+	if(mCloseWithEsc && mGUI->gInput->GetKeyDownRelease(SDLK_ESCAPE))
+		SetFocus(GUI_FOCUS_NONE);
 
 	//TODO: account for parent pos
 	if(cMaths::InRect(mGUI->gInput->GetMouseX(),mGUI->gInput->GetMouseY(),x1,y1,x2,y2))
@@ -302,26 +304,9 @@ void panel::AddElementTextfield(Sint32 _x, Sint32 _y, Sint32 _w, Sint32 _h, Sint
 	elements.push_back(new textfield<Sint32*>(_x,_y,_w,_h,_value,this));
 }
 
-/*
-add a new button to this panel.
-6th parameter is funtion pointer, see button::Update()
-button will have this panel as parent.
-position is reletive to parent.
-uses button class
-*//*
-template <class cInstance>
-void panel::AddElementButton(Sint32 _x, Sint32 _y, Sint32 _w, Sint32 _h,
-		char* _text, cInstance* _pInst, bool (cInstance::*_pFunction)(int), Sint32 _pParam)
-{
-	elements.push_back(new button<cInstance>(_x,_y,_w,_h,this,_text,_pInst,_pFunction,_pParam));
-}
-*/
-
-
 ///////////////////////////////////////////////////////////////////////
 //textfield
 ///////////////////////////////////////////////////////////////////////
-
 
 /*
 constructor of textfield element,
@@ -361,11 +346,5 @@ template <> void textfield<Sint32*>::Render()
 		mGUI->gRen->RenderText((float)*value,(float)x1,(float)y1,0,mGUI->gFontColour,0,SCREEN_SPACE);
 	}
 }
-
-
-///////////////////////////////////////////////////////////////////////
-//button
-///////////////////////////////////////////////////////////////////////
-
 
 } //cGUInamespace
